@@ -1,0 +1,32 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext.kotlin_version = "1.4.21"
+    repositories {
+        google()
+        jcenter()
+
+        flatDir {dirs 'E:\\Distrib\\Reposit'}
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.1.1"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        //classpath 'com.android.support:multidex:2.0.1'
+        //classpath "org.postgresql:postgresql:42.2.18"
+        //classpath "com.android.support:support-v4:27.0.2"
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+
+        flatDir {dirs 'E:\\Distrib\\Reposit'}
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

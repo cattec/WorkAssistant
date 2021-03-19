@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">WorkAssistant</string>
+    <string name="btn_menu">Button Menu</string>
+    <string name="btn_find">Button Find</string>
+    <string name="img_title">Title Iamge</string>
+    <string name="navigation_drawer_open">navigation_drawer_open</string>
+    <string name="navigation_drawer_close">navigation_drawer_close</string>
+
+    <string name="img_todo">Картинка главного окна</string>
+    <string name="card_img">Картинка карточки</string>
+    <string name="card_title">Заголовок статьи</string>
+    <string name="card_text">Некоторый не большой текст в конце с сылкой на основную статью</string>
+    <string name="User_fio">Камушкин Павел Иваныч</string>
+
+    <string name="tv_help_title_text">Справка</string>
+    <string name="tv_help_text_text">Тут будет некоторая справка, ну это не точно, может ее стоит подгружать из базы например, конечно же, ну это сделаем когда научимся это делать и найдем место для нашей основной базы</string>
+
+    <string name="m_serv_name">Сервисы</string>
+    <string name="m_news_text">Новости</string>
+    <string name="m_notif_text">Уведомления</string>
+    <string name="m_chat_text">Чат</string>
+    <string name="m_support_text">Поддержка</string>
+    <string name="m_sup_task_text">Предложения</string>
+    <string name="m_sup_help_text">Справка</string>
+    <string name="m_sup_setting_text">Настройки</string>
+    <string name="settings_title">Настройки</string>
+    <string name="support_title">Поддержка</string>
+    <string name="newsTitle">Новости</string>
+    <string name="cardCategoria">категория</string>
+    <string name="DateCreateView">Дата создания</string>
+    <string name="tvComText">Комментарии</string>
+    <string name="editComment_hintText">Введите текст комментария...</string>
+    <string name="tvMessageDefault">пусто</string>
+    <string name="persDefaultIcon">TODO</string>
+    <string name="persDefaultName">noName</string>
+    <string name="persMesDateDefault">no date</string>
+    <string name="maskPict">maskPict</string>
+    <string name="lpassText">Пароль</string>
+    <string name="lLoginText">Логин</string>
+    <string name="autorizeText">Вход</string>
+    <string name="btnNewRegText">Зарегистрироваться</string>
+    <string name="btnLoginText">Войти</string>
+    <string name="ePassHint">введите пароль...</string>
+    <string name="eLoginHint">введите логин...</string>
+    <string name="m_change_user">Сменить пользователя</string>
+    <string name="lFoggotPass_text">Забыли пароль?</string>
+</resources>

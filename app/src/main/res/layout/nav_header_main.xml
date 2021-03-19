@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_header"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="false"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    android:gravity="bottom"
+    android:hapticFeedbackEnabled="false"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    app:layout_constrainedWidth="false">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/nav_header_imageView"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:contentDescription="@string/img_todo"
+                app:srcCompat="@drawable/logo" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:contentDescription="@string/maskPict"
+                app:srcCompat="@drawable/ic_avatar_form" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/nav_header_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10pt"
+        android:layout_marginRight="10pt"
+        android:paddingTop="16dp"
+        android:text="@string/User_fio"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/black"
+        android:textSize="24sp" />
+
+</LinearLayout>

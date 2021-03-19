@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:id="@+id/grp1" android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_item_three0"
+            android:icon="@drawable/ic_outline_ballot_24"
+            android:title="@string/m_news_text" />
+        <item
+            android:id="@+id/nav_item_three1"
+            android:icon="@drawable/ic_baseline_notification_important_24"
+            android:title="@string/m_notif_text" />
+        <item
+            android:id="@+id/nav_item_three2"
+            android:icon="@drawable/ic_baseline_message_24"
+            android:title="@string/m_chat_text" />
+
+
+    </group>
+
+    <group android:id="@+id/grp2" android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_item_three3"
+            android:icon="@drawable/ic_baseline_campaign_24"
+            android:title="@string/m_sup_task_text" />
+        <item
+            android:id="@+id/nav_item_three4"
+            android:icon="@drawable/ic_baseline_help_outline_24"
+
+            android:title="@string/m_sup_help_text" />
+        <item
+            android:id="@+id/nav_item_three5"
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:title="@string/m_sup_setting_text" />
+
+    </group>
+
+    <group android:id="@+id/grp3" android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_item_three_change_user"
+            android:icon="@android:drawable/ic_lock_lock"
+            android:title="@string/m_change_user" />
+
+    </group>
+</menu>

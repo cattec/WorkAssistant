@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.workassistant">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/logo"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/logo"
+
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="true"
+
+        android:supportsRtl="true"
+        android:theme="@style/Theme.WorkAssistant">
+
+        <receiver
+            android:name=".MyTimeReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
+
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".HelpActivity" />
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".SupportActivity" />
+        <activity android:name=".ChannelsListActivity" />
+        <activity android:name=".ChannelActivity" />
+    </application>
+
+</manifest>
