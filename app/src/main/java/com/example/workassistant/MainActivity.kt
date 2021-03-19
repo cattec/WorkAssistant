@@ -78,13 +78,16 @@ class MainActivity : AppCompatActivity() {
 
         //Загружаем из настроек последнего залогиненного пользователя
         val settings = getSharedPreferences("UserInfo", 0)
-        val userID: Int = settings.getString("userID", "")!!.toInt()
-        val iconID: Int = settings.getString("iconID", "")!!.toInt()
+        val userID_str: String = settings.getString("userID", "").toString()
+        val iconID_str: String = settings.getString("iconID", "").toString()
         val full_name: String = settings.getString("full_name", "").toString()
         val token_type: String = settings.getString("token_type", "").toString()
         val access_token: String = settings.getString("access_token", "").toString()
         val myLogin: String = settings.getString("myLogin", "").toString()
         val myPassword: String = settings.getString("myPassword", "").toString()
+
+        val userID: Int = if (userID_str == "") 0 else userID_str.toInt()
+        val iconID: Int = if (iconID_str == "") 0 else iconID_str.toInt()
 
         //Проверяем старый токен действует еще или уже нет
         val result = URL(apiCurURL + "/users/me/").checkToken(token_type,access_token)
