@@ -1,21 +1,19 @@
 package com.example.workassistant
 
-import android.content.res.Resources
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import coil.transform.CircleCropTransformation
-import com.getstream.sdk.chat.ImageLoader.load
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+//import com.getstream.sdk.chat.ImageLoader.load
+import coil.load
 
 
-class CommentRCAdapter(private val apiURL:String , private val CadrParm: List<MyComment>) :
+class CommentRCAdapter(private val token_type: String,
+                       private val access_token: String,
+                       private val apiURL:String ,
+                       private val CadrParm: List<MyComment>) :
     RecyclerView.Adapter<CommentRCAdapter.MyViewHolder111>() {
 
     override fun getItemCount() = CadrParm.size
@@ -29,9 +27,9 @@ class CommentRCAdapter(private val apiURL:String , private val CadrParm: List<My
         return MyViewHolder111(itemView)
     }
 
-    @InternalStreamChatApi
+    //@InternalStreamChatApi
     override fun onBindViewHolder(holder: MyViewHolder111, position: Int) {
-        holder.persIcon_view?.load(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons.toInt())
+        holder.persIcon_view?.load(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons.toInt()) { addHeader("Authorization", token_type + ' ' + access_token) }
         holder.persName_view?.text = CadrParm[position].fname
         holder.tvMessageBody?.text = CadrParm[position].fbody
         holder.persMesDate_view?.text = CadrParm[position].fdatecreate

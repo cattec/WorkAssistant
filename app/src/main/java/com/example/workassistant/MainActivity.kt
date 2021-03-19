@@ -115,13 +115,15 @@ class MainActivity : AppCompatActivity() {
         val settings = getSharedPreferences("UserInfo", 0)
         val full_name: String = settings.getString("full_name", "")!!
         val iconID: String = settings.getString("iconID", "").toString()
+        val token_type: String = settings.getString("token_type", "").toString()
+        val access_token: String = settings.getString("access_token", "").toString()
 
         val myNav = findViewById<NavigationView>(R.id.nav_view)
         val header = myNav.getHeaderView(0)
         val nav_head_text = header.findViewById<TextView>(R.id.nav_header_textView)
         nav_head_text.setText(full_name)
         val nav_header_imageView = header.findViewById<ImageView>(R.id.nav_header_imageView)
-        if (iconID != "") nav_header_imageView.load(apiCurURL + "/icon/?fkey=" + iconID)
+        if (iconID != "") nav_header_imageView.load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader("Authorization", token_type + ' ' + access_token) }
 
         myNav.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -151,7 +153,7 @@ class MainActivity : AppCompatActivity() {
         //реализация обновления списка: толком не работает тормозит дико, потому что генерит милион событий
         val rv = findViewById<RecyclerView>(R.id.rv)
         rv.layoutManager = LinearLayoutManager(this)
-        rv.adapter = NewsRCAdapter(getSharedPreferences("UserInfo", 0), apiCurURL, fillList1(apiCurURL))
+        rv.adapter = NewsRCAdapter(myToken.userID, myToken.token_type, myToken.access_token, getSharedPreferences("UserInfo", 0), apiCurURL, fillList1(apiCurURL))
 
         /*
         val rv = findViewById<RecyclerView>(R.id.rv)
@@ -202,7 +204,7 @@ class MainActivity : AppCompatActivity() {
 
     fun testURLResponse(view: View) {
         try {
-            val res = URL(apiCurURL + "/users/").getText()
+            val res = URL(apiCurURL + "/users/").getText_noToken()
             Toast.makeText(this, res, Toast.LENGTH_LONG).show()
         }
         catch (e: Exception)
@@ -287,7 +289,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fillList1(apiURL:String): List<MyMessage>{
-        val res = URL(apiURL + "/message_main/").getText()
+        val res = URL(apiURL + "/message_main/").getText(myToken.token_type, myToken.access_token)
         val data = Gson().fromJson(res, Array<MyMessage>::class.java).asList()
         return data
     }

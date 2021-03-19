@@ -4,19 +4,28 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 
-fun URL.getText(): String {
+fun URL.getText(token_type: String, access_token: String): String {
+    return openConnection().run {
+        this as HttpURLConnection
+        setRequestProperty("Authorization", token_type + ' ' + access_token);
+        inputStream.bufferedReader().readText()
+    }
+}
+
+fun URL.getText_noToken(): String {
     return openConnection().run {
         this as HttpURLConnection
         inputStream.bufferedReader().readText()
     }
 }
 
-fun URL.sendComment(outComment:String): String{
+fun URL.sendComment(token_type: String, access_token: String, outComment:String): String{
     return openConnection().run {
         this as HttpURLConnection
         doOutput = true
         doInput = true
         requestMethod = "POST"
+        setRequestProperty("Authorization", token_type + ' ' + access_token);
         setRequestProperty("Content-Type", "application/json");
         setRequestProperty("Accept", "application/json");
         outputStream.write(outComment.toByteArray())

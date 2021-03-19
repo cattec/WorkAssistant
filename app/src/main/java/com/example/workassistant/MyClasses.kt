@@ -16,6 +16,7 @@ class cToken(
         val access_token: String,
         val token_type: String
 )
+
 class MyMessage(
         var fkey: String,
         var fname: String,

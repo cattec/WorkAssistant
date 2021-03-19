@@ -10,14 +10,19 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.ImageLoader.load
+//import com.getstream.sdk.chat.ImageLoader.load
 import com.google.gson.Gson
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.net.HttpURLConnection
 import java.net.URL
+import coil.load
 
-
-class NewsRCAdapter(private val settings: SharedPreferences, private val apiURL:String, private val CadrParm: List<MyMessage>) :
+class NewsRCAdapter(private val userID: Int,
+                    private val token_type: String,
+                    private val access_token: String,
+                    private val settings: SharedPreferences,
+                    private val apiURL:String,
+                    private val CadrParm: List<MyMessage>) :
     RecyclerView.Adapter<NewsRCAdapter.MyViewHolder111>() {
 
     override fun getItemCount() = CadrParm.size
@@ -31,14 +36,11 @@ class NewsRCAdapter(private val settings: SharedPreferences, private val apiURL:
         return MyViewHolder111(itemView)
     }
 
-    @InternalStreamChatApi
+    //@InternalStreamChatApi
     override fun onBindViewHolder(holder: MyViewHolder111, position: Int) {
 
-        //holder.leyoutComment_view?.visibility = View.GONE
-        //holder.imgCardSmall_view?.visibility = View.GONE
-
-        holder.imgCardSmall_view?.load(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons.toInt())
-        holder.imgCard_view?.load(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons.toInt())
+        holder.imgCardSmall_view?.load(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons.toInt()) { addHeader("Authorization", token_type + ' ' + access_token) }
+        holder.imgCard_view?.load(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons.toInt()) { addHeader("Authorization", token_type + ' ' + access_token) }
 
         holder.tCard1_view?.text = CadrParm[position].fname
         holder.tCard2_view?.text = CadrParm[position].fbody
@@ -47,41 +49,36 @@ class NewsRCAdapter(private val settings: SharedPreferences, private val apiURL:
 
         holder.imgCard_view?.setOnClickListener {
             holder.imgCard_view?.visibility = View.GONE
-            //holder.imgCardSmall_view?.visibility = View.VISIBLE
-            //holder.imgCardSmall_revert_view?.visibility = View.VISIBLE
             holder.layout_small_image?.visibility = View.VISIBLE
             holder.leyoutComment_view?.visibility = View.VISIBLE
             //load Comments if needed
             holder.rvComments_view?.layoutManager = LinearLayoutManager(holder.parent_view)
-            holder.rvComments_view?.adapter = CommentRCAdapter(apiURL, fillComments(apiURL, CadrParm[position].fkey))
+            holder.rvComments_view?.adapter = CommentRCAdapter(token_type, access_token, apiURL, fillComments(token_type, access_token, apiURL, CadrParm[position].fkey))
         }
 
         holder.imgCardSmall_view?.setOnClickListener {
             holder.imgCard_view?.visibility = View.VISIBLE
-            //holder.imgCardSmall_view?.visibility = View.GONE
-            //holder.imgCardSmall_revert_view?.visibility = View.GONE
             holder.layout_small_image?.visibility = View.GONE
             holder.leyoutComment_view?.visibility = View.GONE
         }
 
         holder.btnSendMessage_view?.setOnClickListener {
             if ((holder.tvComment_text_view?.text != null) and (holder.tvComment_text_view?.text.toString().trim() != "")) {
-                //получаем текущего пользоваеля
-                val userID: Int = settings.getString("userID", "")!!.toInt()
+                //формируем запрос
                 val nMess = MyCommentOut(userID, holder.tvComment_text_view?.text.toString(), CadrParm[position].fkey.toInt())
                 val outComment = Gson().toJson(nMess)
-                val requestResult = URL(apiURL + "/ins_comment/").sendComment(outComment)
+                val requestResult = URL(apiURL + "/ins_comment/").sendComment(token_type, access_token, outComment)
                 //Toast.makeText(holder.parent_view, requestResult, Toast.LENGTH_LONG).show()
                 holder.tvComment_text_view?.text = null
                 holder.parent_view?.hideKeyBoard(it)
-                holder.rvComments_view?.adapter = CommentRCAdapter(apiURL, fillComments(apiURL, CadrParm[position].fkey))
+                holder.rvComments_view?.adapter = CommentRCAdapter(token_type, access_token, apiURL, fillComments(token_type, access_token, apiURL, CadrParm[position].fkey))
             }
         }
 
     }
 
-    private fun fillComments(cur_apiURL:String, fkey:String): List<MyComment> {
-        val res = URL(cur_apiURL + "/comments/?f_messages=" + fkey).getText()
+    private fun fillComments(token_type: String, access_token: String, cur_apiURL:String, fkey:String): List<MyComment> {
+        val res = URL(cur_apiURL + "/comments/?f_messages=" + fkey).getText(token_type, access_token)
         val data = Gson().fromJson(res, Array<MyComment>::class.java).asList()
         return data
     }
