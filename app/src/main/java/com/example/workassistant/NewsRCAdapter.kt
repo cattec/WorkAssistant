@@ -47,7 +47,9 @@ class NewsRCAdapter(private val settings: SharedPreferences, private val apiURL:
 
         holder.imgCard_view?.setOnClickListener {
             holder.imgCard_view?.visibility = View.GONE
-            holder.imgCardSmall_view?.visibility = View.VISIBLE
+            //holder.imgCardSmall_view?.visibility = View.VISIBLE
+            //holder.imgCardSmall_revert_view?.visibility = View.VISIBLE
+            holder.layout_small_image?.visibility = View.VISIBLE
             holder.leyoutComment_view?.visibility = View.VISIBLE
             //load Comments if needed
             holder.rvComments_view?.layoutManager = LinearLayoutManager(holder.parent_view)
@@ -56,7 +58,9 @@ class NewsRCAdapter(private val settings: SharedPreferences, private val apiURL:
 
         holder.imgCardSmall_view?.setOnClickListener {
             holder.imgCard_view?.visibility = View.VISIBLE
-            holder.imgCardSmall_view?.visibility = View.GONE
+            //holder.imgCardSmall_view?.visibility = View.GONE
+            //holder.imgCardSmall_revert_view?.visibility = View.GONE
+            holder.layout_small_image?.visibility = View.GONE
             holder.leyoutComment_view?.visibility = View.GONE
         }
 
@@ -69,6 +73,7 @@ class NewsRCAdapter(private val settings: SharedPreferences, private val apiURL:
                 val requestResult = URL(apiURL + "/ins_comment/").sendComment(outComment)
                 //Toast.makeText(holder.parent_view, requestResult, Toast.LENGTH_LONG).show()
                 holder.tvComment_text_view?.text = null
+                holder.parent_view?.hideKeyBoard(it)
                 holder.rvComments_view?.adapter = CommentRCAdapter(apiURL, fillComments(apiURL, CadrParm[position].fkey))
             }
         }
@@ -84,7 +89,9 @@ class NewsRCAdapter(private val settings: SharedPreferences, private val apiURL:
     class MyViewHolder111(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var vCards_view: CardView? = null
         var imgCard_view: ImageView? = null
+        var layout_small_image: FrameLayout? = null
         var imgCardSmall_view: ImageView? = null
+        //var imgCardSmall_revert_view: ImageView? = null
         var tCard1_view: TextView? = null
         var tCard2_view: TextView? = null
         var tCard3_view: TextView? = null
@@ -98,7 +105,9 @@ class NewsRCAdapter(private val settings: SharedPreferences, private val apiURL:
         init {
             vCards_view = itemView?.findViewById(R.id.vCards)
             imgCard_view = itemView?.findViewById(R.id.imgCard)
+            layout_small_image = itemView?.findViewById(R.id.layout_small_image)
             imgCardSmall_view = itemView?.findViewById(R.id.imgCardSmall)
+            //imgCardSmall_revert_view = itemView?.findViewById(R.id.imgCardSmall_revert)
             tCard1_view = itemView?.findViewById(R.id.tCard1)
             tCard2_view = itemView?.findViewById(R.id.tCard2)
             tCard3_view = itemView?.findViewById(R.id.tCard3)

@@ -48,16 +48,32 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
-                        <ImageView
-                            android:id="@+id/imgCardSmall"
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
-                            android:layout_marginLeft="1dp"
-                            android:layout_marginTop="1dp"
-                            android:layout_marginRight="1dp"
-                            android:layout_marginBottom="1dp"
-                            android:contentDescription="@string/card_img"
-                            android:visibility="gone" />
+                        <FrameLayout
+                            android:id="@+id/layout_small_image"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone">
+
+                            <ImageView
+                                android:id="@+id/imgCardSmall"
+                                android:layout_width="70dp"
+                                android:layout_height="70dp"
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginTop="1dp"
+                                android:layout_marginRight="1dp"
+                                android:layout_marginBottom="1dp"
+                                android:contentDescription="@string/card_img" />
+
+                            <ImageView
+                                android:id="@+id/imgCardSmall_revert"
+                                android:layout_width="70dp"
+                                android:layout_height="70dp"
+                                android:layout_marginLeft="1dp"
+                                android:layout_marginTop="1dp"
+                                android:layout_marginRight="1dp"
+                                android:layout_marginBottom="1dp"
+                                app:srcCompat="@android:drawable/ic_menu_revert" />
+                        </FrameLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -84,6 +100,8 @@
                                     android:id="@+id/tDate"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
                                     android:layout_weight="1"
                                     android:text="@string/DateCreateView" />
 
@@ -91,6 +109,8 @@
                                     android:id="@+id/tCard3"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="5dp"
                                     android:layout_weight="1"
                                     android:text="@string/cardCategoria"
                                     android:textAlignment="textEnd" />
