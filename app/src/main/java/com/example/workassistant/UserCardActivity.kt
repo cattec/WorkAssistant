@@ -70,44 +70,41 @@ class UserCardActivity: AppCompatActivity() {
     fun loadImageFromGalery(view: View) {
         try {
 
-            val items = arrayOf("Галерея", "Камера", "Internet")
+            val items = arrayOf("Галерея", "Камера")
             val checkedItem = 1
 
             MaterialAlertDialogBuilder(this)
                     .setTitle("Откуда будем брать изображение?")
                     .setIcon(R.drawable.arni)
-                    // Single-choice items (initialized with checked item)
                     .setItems(items) { dialog, which ->
-                        // Respond to item chosen
-                        Toast.makeText(this, "setSingleChoiceItems!!!!!!!", Toast.LENGTH_SHORT).show()
+                        if (which == 0) loadGalery()
+                            else getFromCamera()
                     }
                     .show()
 
-            //Toast.makeText(this, singleItems[checkedItem], Toast.LENGTH_SHORT).show()
-
             //Toast.makeText(this, "Load Image", Toast.LENGTH_LONG).show()
-
-            //val intent = Intent(Intent.ACTION_PICK)
-            //intent.type = "image/*"
-            //startActivityForResult(intent, REQUEST_CODE)
-            /*startActivity(intent)
-            */
-
-            /*
-            val permissionStatus = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
-            if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
-                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivity(intent)
-            } else {
-                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA),101);
-            }*/
-
-
 
         } catch (e: Exception) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
         }
     }
 
+    fun loadGalery() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivity(intent)
+    }
+
+    fun getFromCamera() {
+        val permissionStatus = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val res = startActivity(intent)
+            //startActivityForResult(intent, 1)
+            //val res = setResult(RESULT_OK,intent)
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 101);
+        }
+    }
 
 }
