@@ -6,6 +6,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.net.URL
+import kotlin.system.exitProcess
 
 class RegUserActivity : AppCompatActivity() {
 
@@ -57,8 +58,17 @@ class RegUserActivity : AppCompatActivity() {
                                 findViewById<TextView>(R.id.editTextTextPassword2).setText("")
                             } else {
                                 val result = URL(apiCurURL + "/users/createNewLogin/?sa_pass=" + sa_pass +"&flogin=" + login + "&femail=" + email + "&fpassword=" + pass).getText_noToken()
-                                Toast.makeText(this, "Новый логин создан!", Toast.LENGTH_LONG).show()
-                                finish()
+                                if (result == "{\"status\":\"ok\"}") {
+
+                                    Toast.makeText(this, "Новый логин создан!", Toast.LENGTH_LONG).show()
+                                    //получаем новый токен
+                                    getNewToken(getSharedPreferences("UserInfo", 0), apiCurURL, login, pass)
+                                    //преезапускаем приложение
+                                    //finish()
+                                    exitProcess(0)
+                                } else {
+                                    Toast.makeText(this, "Неудалось создать логин!", Toast.LENGTH_LONG).show()
+                                }
                             }
                         }
 

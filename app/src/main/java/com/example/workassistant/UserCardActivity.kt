@@ -1,7 +1,7 @@
 package com.example.workassistant
 
-import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -10,7 +10,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import coil.load
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.net.URL
 
 
@@ -66,6 +69,22 @@ class UserCardActivity: AppCompatActivity() {
 
     fun loadImageFromGalery(view: View) {
         try {
+
+            val items = arrayOf("Галерея", "Камера", "Internet")
+            val checkedItem = 1
+
+            MaterialAlertDialogBuilder(this)
+                    .setTitle("Откуда будем брать изображение?")
+                    .setIcon(R.drawable.arni)
+                    // Single-choice items (initialized with checked item)
+                    .setItems(items) { dialog, which ->
+                        // Respond to item chosen
+                        Toast.makeText(this, "setSingleChoiceItems!!!!!!!", Toast.LENGTH_SHORT).show()
+                    }
+                    .show()
+
+            //Toast.makeText(this, singleItems[checkedItem], Toast.LENGTH_SHORT).show()
+
             //Toast.makeText(this, "Load Image", Toast.LENGTH_LONG).show()
 
             //val intent = Intent(Intent.ACTION_PICK)
@@ -73,8 +92,17 @@ class UserCardActivity: AppCompatActivity() {
             //startActivityForResult(intent, REQUEST_CODE)
             /*startActivity(intent)
             */
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivity(intent)
+
+            /*
+            val permissionStatus = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+            if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                startActivity(intent)
+            } else {
+                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA),101);
+            }*/
+
+
 
         } catch (e: Exception) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
