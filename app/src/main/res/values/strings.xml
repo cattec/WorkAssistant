@@ -44,4 +44,18 @@
     <string name="eLoginHint">введите логин...</string>
     <string name="m_change_user">Сменить пользователя</string>
     <string name="lFoggotPass_text">Забыли пароль?</string>
+    <string name="tvRegHeadTxt">Регистрация пользователя</string>
+    <string name="ptNameHint">Введите логин...</string>
+    <string name="ptMailHint">Введите почту...</string>
+    <string name="ettPass">Введите пароль...</string>
+    <string name="ettPass2">Повторите пароль...</string>
+    <string name="btnTryRegtxt">Зарегистророваться</string>
+    <string name="userCardLoginText">Логин</string>
+    <string name="userCardHeadText">Сохранить настройки?</string>
+    <string name="userCardNameText">Имя</string>
+    <string name="userCardPassText">Пароль</string>
+    <string name="userCardEmailText">Почта</string>
+    <string name="avatarHint">Аватарка</string>
+    <string name="UserCardDescText">Описание</string>
+    <string name="UserCardSavebtnText">OK</string>
 </resources>

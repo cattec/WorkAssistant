@@ -1,5 +1,6 @@
 package com.example.workassistant
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -13,9 +14,8 @@ import java.net.URL
 class LoginActivity : AppCompatActivity() {
 
     var apiCurURL: String = ""
-    //var myLogin: String = "monkey"
-    //var myPassword: String = "123456"
     var myToken: cToken? = null
+    var oldLogin: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
         val myPassword: String = settings.getString("myPassword", "").toString()
         findViewById<EditText>(R.id.eLogin).setText(myLogin)
         findViewById<EditText>(R.id.ePass).setText(myPassword)
+        oldLogin = myLogin
 
         apiCurURL = intent.extras!!.getString("apiCurURL").toString()
     }
@@ -38,7 +39,10 @@ class LoginActivity : AppCompatActivity() {
             myToken = getNewToken(getSharedPreferences("UserInfo", 0), apiCurURL, myLogin, myPassword)
 
             if(myToken != null) {
-                finish()
+                if (oldLogin == myLogin)
+                    finish()
+                else
+                    System.exit(0)
             }
             else {
                 Toast.makeText(this, "Can't get new Token", Toast.LENGTH_LONG).show()
@@ -52,7 +56,7 @@ class LoginActivity : AppCompatActivity() {
 
     fun pressReg(view: View) {
         try {
-            Toast.makeText(this, "Тут будем регаться", Toast.LENGTH_LONG).show()
+            startActivity(Intent(this, RegUserActivity::class.java).putExtra("apiCurURL", apiCurURL))
         }
         catch (e: Exception)
         {

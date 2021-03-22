@@ -16,13 +16,14 @@
     app:layout_constrainedWidth="false">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/head_leyout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/nav_header_imageView"
@@ -38,19 +39,20 @@
                 android:contentDescription="@string/maskPict"
                 app:srcCompat="@drawable/ic_avatar_form" />
         </FrameLayout>
-    </LinearLayout>
 
-    <TextView
-        android:id="@+id/nav_header_textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10pt"
-        android:layout_marginRight="10pt"
-        android:paddingTop="16dp"
-        android:text="@string/User_fio"
-        android:textAllCaps="false"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/black"
-        android:textSize="24sp" />
+        <TextView
+            android:id="@+id/nav_header_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10pt"
+            android:layout_marginRight="10pt"
+            android:paddingTop="16dp"
+            android:text="@string/User_fio"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/black"
+            android:textSize="24sp" />
+
+    </LinearLayout>
 
 </LinearLayout>

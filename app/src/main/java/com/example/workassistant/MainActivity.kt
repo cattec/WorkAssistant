@@ -1,6 +1,5 @@
 package com.example.workassistant
 
-import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -12,11 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.view.GravityCompat
@@ -26,8 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.*
-import okhttp3.internal.wait
-import java.net.HttpURLConnection
 import java.net.URL
 
 
@@ -43,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     val apiURL_local: String = "http://10.226.96.21:5000"
     val apiCurURL: String = apiURL_local
 
-    var myToken: cToken = cToken( 0,0,"","","")
+    var myToken: cToken = cToken(0, 0, "", "", "")
 
     //private val TimeReceiver: MyTimeReceiver = MyTimeReceiver()
 
@@ -70,7 +63,8 @@ class MainActivity : AppCompatActivity() {
         }
         catch (e: Exception)
         {
-            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
+            //Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
+            etInfoShow(e.toString())
         }
     }
 
@@ -90,7 +84,7 @@ class MainActivity : AppCompatActivity() {
         val iconID: Int = if (iconID_str == "") 0 else iconID_str.toInt()
 
         //Проверяем старый токен действует еще или уже нет
-        val result = URL(apiCurURL + "/users/me/").checkToken(token_type,access_token)
+        val result = URL(apiCurURL + "/users/me/").checkToken(token_type, access_token)
 
         //если вернуло ответ то токен еще рабочий
         if ( result != "" ) {
@@ -110,6 +104,12 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
+    fun etInfoShow(inpStr: String) {
+        val etInfo = findViewById<TextView>(R.id.etInfo)
+        etInfo.setText(inpStr)
+        etInfo.visibility = View.VISIBLE
+    }
+
     fun navMenuEvents() {
 
         val settings = getSharedPreferences("UserInfo", 0)
@@ -124,6 +124,12 @@ class MainActivity : AppCompatActivity() {
         nav_head_text.setText(full_name)
         val nav_header_imageView = header.findViewById<ImageView>(R.id.nav_header_imageView)
         if (iconID != "") nav_header_imageView.load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader("Authorization", token_type + ' ' + access_token) }
+
+        val navHeader = myNav.getHeaderView(0)
+        navHeader.findViewById<LinearLayout>(R.id.head_leyout).setOnClickListener {
+            startActivity(Intent(this, UserCardActivity::class.java).putExtra("apiCurURL", apiCurURL))
+            //Toast.makeText(this, "Open User Profile Card!", Toast.LENGTH_SHORT).show()
+        }
 
         myNav.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -228,33 +234,33 @@ class MainActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
                 val contentIntent = PendingIntent.getActivity(
-                    this,
-                    0,
-                    Intent(
                         this,
-                        MainActivity::class.java
-                    ).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                    PendingIntent.FLAG_CANCEL_CURRENT
+                        0,
+                        Intent(
+                                this,
+                                MainActivity::class.java
+                        ).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                        PendingIntent.FLAG_CANCEL_CURRENT
                 )
 
                 val contentIntentYes = PendingIntent.getActivity(
-                    this,
-                    0,
-                    Intent(
                         this,
-                        SupportActivity::class.java
-                    ).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                    PendingIntent.FLAG_CANCEL_CURRENT
+                        0,
+                        Intent(
+                                this,
+                                SupportActivity::class.java
+                        ).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                        PendingIntent.FLAG_CANCEL_CURRENT
                 )
 
                 val contentIntentNo = PendingIntent.getActivity(
-                    this,
-                    0,
-                    Intent(
                         this,
-                        HelpActivity::class.java
-                    ).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                    PendingIntent.FLAG_CANCEL_CURRENT
+                        0,
+                        Intent(
+                                this,
+                                HelpActivity::class.java
+                        ).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                        PendingIntent.FLAG_CANCEL_CURRENT
                 )
 
                 val builder = NotificationCompat.Builder(this, CHANNEL_ID)
@@ -271,9 +277,9 @@ class MainActivity : AppCompatActivity() {
                         .setStyle(NotificationCompat.BigTextStyle().bigText(CHANEL_TEXT))
 
                 val channel = NotificationChannel(
-                    CHANNEL_ID,
-                    CHANEL_NAME,
-                    NotificationManager.IMPORTANCE_DEFAULT
+                        CHANNEL_ID,
+                        CHANEL_NAME,
+                        NotificationManager.IMPORTANCE_DEFAULT
                 ).apply {
                     description = CHANEL_DESC
                 }
@@ -288,7 +294,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun fillList1(apiURL:String): List<MyMessage>{
+    private fun fillList1(apiURL: String): List<MyMessage>{
         val res = URL(apiURL + "/message_main/").getText(myToken.token_type, myToken.access_token)
         val data = Gson().fromJson(res, Array<MyMessage>::class.java).asList()
         return data
