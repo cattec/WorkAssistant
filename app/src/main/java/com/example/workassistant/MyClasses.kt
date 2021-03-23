@@ -29,11 +29,21 @@ class MyMessage(
 
 class MyComment (
         var fkey: String,
-        var f_users_creat: String,
+        var f_users_create: String,
         var fname: String,
         var fdatecreate: String,
         var fbody: String,
         var f_icons: String
+)
+
+class MyUser (
+    var fkey: String,
+    var flogin: String,
+    var fname: String,
+    var fdisable: String,
+    var fdescription: String,
+    var femail: String,
+    var f_icons: String
 )
 
 class MyCommentOut(

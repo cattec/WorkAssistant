@@ -18,7 +18,18 @@
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme" />
 
+        <Button
+            android:id="@+id/tbnSendPersMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:backgroundTint="@color/teal_700"
+            android:text="@string/tbnSendPersMessagetxt" />
+
         <LinearLayout
+            android:id="@+id/layuot_SaveSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -66,7 +77,6 @@
                 android:layout_marginRight="5dp"
                 android:layout_marginBottom="5dp"
                 android:contentDescription="@string/avatarHint"
-                android:onClick="loadImageFromGalery"
                 tools:srcCompat="@tools:sample/avatars" />
 
             <LinearLayout
@@ -116,6 +126,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/passLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"

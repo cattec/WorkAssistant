@@ -21,6 +21,15 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_screen)
 
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar2)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayShowTitleEnabled(true)
+        supportActionBar!!.setTitle("Авторизация пользователя")
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener(View.OnClickListener {
+            finish();
+        })
+
         val settings = getSharedPreferences("UserInfo", 0)
         val myLogin: String = settings.getString("myLogin", "").toString()
         val myPassword: String = settings.getString("myPassword", "").toString()

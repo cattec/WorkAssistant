@@ -7,10 +7,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -18,48 +15,63 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.Gson
 import java.net.URL
 
 
 class UserCardActivity: AppCompatActivity() {
 
     var apiCurURL: String = ""
+    var CurUserID: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.user_card)
 
         apiCurURL = intent.extras!!.getString("apiCurURL").toString()
+        CurUserID = intent.extras!!.getString("CurUserID").toString()
+
+        val settings = getSharedPreferences("UserInfo", 0)
+        val userID: String = settings.getString("userID", "").toString()
+        val token_type: String = settings.getString("token_type", "").toString()
+        val access_token: String = settings.getString("access_token", "").toString()
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar1)
-
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
-        supportActionBar!!.setTitle("Карточка пользователя")
+        if (userID == CurUserID) {supportActionBar!!.setTitle("Ваша карточка пользователя")}
+            else { supportActionBar!!.setTitle("Карточка пользователя") }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
         toolbar.setNavigationOnClickListener(View.OnClickListener {
             finish();
         })
 
-        val settings = getSharedPreferences("UserInfo", 0)
-        val userID: String = settings.getString("userID", "").toString()
-        val iconID: String = settings.getString("iconID", "").toString()
-        val myLogin: String = settings.getString("myLogin", "").toString()
-        val full_name: String = settings.getString("full_name", "")!!
-        val token_type: String = settings.getString("token_type", "").toString()
-        val access_token: String = settings.getString("access_token", "").toString()
+        val userfullinfo = URL(apiCurURL + "/users/userfullinfo/?fkey=" + CurUserID).getText(token_type, access_token)
+        val data = Gson().fromJson('[' +userfullinfo + ']', Array<MyUser>::class.java).asList()
 
-        val myEmail = URL(apiCurURL + "/users/email/?fkey=" + userID).getText(token_type, access_token).replace("\"", "")
-        val myDescription = URL(apiCurURL + "/users/description/?fkey=" + userID).getText(token_type, access_token).replace("\"", "")
-
+        val iconID: String = data[0].f_icons
+        val myLogin: String = data[0].flogin
+        val full_name: String = data[0].fname
+        val myEmail = data[0].femail
+        val myDescription = data[0].fdescription
         findViewById<TextView>(R.id.userCardLogin1).setText(myLogin)
         findViewById<EditText>(R.id.userCardName1).setText(full_name)
         findViewById<EditText>(R.id.userCardEmail1).setText(myEmail)
         findViewById<EditText>(R.id.UserCardDesc1).setText(myDescription)
-
-
         if (iconID != "") findViewById<ImageView>(R.id.userAvaCard).load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader("Authorization", token_type + ' ' + access_token) }
+
+        if (userID == CurUserID) {
+            findViewById<Button>(R.id.tbnSendPersMessage).visibility = View.GONE
+            findViewById<ImageView>(R.id.userAvaCard).setOnClickListener {
+                loadImageFromGalery(it)
+            }
+        } else {
+            findViewById<LinearLayout>(R.id.layuot_SaveSettings).visibility = View.GONE
+            findViewById<LinearLayout>(R.id.passLayout).visibility = View.GONE
+            findViewById<EditText>(R.id.userCardName1).isEnabled = false
+            findViewById<EditText>(R.id.userCardEmail1).isEnabled = false
+            findViewById<EditText>(R.id.UserCardDesc1).isEnabled = false
+        }
 
     }
 
@@ -101,7 +113,7 @@ class UserCardActivity: AppCompatActivity() {
     fun getFromCamera() {
         val permissionStatus = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
         if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
-            //val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             //val res = startActivity(intent)
 /*
             if (intent.resolveActivity(getPackageManager()) != null) {
@@ -110,7 +122,7 @@ class UserCardActivity: AppCompatActivity() {
             //startActivityForResult(intent, 1)
             //val res = setResult(RESULT_OK,intent)
 
-            startForResult.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+            startForResult.launch(intent)
 
         } else {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 101);
@@ -119,7 +131,7 @@ class UserCardActivity: AppCompatActivity() {
 
         val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val res = result
+                val res = result.data
                 //val intent = result
                 //result.data()
                 // Handle the Intent

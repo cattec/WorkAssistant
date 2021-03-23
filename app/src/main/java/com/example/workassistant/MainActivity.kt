@@ -22,6 +22,7 @@ import coil.load
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.*
 import java.net.URL
+//import kotlinx.coroutines.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -55,11 +56,17 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, LoginActivity::class.java).putExtra("apiCurURL", apiCurURL))
             }
 
-            //обработка собый основной ленты сообщений
-            mainListRefresh()
+            //val job = launch {
+                //обработка собый основной ленты сообщений
+                mainListRefresh()
 
-            //События навигационного меню
-            navMenuEvents()
+                //События навигационного меню
+                navMenuEvents()
+            //}
+            //job.join()
+
+            //убираем слой загрузки
+            findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
         }
         catch (e: Exception)
         {
@@ -113,6 +120,7 @@ class MainActivity : AppCompatActivity() {
     fun navMenuEvents() {
 
         val settings = getSharedPreferences("UserInfo", 0)
+        val userID: String = settings.getString("userID", "").toString()
         val full_name: String = settings.getString("full_name", "")!!
         val iconID: String = settings.getString("iconID", "").toString()
         val token_type: String = settings.getString("token_type", "").toString()
@@ -127,7 +135,7 @@ class MainActivity : AppCompatActivity() {
 
         val navHeader = myNav.getHeaderView(0)
         navHeader.findViewById<LinearLayout>(R.id.head_leyout).setOnClickListener {
-            startActivity(Intent(this, UserCardActivity::class.java).putExtra("apiCurURL", apiCurURL))
+            startActivity(Intent(this, UserCardActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("CurUserID", userID))
             //Toast.makeText(this, "Open User Profile Card!", Toast.LENGTH_SHORT).show()
         }
 

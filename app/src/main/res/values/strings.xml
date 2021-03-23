@@ -58,4 +58,6 @@
     <string name="avatarHint">Аватарка</string>
     <string name="UserCardDescText">Описание</string>
     <string name="UserCardSavebtnText">OK</string>
+    <string name="tbnSendPersMessagetxt">Отправить личное сообщение</string>
+    <string name="lodingMessage">Приложение загружается ждите...</string>
 </resources>

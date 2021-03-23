@@ -20,15 +20,14 @@ class RegUserActivity : AppCompatActivity() {
         apiCurURL = intent.extras!!.getString("apiCurURL").toString()
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
-
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(true)
         supportActionBar!!.setTitle("Регистрация пользователя")
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
         toolbar.setNavigationOnClickListener(View.OnClickListener {
             finish();
         })
+
     }
 
     fun pressTryReg(view: View) {

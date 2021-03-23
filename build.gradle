@@ -4,7 +4,8 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven{	url = uri("https://repo1.maven.org/maven2/")}
+        mavenCentral()
+        //maven{	url = uri("https://repo1.maven.org/maven2/")}
 
         flatDir {dirs 'E:\\Distrib\\Reposit'}
     }
@@ -23,7 +24,8 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven{	url = uri("https://repo1.maven.org/maven2/")}
+        mavenCentral()
+        //maven{	url = uri("https://repo1.maven.org/maven2/")}
 
         flatDir {dirs 'E:\\Distrib\\Reposit'}
     }
