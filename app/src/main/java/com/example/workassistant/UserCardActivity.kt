@@ -1,7 +1,9 @@
 package com.example.workassistant
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -9,6 +11,8 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -71,7 +75,6 @@ class UserCardActivity: AppCompatActivity() {
         try {
 
             val items = arrayOf("Галерея", "Камера")
-            val checkedItem = 1
 
             MaterialAlertDialogBuilder(this)
                     .setTitle("Откуда будем брать изображение?")
@@ -98,13 +101,30 @@ class UserCardActivity: AppCompatActivity() {
     fun getFromCamera() {
         val permissionStatus = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
         if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            val res = startActivity(intent)
+            //val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            //val res = startActivity(intent)
+/*
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(intent, 1);
+            }*/
             //startActivityForResult(intent, 1)
             //val res = setResult(RESULT_OK,intent)
+
+            startForResult.launch(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
+
         } else {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 101);
         }
     }
+
+        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val res = result
+                //val intent = result
+                //result.data()
+                // Handle the Intent
+            }
+        }
+
 
 }

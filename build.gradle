@@ -1,9 +1,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = "1.4.21"
+    ext.kotlin_version = '1.4.21'
     repositories {
         google()
         jcenter()
+        maven{	url = uri("https://repo1.maven.org/maven2/")}
 
         flatDir {dirs 'E:\\Distrib\\Reposit'}
     }
@@ -22,6 +23,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven{	url = uri("https://repo1.maven.org/maven2/")}
 
         flatDir {dirs 'E:\\Distrib\\Reposit'}
     }
