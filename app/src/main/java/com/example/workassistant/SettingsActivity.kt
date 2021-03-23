@@ -16,6 +16,15 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_screen)
 
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar4)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayShowTitleEnabled(true)
+        supportActionBar!!.setTitle("Настройки")
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener(View.OnClickListener {
+            finish();
+        })
+
     }
 
     fun onClickReceiver (view: View)
