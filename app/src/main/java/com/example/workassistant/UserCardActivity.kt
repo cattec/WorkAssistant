@@ -114,29 +114,25 @@ class UserCardActivity: AppCompatActivity() {
         val permissionStatus = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
         if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            //val res = startActivity(intent)
-/*
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(intent, 1);
-            }*/
-            //startActivityForResult(intent, 1)
-            //val res = setResult(RESULT_OK,intent)
-
             startForResult.launch(intent)
-
         } else {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 101);
         }
     }
 
-        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val res = result.data
-                //val intent = result
-                //result.data()
-                // Handle the Intent
+    val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val res = result.data
+            if (res?.extras != null) {
+                val obj = res?.extras!!["data"]
+                if (obj is Bitmap) {
+                    val bitmap = obj
+                    findViewById<ImageView>(R.id.userAvaCard).setImageBitmap(bitmap)
+                }
             }
         }
+    }
+
 
 
 }

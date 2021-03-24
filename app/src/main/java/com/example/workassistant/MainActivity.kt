@@ -21,8 +21,8 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.*
+import kotlinx.coroutines.*
 import java.net.URL
-//import kotlinx.coroutines.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     val apiURL_heroku: String = "https://wassistant.herokuapp.com"
     val apiURL_local: String = "http://10.226.96.21:5000"
-    val apiCurURL: String = apiURL_local
+    val apiCurURL: String = apiURL_heroku
 
     var myToken: cToken = cToken(0, 0, "", "", "")
 
@@ -56,17 +56,28 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, LoginActivity::class.java).putExtra("apiCurURL", apiCurURL))
             }
 
-            //val job = launch {
+            //запускаем карутиной загрузку списка
+            val job = GlobalScope.async {
                 //обработка собый основной ленты сообщений
                 mainListRefresh()
 
                 //События навигационного меню
                 navMenuEvents()
-            //}
-            //job.join()
 
-            //убираем слой загрузки
-            findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
+                true
+            }
+
+            //ждем когда загрузится список и потом убираем слой с интро загрузки
+            val job2 = GlobalScope.launch {
+                if(job.await()) {
+                    //убираем слой загрузки
+                    withContext(Dispatchers.Main) {
+                        findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
+                    }
+                }
+            }
+
+
         }
         catch (e: Exception)
         {

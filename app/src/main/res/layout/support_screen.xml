@@ -25,18 +25,14 @@
             <EditText
                 android:id="@+id/editTextTextPersonName"
                 android:layout_width="match_parent"
-                android:layout_height="453dp"
+                android:layout_height="250dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@color/white"
-                android:ems="10"
-                android:hapticFeedbackEnabled="false"
-                android:inputType="textPersonName"
-                android:scrollbarAlwaysDrawHorizontalTrack="false"
-                android:scrollbarAlwaysDrawVerticalTrack="false"
-                android:text="Name" />
+                android:gravity="top"
+                android:inputType="textMultiLine" />
 
             <Button
                 android:id="@+id/button2"
@@ -44,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:text="Отправить претензию" />
+                android:text="Отправить заявку" />
         </LinearLayout>
 
     </LinearLayout>

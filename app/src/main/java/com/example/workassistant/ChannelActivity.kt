@@ -17,7 +17,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Mode.Normal
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Mode.Thread
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.State.NavigateUp
-import com.getstream.sdk.chat.viewmodel.messages.bindView
+//import com.getstream.sdk.chat.viewmodel.messages.bindView
 import io.getstream.chat.android.client.models.Channel
 
 class ChannelActivity : AppCompatActivity() {
@@ -47,7 +47,7 @@ class ChannelActivity : AppCompatActivity() {
 
             // Step 2 - Bind the view and ViewModels, they are loosely coupled so it's easy to customize
             channelHeaderViewModel.bindView(findViewById(R.id.channelHeaderView),this)
-            messageListViewModel.bindView(findViewById(R.id.messageListView),this)
+            //messageListViewModel.bindView(findViewById(R.id.messageListView),this)
             messageInputViewModel.bindView(findViewById(R.id.messageInputView),this)
 
             // Step 3 - Let the message input know when we open a thread
