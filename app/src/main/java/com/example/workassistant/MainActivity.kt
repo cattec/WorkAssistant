@@ -51,38 +51,29 @@ class MainActivity : AppCompatActivity() {
             StrictMode.setThreadPolicy(policy)
 
             //загрузка токена
-            val resultTokenResponse = loadToken()
-            if (resultTokenResponse == false) {
-                startActivity(Intent(this, LoginActivity::class.java).putExtra("apiCurURL", apiCurURL))
-            }
+            getToken()
 
-            //запускаем карутиной загрузку списка
-            val job = GlobalScope.async {
-                //обработка собый основной ленты сообщений
-                mainListRefresh()
+            //обработка собый основной ленты сообщений
+            mainListRefresh()
 
-                //События навигационного меню
-                navMenuEvents()
-
-                true
-            }
+            //События навигационного меню
+            navMenuEvents()
 
             //ждем когда загрузится список и потом убираем слой с интро загрузки
-            val job2 = GlobalScope.launch {
-                if(job.await()) {
-                    //убираем слой загрузки
-                    withContext(Dispatchers.Main) {
-                        findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
-                    }
-                }
-            }
-
+            findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
 
         }
         catch (e: Exception)
         {
             //Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
             etInfoShow(e.toString())
+        }
+    }
+
+    fun getToken() {
+        val resultTokenResponse = loadToken()
+        if (resultTokenResponse == false) {
+            startActivity(Intent(this, LoginActivity::class.java).putExtra("apiCurURL", apiCurURL))
         }
     }
 

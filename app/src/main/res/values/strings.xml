@@ -59,4 +59,7 @@
     <string name="UserCardSavebtnText">OK</string>
     <string name="tbnSendPersMessagetxt">Отправить личное сообщение</string>
     <string name="lodingMessage">Приложение загружается ждите...</string>
+    <string name="userCardPassTextRepeat">Повторить пароль</string>
+    <string name="uaserCardpassHint">новый пароль...</string>
+    <string name="uaserCardpassRepeatHint">новый пароль...</string>
 </resources>

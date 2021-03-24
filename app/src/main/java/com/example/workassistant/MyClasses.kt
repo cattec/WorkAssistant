@@ -46,10 +46,18 @@ class MyUser (
     var f_icons: String
 )
 
-class MyCommentOut(
+class MyCommentOut (
         val f_users_create: Int,
         val fbody: String,
         val f_messages: Int
+)
+
+class myUserUpdate (
+    val fkey: Int,
+    val fname: String,
+    val femail: String,
+    val fdescription: String,
+    val fpass: String
 )
 
 fun getNewToken(settings: SharedPreferences, apiCurURL: String, myLogin: String, myPassword: String): cToken? {

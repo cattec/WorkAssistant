@@ -1,5 +1,7 @@
 package com.example.workassistant
 
+import java.io.BufferedReader
+import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -19,7 +21,17 @@ fun URL.getText_noToken(): String {
     }
 }
 
-fun URL.sendComment(token_type: String, access_token: String, outComment:String): String{
+fun URL.getIcon(token_type: String, access_token: String): InputStream {
+    return openConnection().run {
+        this as HttpURLConnection
+        doInput = true
+        setRequestProperty("Authorization", token_type + ' ' + access_token);
+        inputStream
+    }
+}
+
+
+fun URL.sendJSONRequest(token_type: String, access_token: String, outComment:String): String{
     return openConnection().run {
         this as HttpURLConnection
         doOutput = true

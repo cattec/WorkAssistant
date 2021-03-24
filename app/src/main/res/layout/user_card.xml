@@ -132,23 +132,79 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/userCardPass"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <LinearLayout
+                android:id="@+id/newPassLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/userCardPassText"
-                android:textSize="24sp" />
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/userCardPass1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/userCardPass"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:text="@string/userCardPassText"
+                    android:textSize="24sp" />
+
+                <EditText
+                    android:id="@+id/userCardPass1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/uaserCardpassHint"
+                    android:inputType="textPassword" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/repeatNewPassLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:ems="10"
-                android:inputType="textPassword" />
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/userCardPassRepeat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:text="@string/userCardPassTextRepeat"
+                        android:textSize="24sp" />
+
+                    <EditText
+                        android:id="@+id/userCardPassRepeat1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:ems="10"
+                        android:hint="@string/uaserCardpassRepeatHint"
+                        android:inputType="textPassword" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/repeatPassInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:inputType="textPersonName" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -163,6 +219,7 @@
                 android:id="@+id/userCardEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:text="@string/userCardEmailText"
                 android:textSize="24sp" />
@@ -171,6 +228,7 @@
                 android:id="@+id/userCardEmail1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:autofillHints=""
                 android:ems="10"
