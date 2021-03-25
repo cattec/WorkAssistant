@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -183,9 +184,15 @@ class UserCardActivity: AppCompatActivity() {
                     val bitmap = obj
                     findViewById<ImageView>(R.id.userAvaCard).setImageBitmap(bitmap)
                 }
+            } else {
+                val picturePath = res?.data
+                if (picturePath != null) {
+                    findViewById<ImageView>(R.id.userAvaCard).setImageURI(picturePath)
+                }
             }
         }
     }
+
 
 
 
