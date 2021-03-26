@@ -30,6 +30,15 @@ fun URL.getIcon(token_type: String, access_token: String): InputStream {
     }
 }
 
+fun URL.saveIcon(token_type: String, access_token: String): InputStream {
+    return openConnection().run {
+        this as HttpURLConnection
+        doInput = true
+        setRequestProperty("Authorization", token_type + ' ' + access_token);
+        inputStream
+    }
+}
+
 
 fun URL.sendJSONRequest(token_type: String, access_token: String, outComment:String): String{
     return openConnection().run {
@@ -45,9 +54,12 @@ fun URL.sendJSONRequest(token_type: String, access_token: String, outComment:Str
         if (responseCode != HttpURLConnection.HTTP_OK) {
             return "Can't post message!"
         }
-        return "Send Message"
+        //responseMessage
+        //return "Send Message"
+        return inputStream.bufferedReader().readText()
     }
 }
+
 
 fun URL.checkToken(token_type: String, access_token: String): String {
     return openConnection().run {

@@ -4,27 +4,35 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.*
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.text.isDigitsOnly
 import androidx.core.widget.addTextChangedListener
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
+import java.io.ByteArrayOutputStream
 import java.net.URL
+import java.util.Base64
 
 
 class UserCardActivity: AppCompatActivity() {
 
     var apiCurURL: String = ""
     var CurUserID: String = ""
+    var isNewIcon: Boolean = false
+    var newIconID: Int = 0
+
+    var old_full_name = ""
+    var old_myEmail = ""
+    var old_myDescription = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +56,11 @@ class UserCardActivity: AppCompatActivity() {
             finish();
         })
 
-        val userfullinfo = URL(apiCurURL + "/users/userfullinfo/?fkey=" + CurUserID).getText(token_type, access_token)
-        val data = Gson().fromJson('[' +userfullinfo + ']', Array<MyUser>::class.java).asList()
+        val userfullinfo = URL(apiCurURL + "/users/userfullinfo/?fkey=" + CurUserID).getText(
+            token_type,
+            access_token
+        )
+        val data = Gson().fromJson('[' + userfullinfo + ']', Array<MyUser>::class.java).asList()
 
         val iconID: String = data[0].f_icons
         val myLogin: String = data[0].flogin
@@ -60,9 +71,17 @@ class UserCardActivity: AppCompatActivity() {
         findViewById<EditText>(R.id.userCardName1).setText(full_name)
         findViewById<EditText>(R.id.userCardEmail1).setText(myEmail)
         findViewById<EditText>(R.id.UserCardDesc1).setText(myDescription)
-        if (iconID != "") findViewById<ImageView>(R.id.userAvaCard).load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader("Authorization", token_type + ' ' + access_token) }
+        if (iconID != "") findViewById<ImageView>(R.id.userAvaCard).load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader(
+            "Authorization",
+            token_type + ' ' + access_token
+        ) }
 
         if (userID == CurUserID) {
+
+            old_full_name = full_name
+            old_myEmail = myEmail
+            old_myDescription = myDescription
+
             findViewById<LinearLayout>(R.id.repeatNewPassLayout).visibility = View.GONE
             findViewById<Button>(R.id.tbnSendPersMessage).visibility = View.GONE
             findViewById<ImageView>(R.id.userAvaCard).setOnClickListener {
@@ -109,25 +128,68 @@ class UserCardActivity: AppCompatActivity() {
             val full_name = findViewById<EditText>(R.id.userCardName1).text.toString()
             val myEmail = findViewById<EditText>(R.id.userCardEmail1).text.toString()
             val myDescription = findViewById<EditText>(R.id.UserCardDesc1).text.toString()
-            val myPass = if (findViewById<EditText>(R.id.userCardPass1).text.toString() == findViewById<EditText>(R.id.userCardPassRepeat1).text.toString())
+            val myPass = if (findViewById<EditText>(R.id.userCardPass1).text.toString() == findViewById<EditText>(
+                    R.id.userCardPassRepeat1
+                ).text.toString())
                 findViewById<EditText>(R.id.userCardPass1).text.toString() else ""
-
 
             val settings = getSharedPreferences("UserInfo", 0)
             val token_type: String = settings.getString("token_type", "").toString()
             val access_token: String = settings.getString("access_token", "").toString()
 
-            //формируем запрос
-            val nUserUpdate = myUserUpdate(CurUserID.toInt(), full_name, myEmail, myDescription, myPass)
-            val outResponse = Gson().toJson(nUserUpdate)
-            val requestResult = URL(apiCurURL + "/users/userupdate/").sendJSONRequest(token_type, access_token, outResponse)
+            var isNeedUpdate: Boolean = false
 
-            if (requestResult.toString() == "Send Message") {
+            //Если хоть что то изменилось то делаем апдетй в базу
+            if ((old_full_name != full_name) or (old_myEmail != myEmail) or (old_myDescription != myDescription) or (myPass != "")) {
+                //формируем запрос
+                val nUserUpdate = myUserUpdate(
+                    CurUserID.toInt(),
+                    full_name,
+                    myEmail,
+                    myDescription,
+                    myPass
+                )
+                val outResponse = Gson().toJson(nUserUpdate)
+                val requestResult = URL(apiCurURL + "/users/userupdate/").sendJSONRequest(
+                    token_type,
+                    access_token,
+                    outResponse
+                )
+                if (requestResult.toString() == "\"OK\"") isNeedUpdate = true
+            }
+
+            //Сохраняем новую иконку
+            if (isNewIcon == true) {
+                val stream = ByteArrayOutputStream()
+                val bitmap = (findViewById<ImageView>(R.id.userAvaCard).getDrawable() as BitmapDrawable).bitmap
+                bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream)
+                val image = stream.toByteArray()
+                val base64Encoded: String = Base64.getEncoder().encodeToString(image)
+
+                val nUserUpdateIcon = MyUserUpdateIcon(
+                    0,
+                    CurUserID.toInt(),
+                    base64Encoded
+                )
+                val outResponse = Gson().toJson(nUserUpdateIcon)
+                val requestResult = URL(apiCurURL + "/users/userupdateIcon/").sendJSONRequest(
+                    token_type,
+                    access_token,
+                    outResponse
+                )
+                isNeedUpdate = true
+
+                if ( (requestResult != "") and (requestResult.isDigitsOnly()) ) newIconID = requestResult.toInt()
+
+            }
+
+            if (isNeedUpdate == true) {
                 Toast.makeText(this, "Save Card", Toast.LENGTH_LONG).show()
 
                 val editor = settings.edit()
-                 if (myPass != "") editor.putString("myPassword", myPass)
+                if (myPass != "") editor.putString("myPassword", myPass)
                 editor.putString("full_name", full_name)
+                if (newIconID > 0) editor.putString("iconID", newIconID.toString())
                 editor.commit()
 
                 System.exit(0)
@@ -166,12 +228,19 @@ class UserCardActivity: AppCompatActivity() {
     }
 
     fun getFromCamera() {
-        val permissionStatus = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+        val permissionStatus = ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.CAMERA
+        )
         if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             startForResult.launch(intent)
         } else {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 101);
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.CAMERA),
+                101
+            );
         }
     }
 
@@ -182,12 +251,25 @@ class UserCardActivity: AppCompatActivity() {
                 val obj = res?.extras!!["data"]
                 if (obj is Bitmap) {
                     val bitmap = obj
+                    isNewIcon = true
                     findViewById<ImageView>(R.id.userAvaCard).setImageBitmap(bitmap)
                 }
             } else {
                 val picturePath = res?.data
                 if (picturePath != null) {
+                    isNewIcon = true
+
                     findViewById<ImageView>(R.id.userAvaCard).setImageURI(picturePath)
+                    //findViewById<ImageView>(R.id.userAvaCard)
+
+                    //val image = (findViewById<ImageView>(R.id.userAvaCard).getDrawable() as BitmapDrawable).bitmap
+
+                    //val conn  = URL(picturePath.path).openConnection()
+                    //val bis = URL(picturePath.path).openConnection().getInputStream()
+                    //var bitmap = BitmapFactory.decodeStream(BufferedInputStream(bis))
+
+                    //findViewById<ImageView>(R.id.userAvaCard).load(bitmap)
+
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.example.workassistant
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Bitmap
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.facebook.common.references.SharedReference
@@ -60,6 +61,12 @@ class myUserUpdate (
     val fpass: String
 )
 
+class MyUserUpdateIcon (
+    var fkey: Int,
+    var f_users: Int,
+    var fdata: String
+)
+
 fun getNewToken(settings: SharedPreferences, apiCurURL: String, myLogin: String, myPassword: String): cToken? {
 
     val tokenResponse = URL(apiCurURL + "/token").getToken(myLogin, myPassword)
@@ -69,7 +76,7 @@ fun getNewToken(settings: SharedPreferences, apiCurURL: String, myLogin: String,
         val myToken = Gson().fromJson(
                 '[' + tokenResponse + ']',
                 Array<cToken>::class.java
-        )[0]
+        ) [0]
 
         //После того как был успешный логин сохраняем последние удачные данные
         val editor = settings.edit()
