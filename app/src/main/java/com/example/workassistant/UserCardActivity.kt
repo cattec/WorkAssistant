@@ -1,6 +1,7 @@
 package com.example.workassistant
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -26,6 +27,8 @@ import java.util.Base64
 class UserCardActivity: AppCompatActivity() {
 
     var apiCurURL: String = ""
+    var token_type: String = ""
+    var access_token: String = ""
     var CurUserID: String = ""
     var isNewIcon: Boolean = false
     var newIconID: Int = 0
@@ -43,8 +46,8 @@ class UserCardActivity: AppCompatActivity() {
 
         val settings = getSharedPreferences("UserInfo", 0)
         val userID: String = settings.getString("userID", "").toString()
-        val token_type: String = settings.getString("token_type", "").toString()
-        val access_token: String = settings.getString("access_token", "").toString()
+        token_type = settings.getString("token_type", "").toString()
+        access_token = settings.getString("access_token", "").toString()
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar1)
         setSupportActionBar(toolbar)
@@ -85,7 +88,7 @@ class UserCardActivity: AppCompatActivity() {
             findViewById<LinearLayout>(R.id.repeatNewPassLayout).visibility = View.GONE
             findViewById<Button>(R.id.tbnSendPersMessage).visibility = View.GONE
             findViewById<ImageView>(R.id.userAvaCard).setOnClickListener {
-                loadImageFromGalery(it)
+                getNewImage(this)
             }
 
             //после того как начинаем набирать пароль открываем строчку повторить папроль
@@ -132,10 +135,6 @@ class UserCardActivity: AppCompatActivity() {
                     R.id.userCardPassRepeat1
                 ).text.toString())
                 findViewById<EditText>(R.id.userCardPass1).text.toString() else ""
-
-            val settings = getSharedPreferences("UserInfo", 0)
-            val token_type: String = settings.getString("token_type", "").toString()
-            val access_token: String = settings.getString("access_token", "").toString()
 
             var isNeedUpdate: Boolean = false
 
@@ -186,6 +185,7 @@ class UserCardActivity: AppCompatActivity() {
             if (isNeedUpdate == true) {
                 Toast.makeText(this, "Save Card", Toast.LENGTH_LONG).show()
 
+                val settings = getSharedPreferences("UserInfo", 0)
                 val editor = settings.edit()
                 if (myPass != "") editor.putString("myPassword", myPass)
                 editor.putString("full_name", full_name)
@@ -201,46 +201,18 @@ class UserCardActivity: AppCompatActivity() {
         }
     }
 
-    fun loadImageFromGalery(view: View) {
+    fun getNewImage(ac: Activity) {
         try {
-
-            MaterialAlertDialogBuilder(this)
+            MaterialAlertDialogBuilder(ac)
                     .setTitle("Откуда будем брать изображение?")
                     .setIcon(R.drawable.arni)
                     .setItems(arrayOf("Галерея", "Камера")) { dialog, which ->
-                        if (which == 0) getFromGalery()
-                            else getFromCamera()
+                        if (which == 0) startForResult.launch(getFromGalery())
+                        else startForResult.launch(getFromCamera(ac))
                     }
                     .show()
-
-            //Toast.makeText(this, "Load Image", Toast.LENGTH_LONG).show()
-
         } catch (e: Exception) {
-            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
-        }
-    }
-
-    fun getFromGalery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        //startActivity(intent)
-        startForResult.launch(intent)
-    }
-
-    fun getFromCamera() {
-        val permissionStatus = ContextCompat.checkSelfPermission(
-            this,
-            android.Manifest.permission.CAMERA
-        )
-        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startForResult.launch(intent)
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.CAMERA),
-                101
-            );
+            Toast.makeText(ac, e.toString(), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -258,18 +230,7 @@ class UserCardActivity: AppCompatActivity() {
                 val picturePath = res?.data
                 if (picturePath != null) {
                     isNewIcon = true
-
                     findViewById<ImageView>(R.id.userAvaCard).setImageURI(picturePath)
-                    //findViewById<ImageView>(R.id.userAvaCard)
-
-                    //val image = (findViewById<ImageView>(R.id.userAvaCard).getDrawable() as BitmapDrawable).bitmap
-
-                    //val conn  = URL(picturePath.path).openConnection()
-                    //val bis = URL(picturePath.path).openConnection().getInputStream()
-                    //var bitmap = BitmapFactory.decodeStream(BufferedInputStream(bis))
-
-                    //findViewById<ImageView>(R.id.userAvaCard).load(bitmap)
-
                 }
             }
         }

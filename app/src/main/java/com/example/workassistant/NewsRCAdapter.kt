@@ -1,7 +1,6 @@
 package com.example.workassistant
 
 //import com.getstream.sdk.chat.ImageLoader.load
-import android.R.attr.src
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Bitmap
@@ -15,8 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.google.gson.Gson
-import java.io.InputStream
-import java.net.HttpURLConnection
 import java.net.URL
 
 
@@ -86,7 +83,7 @@ class NewsRCAdapter(
                     CadrParm[position].fkey.toInt()
                 )
                 val outComment = Gson().toJson(nMess)
-                val requestResult = URL(apiURL + "/ins_comment/").sendJSONRequest(
+                val requestResult = URL(apiURL + "/comments/add/").sendJSONRequest(
                     token_type,
                     access_token,
                     outComment
@@ -143,10 +140,10 @@ class NewsRCAdapter(
             layout_small_image = itemView?.findViewById(R.id.layout_small_image)
             imgCardSmall_view = itemView?.findViewById(R.id.imgCardSmall)
             //imgCardSmall_revert_view = itemView?.findViewById(R.id.imgCardSmall_revert)
-            tCard1_view = itemView?.findViewById(R.id.tCard1)
-            tCard2_view = itemView?.findViewById(R.id.tCard2)
-            tCard3_view = itemView?.findViewById(R.id.tCard3)
-            tDate_view = itemView?.findViewById(R.id.tDate)
+            tCard1_view = itemView?.findViewById(R.id.tMesName)
+            tCard2_view = itemView?.findViewById(R.id.tMesText)
+            tCard3_view = itemView?.findViewById(R.id.tMesCateg)
+            tDate_view = itemView?.findViewById(R.id.tMesDate)
             leyoutComment_view = itemView?.findViewById(R.id.leyoutComment)
             rvComments_view = itemView?.findViewById(R.id.rvComments)
             parent_view = itemView?.context

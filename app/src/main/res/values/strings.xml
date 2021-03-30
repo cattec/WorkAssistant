@@ -9,13 +9,13 @@
     <string name="img_todo">Картинка главного окна</string>
     <string name="card_img">Картинка карточки</string>
     <string name="card_title">Заголовок статьи</string>
-    <string name="card_text">Некоторый не большой текст в конце с сылкой на основную статью</string>
+    <string name="card_text">Введите текст сообщения...</string>
     <string name="User_fio">Камушкин Павел Иваныч</string>
 
     <string name="tv_help_title_text">Справка</string>
     <string name="tv_help_text_text">В будующем тут будет находиться краткая справка для работы с описанием всех иструментов, разделов и возможностей приложения. Например на данный момент готова основная лента новостей, ее можно коментировать. Реализована авторзация пользователей. В случаи возникновения проблем с приложеним или если у вас появились какие то предлоджения по доработке просим связаться вас с ИТ службой ИННЦ.</string>
     <string name="m_serv_name">Сервисы</string>
-    <string name="m_news_text">Новости</string>
+    <string name="m_news_text">Новое сообщение</string>
     <string name="m_notif_text">Уведомления</string>
     <string name="m_chat_text">Чат</string>
     <string name="m_support_text">Поддержка</string>
@@ -62,4 +62,6 @@
     <string name="userCardPassTextRepeat">Повторить пароль</string>
     <string name="uaserCardpassHint">новый пароль...</string>
     <string name="uaserCardpassRepeatHint">новый пароль...</string>
+    <string name="btnSaveCard">Сохранить</string>
+    <string name="mesCartTitle">Сообщение</string>
 </resources>

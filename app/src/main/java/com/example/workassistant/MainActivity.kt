@@ -9,11 +9,13 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.StrictMode
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.core.os.HandlerCompat.postDelayed
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +25,8 @@ import com.google.android.material.navigation.NavigationView
 import com.google.gson.*
 import kotlinx.coroutines.*
 import java.net.URL
+import java.util.*
+import kotlin.concurrent.schedule
 
 
 class MainActivity : AppCompatActivity() {
@@ -49,9 +53,12 @@ class MainActivity : AppCompatActivity() {
             //установка необходимых прав
             val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
             StrictMode.setThreadPolicy(policy)
-
+            findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
             //загрузка токена
             getToken()
+            Timer().schedule(60000){
+                getToken()
+            }
 
             //обработка собый основной ленты сообщений
             mainListRefresh()
@@ -71,8 +78,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getToken() {
-        val resultTokenResponse = loadToken()
-        if (resultTokenResponse == false) {
+        if (loadToken() == false) {
             startActivity(Intent(this, LoginActivity::class.java).putExtra("apiCurURL", apiCurURL))
         }
     }
@@ -88,14 +94,20 @@ class MainActivity : AppCompatActivity() {
         val access_token: String = settings.getString("access_token", "").toString()
         val myLogin: String = settings.getString("myLogin", "").toString()
         val myPassword: String = settings.getString("myPassword", "").toString()
+        val token_limit_date_str: String = settings.getString("token_limit_date", "").toString()
 
         val userID: Int = if (userID_str == "") 0 else userID_str.toInt()
         val iconID: Int = if (iconID_str == "") 0 else iconID_str.toInt()
+        val token_limit_date: Long = if (token_limit_date_str == "") 0 else token_limit_date_str.toLong()
 
-        //Проверяем старый токен действует еще или уже нет
+        //Проверяем токен на время истечения 25 минут
+        if (Calendar.getInstance().time.time - token_limit_date < 1500000) {
+            if (myToken.userID == 0) myToken = cToken(userID, iconID, full_name, access_token, token_type)
+            return true
+        }
+
+        //Проверяем старый токен действует еще или уже нет, если вернуло ответ то токен еще рабочий
         val result = URL(apiCurURL + "/users/me/").checkToken(token_type, access_token)
-
-        //если вернуло ответ то токен еще рабочий
         if ( result != "" ) {
             myToken = cToken(userID, iconID, full_name, access_token, token_type)
             return true
@@ -103,7 +115,6 @@ class MainActivity : AppCompatActivity() {
 
         //токен устарел надо попрбовать сделать новый с реквизитами последнего пользователя
         val newToken = getNewToken(getSharedPreferences("UserInfo", 0), apiCurURL, myLogin, myPassword)
-
         if(newToken != null) {
             myToken = newToken
             return true
@@ -143,22 +154,12 @@ class MainActivity : AppCompatActivity() {
 
         myNav.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_item_three0 -> openCloseNavigationDrawer(findViewById<NavigationView>(R.id.nav_view))
+                R.id.nav_item_three0 -> startActivity(Intent(this, MessageCardActivity::class.java).putExtra("apiCurURL", apiCurURL)) //openCloseNavigationDrawer(findViewById<NavigationView>(R.id.nav_view))
                 R.id.nav_item_three1 -> createINNCNotify()
-                R.id.nav_item_three2 -> startActivity(
-                        Intent(
-                                this,
-                                ChannelsListActivity::class.java
-                        )
-                )
+                R.id.nav_item_three2 -> startActivity(Intent(this, ChannelsListActivity::class.java))
                 R.id.nav_item_three3 -> startActivity(Intent(this, SupportActivity::class.java))
                 R.id.nav_item_three4 -> startActivity(Intent(this, HelpActivity::class.java))
-                R.id.nav_item_three5 -> startActivity(
-                        Intent(
-                                this,
-                                SettingsActivity::class.java
-                        )
-                )
+                R.id.nav_item_three5 -> startActivity(Intent(this, SettingsActivity::class.java))
                 R.id.nav_item_three_change_user -> startActivity(Intent(this, LoginActivity::class.java).putExtra("apiCurURL", apiCurURL))
             }
             true
@@ -305,7 +306,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fillList1(apiURL: String): List<MyMessage>{
-        val res = URL(apiURL + "/message_main/").getText(myToken.token_type, myToken.access_token)
+        val res = URL(apiURL + "/messages/").getText(myToken.token_type, myToken.access_token)
         val data = Gson().fromJson(res, Array<MyMessage>::class.java).asList()
         return data
     }
