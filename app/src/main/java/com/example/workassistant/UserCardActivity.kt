@@ -160,8 +160,8 @@ class UserCardActivity: AppCompatActivity() {
             //Сохраняем новую иконку
             if (isNewIcon == true) {
                 val stream = ByteArrayOutputStream()
-                val bitmap = (findViewById<ImageView>(R.id.userAvaCard).getDrawable() as BitmapDrawable).bitmap
-                bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream)
+                val bitmap = resizeBitmap(200,(findViewById<ImageView>(R.id.userAvaCard).getDrawable() as BitmapDrawable).bitmap)
+                bitmap.compress(Bitmap.CompressFormat.PNG, 70, stream)
                 val image = stream.toByteArray()
                 val base64Encoded: String = Base64.getEncoder().encodeToString(image)
 

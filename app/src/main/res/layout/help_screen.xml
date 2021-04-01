@@ -20,7 +20,6 @@
             android:id="@+id/tv_help_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/back2"
             android:gravity="center"
             android:hapticFeedbackEnabled="false"
             android:text="@string/tv_help_text_text"

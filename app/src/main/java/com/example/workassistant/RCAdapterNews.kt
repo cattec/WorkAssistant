@@ -2,9 +2,8 @@ package com.example.workassistant
 
 //import com.getstream.sdk.chat.ImageLoader.load
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,12 +11,17 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.ImageLoader
 import coil.load
+import coil.request.ImageRequest
 import com.google.gson.Gson
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import java.net.URL
 
 
-class NewsRCAdapter(
+class RCAdapterNews(
+    private val imageLoader: ImageLoader,
     private val userID: Int,
     private val token_type: String,
     private val access_token: String,
@@ -25,27 +29,35 @@ class NewsRCAdapter(
     private val apiURL: String,
     private val CadrParm: List<MyMessage>
 ) :
-    RecyclerView.Adapter<NewsRCAdapter.MyViewHolder111>() {
+    RecyclerView.Adapter<RCAdapterNews.MyViewHolderMessage>() {
 
     override fun getItemCount() = CadrParm.size
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder111 {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolderMessage {
         val itemView = LayoutInflater.from(parent?.context).inflate(
-            R.layout.recyclerview_item,
+            R.layout.item_message,
             parent,
             false
         )
-        return MyViewHolder111(itemView)
+        return MyViewHolderMessage(itemView)
     }
 
-    //@InternalStreamChatApi
-    override fun onBindViewHolder(holder: MyViewHolder111, position: Int) {
-
+    override fun onBindViewHolder(holder: MyViewHolderMessage, position: Int) {
         //загрузить картинку
-        val img: Bitmap = BitmapFactory.decodeStream(URL(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons.toInt()).getIcon(token_type, access_token))
+        //val img: Bitmap = BitmapFactory.decodeStream(URL(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons.toInt()).getIcon(token_type, access_token))
+        //holder.imgCardSmall_view?.load(img)
+        //holder.imgCard_view?.load(img)
 
-        holder.imgCardSmall_view?.load(img)
-        holder.imgCard_view?.load(img)
+        val request = ImageRequest.Builder(holder.parent_view!!)
+            .data(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons)
+            .addHeader("Authorization", token_type + ' ' + access_token)
+            .build()
+
+        GlobalScope.async {
+            val resul = imageLoader.execute(request).drawable
+            holder.imgCardSmall_view?.load(resul)
+            holder.imgCard_view?.load(resul)
+        }
 
         holder.tCard1_view?.text = CadrParm[position].fname
         holder.tCard2_view?.text = CadrParm[position].fbody
@@ -58,14 +70,14 @@ class NewsRCAdapter(
             holder.leyoutComment_view?.visibility = View.VISIBLE
             //load Comments if needed
             holder.rvComments_view?.layoutManager = LinearLayoutManager(holder.parent_view)
-            holder.rvComments_view?.adapter = CommentRCAdapter(
-                token_type, access_token, apiURL, fillComments(
-                    token_type,
-                    access_token,
-                    apiURL,
-                    CadrParm[position].fkey
-                )
-            )
+            holder.rvComments_view?.adapter = refreshAdapter(CadrParm[position].fkey)
+            if (holder.rvComments_view?.childCount!! > 0) holder.tvComment_view?.visibility = View.VISIBLE
+                else holder.tvComment_view?.visibility = View.GONE
+        }
+
+        holder.imgCard_view?.setOnLongClickListener {
+            holder.parent_view?.startActivity(Intent(holder.parent_view, MessageCardActivity::class.java).putExtra("apiCurURL", apiURL).putExtra("f_messages", CadrParm[position].fkey))
+            true
         }
 
         holder.imgCardSmall_view?.setOnClickListener {
@@ -74,43 +86,57 @@ class NewsRCAdapter(
             holder.leyoutComment_view?.visibility = View.GONE
         }
 
+        holder.iBFullView_view?.setOnClickListener {
+            if (holder.imgCard_view?.visibility == View.VISIBLE) {
+                holder.iBFullView_view?.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24)
+                holder.imgCard_view?.visibility = View.GONE
+                holder.layout_small_image?.visibility = View.VISIBLE
+                holder.leyoutComment_view?.visibility = View.VISIBLE
+                holder.rvComments_view?.layoutManager = LinearLayoutManager(holder.parent_view)
+                holder.rvComments_view?.adapter = refreshAdapter(CadrParm[position].fkey)
+                if (holder.rvComments_view?.childCount!! > 0) holder.tvComment_view?.visibility = View.VISIBLE
+                else holder.tvComment_view?.visibility = View.GONE
+            } else {
+                holder.iBFullView_view?.setImageResource(R.drawable.ic_baseline_arrow_drop_down_24)
+                holder.imgCard_view?.visibility = View.VISIBLE
+                holder.layout_small_image?.visibility = View.GONE
+                holder.leyoutComment_view?.visibility = View.GONE
+            }
+        }
+
         holder.btnSendMessage_view?.setOnClickListener {
             if ((holder.tvComment_text_view?.text != null) and (holder.tvComment_text_view?.text.toString().trim() != "")) {
+                holder.btnSendMessage_view?.isEnabled = false
                 //формируем запрос
                 val nMess = MyCommentOut(
-                    userID,
-                    holder.tvComment_text_view?.text.toString(),
-                    CadrParm[position].fkey.toInt()
+                        userID,
+                        holder.tvComment_text_view?.text.toString(),
+                        CadrParm[position].fkey.toInt()
                 )
                 val outComment = Gson().toJson(nMess)
                 val requestResult = URL(apiURL + "/comments/add/").sendJSONRequest(
-                    token_type,
-                    access_token,
-                    outComment
+                        token_type,
+                        access_token,
+                        outComment
                 )
                 //Toast.makeText(holder.parent_view, requestResult, Toast.LENGTH_LONG).show()
                 holder.tvComment_text_view?.text = null
                 holder.parent_view?.hideKeyBoard(it)
-                holder.rvComments_view?.adapter = CommentRCAdapter(
-                    token_type, access_token, apiURL, fillComments(
-                        token_type,
-                        access_token,
-                        apiURL,
-                        CadrParm[position].fkey
-                    )
-                )
+                holder.rvComments_view?.adapter = refreshAdapter(CadrParm[position].fkey)
+                holder.btnSendMessage_view?.isEnabled = false
             }
         }
-
     }
 
-    private fun fillComments(
-        token_type: String,
-        access_token: String,
-        cur_apiURL: String,
-        fkey: String
-    ): List<MyComment> {
-        val res = URL(cur_apiURL + "/comments/?f_messages=" + fkey).getText(
+    private fun refreshAdapter(fkey: String): RCAdapterComment {
+        return RCAdapterComment(
+            imageLoader, token_type, access_token, apiURL,
+            fillComments(fkey)
+        )
+    }
+
+    private fun fillComments(fkey: String): List<MyComment> {
+        val res = URL(apiURL + "/comments/?f_messages=" + fkey).getText(
             token_type,
             access_token
         )
@@ -118,12 +144,11 @@ class NewsRCAdapter(
         return data
     }
 
-    class MyViewHolder111(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class MyViewHolderMessage(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var vCards_view: CardView? = null
         var imgCard_view: ImageView? = null
         var layout_small_image: FrameLayout? = null
         var imgCardSmall_view: ImageView? = null
-        //var imgCardSmall_revert_view: ImageView? = null
         var tCard1_view: TextView? = null
         var tCard2_view: TextView? = null
         var tCard3_view: TextView? = null
@@ -133,13 +158,14 @@ class NewsRCAdapter(
         var parent_view: Context? = null
         var btnSendMessage_view: Button? = null
         var tvComment_text_view: EditText? = null
+        var tvComment_view: TextView? = null
+        var iBFullView_view: ImageButton? = null
 
         init {
             vCards_view = itemView?.findViewById(R.id.vCards)
             imgCard_view = itemView?.findViewById(R.id.imgCard)
             layout_small_image = itemView?.findViewById(R.id.layout_small_image)
             imgCardSmall_view = itemView?.findViewById(R.id.imgCardSmall)
-            //imgCardSmall_revert_view = itemView?.findViewById(R.id.imgCardSmall_revert)
             tCard1_view = itemView?.findViewById(R.id.tMesName)
             tCard2_view = itemView?.findViewById(R.id.tMesText)
             tCard3_view = itemView?.findViewById(R.id.tMesCateg)
@@ -149,6 +175,8 @@ class NewsRCAdapter(
             parent_view = itemView?.context
             btnSendMessage_view = itemView?.findViewById(R.id.btnSendMessage)
             tvComment_text_view = itemView?.findViewById(R.id.tvComment_text)
+            tvComment_view = itemView?.findViewById(R.id.tvComment)
+            iBFullView_view = itemView?.findViewById(R.id.iBFullView)
         }
 
     }

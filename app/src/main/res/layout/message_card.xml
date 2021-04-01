@@ -92,7 +92,6 @@
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:layout_weight="1"
-                            android:background="@color/green"
                             android:text="@string/cardCategoria"
                             android:textSize="24sp" />
 

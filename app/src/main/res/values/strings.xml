@@ -24,7 +24,7 @@
     <string name="m_sup_setting_text">Настройки</string>
     <string name="settings_title">Настройки</string>
     <string name="support_title">Поддержка</string>
-    <string name="newsTitle">Новости</string>
+    <string name="newsTitle">Все</string>
     <string name="cardCategoria">категория</string>
     <string name="DateCreateView">Дата создания</string>
     <string name="tvComText">Комментарии</string>
@@ -64,4 +64,12 @@
     <string name="uaserCardpassRepeatHint">новый пароль...</string>
     <string name="btnSaveCard">Сохранить</string>
     <string name="mesCartTitle">Сообщение</string>
+    <string name="ibFullView">Раскрыть/скрыть</string>
+    <string name="cardSmallImgDesc">Мини иконка сообщения</string>
+    <string name="roleName">Имя роли</string>
+    <string name="roleUserCount">количество людей в это роли</string>
+    <string name="roleDesc">Описание роли</string>
+    <string name="btnAddUser">Добавить пользователя</string>
+    <string name="addNewRoleStr">Добавить новую роль</string>
+    <string name="btnDeleteRoleStr">Удалить роль</string>
 </resources>

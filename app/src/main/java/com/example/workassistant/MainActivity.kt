@@ -9,18 +9,18 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.os.StrictMode
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
-import androidx.core.os.HandlerCompat.postDelayed
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.ImageLoader
 import coil.load
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.*
 import kotlinx.coroutines.*
@@ -39,11 +39,13 @@ class MainActivity : AppCompatActivity() {
 
     val apiURL_heroku: String = "https://wassistant.herokuapp.com"
     val apiURL_local: String = "http://10.226.96.21:5000"
-    val apiCurURL: String = apiURL_local
+    val apiCurURL: String = apiURL_heroku
 
+    var imageLoader: ImageLoader? = null;
+
+    var categories = arrayOf<String>()
+    var lastCategory: String = "Все"
     var myToken: cToken = cToken(0, 0, "", "", "")
-
-    //private val TimeReceiver: MyTimeReceiver = MyTimeReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
@@ -54,6 +56,12 @@ class MainActivity : AppCompatActivity() {
             val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
             StrictMode.setThreadPolicy(policy)
             findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
+
+            imageLoader = ImageLoader.Builder(this)
+                .availableMemoryPercentage(0.25)
+                .crossfade(true)
+                .build()
+
             //загрузка токена
             getToken()
             Timer().schedule(60000){
@@ -159,7 +167,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_item_three2 -> startActivity(Intent(this, ChannelsListActivity::class.java))
                 R.id.nav_item_three3 -> startActivity(Intent(this, SupportActivity::class.java))
                 R.id.nav_item_three4 -> startActivity(Intent(this, HelpActivity::class.java))
-                R.id.nav_item_three5 -> startActivity(Intent(this, SettingsActivity::class.java))
+                R.id.nav_item_three5 -> startActivity(Intent(this, SettingsActivity::class.java).putExtra("apiCurURL", apiCurURL))
                 R.id.nav_item_three_change_user -> startActivity(Intent(this, LoginActivity::class.java).putExtra("apiCurURL", apiCurURL))
             }
             true
@@ -168,9 +176,13 @@ class MainActivity : AppCompatActivity() {
 
     fun mainListRefresh() {
         //реализация обновления списка: толком не работает тормозит дико, потому что генерит милион событий
+        /*val imageLoader = ImageLoader.Builder(this)
+            .availableMemoryPercentage(0.25)
+            .crossfade(true)
+            .build()*/
         val rv = findViewById<RecyclerView>(R.id.rv)
         rv.layoutManager = LinearLayoutManager(this)
-        rv.adapter = NewsRCAdapter(myToken.userID, myToken.token_type, myToken.access_token, getSharedPreferences("UserInfo", 0), apiCurURL, fillList1(apiCurURL))
+        rv.adapter = RCAdapterNews(imageLoader!!, myToken.userID, myToken.token_type, myToken.access_token, getSharedPreferences("UserInfo", 0), apiCurURL, fillMessageList())
 
         /*
         val rv = findViewById<RecyclerView>(R.id.rv)
@@ -305,21 +317,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun fillList1(apiURL: String): List<MyMessage>{
-        val res = URL(apiURL + "/messages/").getText(myToken.token_type, myToken.access_token)
-        val data = Gson().fromJson(res, Array<MyMessage>::class.java).asList()
-        return data
+    private fun fillMessageList(): List<MyMessage> {
+        var curCategory = "none"
+        if (lastCategory != "Все") curCategory = lastCategory
+        val res = URL(apiCurURL + "/messages/get/?fkey=0&categ_name=" + curCategory).getText(myToken.token_type, myToken.access_token)
+        return Gson().fromJson(res, Array<MyMessage>::class.java).asList()
     }
 
     fun openCloseNavigationDrawer(view: View) {
-
         this.hideKeyBoard(view)
-
         val drawer_layout: DrawerLayout = findViewById(R.id.drawer_layout)
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
             drawer_layout.openDrawer(GravityCompat.START)
+        }
+    }
+
+    fun changeCategory(view: View) {
+        try {
+           if (categories.size == 0) {
+               categories = getCategories(apiCurURL, myToken.token_type, myToken.access_token)
+           }
+            MaterialAlertDialogBuilder(this)
+                    .setTitle("Категория сообщения?")
+                    .setIcon(R.drawable.arni)
+                    .setItems(categories) { dialog, which ->
+                        if (lastCategory != categories[which]) {
+                            lastCategory = categories[which]
+                            findViewById<TextView>(R.id.tvMainCategory).setText(categories[which])
+                            mainListRefresh()
+                        }
+                    }
+                    .show()
+        }
+        catch (e: Exception) {
+            Toast.makeText(this, "Cant change category: " + e.toString(), Toast.LENGTH_LONG).show()
         }
     }
 
