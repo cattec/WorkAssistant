@@ -67,9 +67,10 @@
     <string name="ibFullView">Раскрыть/скрыть</string>
     <string name="cardSmallImgDesc">Мини иконка сообщения</string>
     <string name="roleName">Имя роли</string>
-    <string name="roleUserCount">количество людей в это роли</string>
+    <string name="roleUserCount">кол</string>
     <string name="roleDesc">Описание роли</string>
     <string name="btnAddUser">Добавить пользователя</string>
     <string name="addNewRoleStr">Добавить новую роль</string>
     <string name="btnDeleteRoleStr">Удалить роль</string>
+    <string name="findStringHint">введите строку для поиска...</string>
 </resources>

@@ -32,7 +32,8 @@ class MyRole (
         var fkey: Int,
         var fname: String,
         var fdescription: String,
-        var usercount: Int
+        var usercount: Int,
+        var f_icons: Int
 )
 
 class MyMessage (

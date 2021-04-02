@@ -5,15 +5,13 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import coil.load
 import coil.request.ImageRequest
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -42,7 +40,7 @@ class RCAdapterRoles (
     override fun onBindViewHolder(holder: MyViewHolderRole, position: Int) {
 
         val request = ImageRequest.Builder(holder.parent_view!!)
-                .data(apiURL + "/icon/?fkey=" + 10)
+                .data(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons.toString())
                 .addHeader("Authorization", token_type + ' ' + access_token)
                 .build()
 
@@ -55,26 +53,68 @@ class RCAdapterRoles (
         holder.roleUserCount_view?.text = CadrParm[position].usercount.toString()
         holder.roleDescription_view?.text = CadrParm[position].fdescription
 
+        holder.btnAddUsertoRole_view?.setOnClickListener {
+            addUserToRole(holder?.parent_view!!, holder.rvUsers_view!!, holder.roleUserCount_view!!, CadrParm[position].fkey.toString(), CadrParm[position].fname)
+            //Toast.makeText(holder.parent_view, "Add users to Role", Toast.LENGTH_LONG).show()
+        }
+
+        holder.btnDeleteRole_view?.setOnClickListener {
+            MaterialAlertDialogBuilder(holder.parent_view!!)
+                .setTitle("Удаление роли")
+                .setMessage("Вы уверены что хотите удалить роль <"+ CadrParm[position].fname +"> ?")
+                .setNegativeButton("Отмена") { dialog, which ->
+                    // Respond to negative button press
+                }
+                .setPositiveButton("Удалить") { dialog, which ->
+                    // Respond to positive button press
+                }
+                .show()
+        }
+
         holder.ibRoleOpen_view?.setOnClickListener {
             if (holder.layoutUsers_view?.visibility == View.VISIBLE) {
-                holder.ibRoleOpen_view?.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24)
+                holder.ibRoleOpen_view?.setImageResource(R.drawable.ic_baseline_arrow_drop_down_24)
                 holder.layoutUsers_view?.visibility = View.GONE
             } else {
-                holder.ibRoleOpen_view?.setImageResource(R.drawable.ic_baseline_arrow_drop_down_24)
+                holder.ibRoleOpen_view?.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24)
                 holder.layoutUsers_view?.visibility = View.VISIBLE
                 holder.rvUsers_view?.layoutManager = LinearLayoutManager(holder.parent_view)
-                holder.rvUsers_view?.adapter = refreshAdapter(CadrParm[position].fkey.toString())
+                holder.rvUsers_view?.adapter = refreshAdapter(holder.roleUserCount_view!!, CadrParm[position].fkey.toString(),CadrParm[position].fname)
             }
         }
 
     }
 
-    private fun refreshAdapter(fkey: String): RCAdapterUsers {
-        return RCAdapterUsers(imageLoader, token_type, access_token, apiURL, fillUsersInRole(fkey))
+    fun addUserToRole(contex: Context, rv: RecyclerView, roleUserCount: TextView, fkey: String, roleName: String) {
+        val res = URL(apiURL + "/roles/role_users/?in_role=false&f_roles=" + fkey).getText(token_type, access_token)
+        val data = Gson().fromJson(res, Array<MyCategories>::class.java).asList()
+        val users = Array<String>(data.size) { i -> "[" + data[i].fkey.toString() + "] " + data[i].fname }
+        //val users_checked = BooleanArray(data.size) { i -> false }
+        MaterialAlertDialogBuilder(contex)
+            .setTitle("Кого добавить к роли <" + roleName + ">")
+            .setIcon(R.drawable.arni)
+            .setItems(users) { dialog, which ->
+                addUserToRoleRequest(fkey, users[which])
+                roleUserCount.setText((roleUserCount.text.toString().toInt()+1).toString())
+                rv.layoutManager = LinearLayoutManager(contex)
+                rv.adapter = refreshAdapter(roleUserCount, fkey, roleName)
+            }
+            .show()
+    }
+
+    private fun addUserToRoleRequest (f_roles: String, userStr: String) {
+        val idbeg = userStr.indexOf("[",0,true) + 1
+        val idend =  userStr.indexOf("]",0,true)
+        var userID: String = userStr.substring(idbeg, idend)
+        URL(apiURL + "/roles/add_user/?f_roles=" + f_roles + "&f_users=" + userID).getText(token_type, access_token)
+    }
+
+    private fun refreshAdapter(roleUserCount: TextView, fkey: String, fname: String): RCAdapterUsers {
+        return RCAdapterUsers(imageLoader, roleUserCount, token_type, access_token, apiURL, fkey, fname, fillUsersInRole(fkey))
     }
 
     private fun fillUsersInRole(fkey: String): List<MyUser> {
-        val res = URL(apiURL + "/roles/role_users/?fkey=" + fkey).getText(token_type,access_token)
+        val res = URL(apiURL + "/roles/role_users/?in_role=true&f_roles=" + fkey).getText(token_type,access_token)
         return Gson().fromJson(res, Array<MyUser>::class.java).asList()
     }
 
@@ -87,6 +127,8 @@ class RCAdapterRoles (
         var ibRoleOpen_view: ImageButton? = null
         var layoutUsers_view: LinearLayout? = null
         var rvUsers_view: RecyclerView? = null
+        var btnAddUsertoRole_view: Button? = null
+        var btnDeleteRole_view: Button? = null
 
         init {
             userIcon_view = itemView?.findViewById(R.id.userIcon)
@@ -97,6 +139,8 @@ class RCAdapterRoles (
             ibRoleOpen_view = itemView?.findViewById(R.id.ibRoleOpen)
             layoutUsers_view = itemView?.findViewById(R.id.layoutUsers)
             rvUsers_view = itemView?.findViewById(R.id.rvUsers)
+            btnAddUsertoRole_view = itemView?.findViewById(R.id.btnAddUsertoRole)
+            btnDeleteRole_view = itemView?.findViewById(R.id.btnDeleteRole)
         }
     }
 

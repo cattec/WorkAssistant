@@ -10,132 +10,157 @@
     android:layout_marginBottom="3dp"
     android:orientation="horizontal">
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/RoleCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        app:cardUseCompatPadding="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
-            android:orientation="horizontal">
-
-            <FrameLayout
-                android:id="@+id/layoutIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginBottom="3dp"
-                    android:contentDescription="@string/maskPict"
-                    app:srcCompat="@drawable/ic_avatar_form" />
-
-                <ImageView
-                    android:id="@+id/userIcon"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginBottom="3dp"
-                    android:contentDescription="@string/persDefaultIcon"
-                    tools:srcCompat="@android:drawable/ic_menu_myplaces" />
-
-            </FrameLayout>
+            android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/layoutBaseInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#F1F6F6"
-                android:orientation="vertical">
+                android:gravity="start"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:id="@+id/layoutIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/userIcon"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:contentDescription="@string/persDefaultIcon"
+                        tools:srcCompat="@android:drawable/ic_menu_myplaces" />
+
+                    <ImageView
+                        android:id="@+id/imageView3"
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginBottom="3dp"
+                        android:contentDescription="@string/maskPict"
+                        app:srcCompat="@drawable/ic_avatar_form" />
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:id="@+id/layoutBaseInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/roleName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_weight="1"
+                            android:text="@string/roleName"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/roleUserCount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="3dp"
+                            android:layout_marginRight="5dp"
+                            android:text="@string/roleUserCount"
+                            android:textAlignment="textEnd"
+                            android:textSize="24sp" />
+
+                        <ImageButton
+                            android:id="@+id/ibRoleOpen"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            app:srcCompat="@drawable/ic_baseline_arrow_drop_down_24" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/roleDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginEnd="3dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="@string/roleDesc" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutUsers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvUsers"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </androidx.recyclerview.widget.RecyclerView>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/roleName"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/layoutGropButtons"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="5dp"
-                        android:layout_weight="1"
-                        android:text="@string/roleName" />
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/roleUserCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="3dp"
-                        android:layout_marginRight="5dp"
-                        android:text="@string/roleUserCount"
-                        android:textAlignment="textEnd" />
+                        <Button
+                            android:id="@+id/btnDeleteRole"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginRight="10dp"
+                            android:backgroundTint="@color/orange"
+                            android:text="@string/btnDeleteRoleStr"
+                            app:icon="@android:drawable/ic_delete" />
 
-                    <ImageButton
-                        android:id="@+id/ibRoleOpen"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        app:srcCompat="@drawable/ic_baseline_arrow_drop_down_24" />
+                        <Button
+                            android:id="@+id/btnAddUsertoRole"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="10dp"
+                            android:text="@string/btnAddUser" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
-
-                <TextView
-                    android:id="@+id/roleDescription"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="7dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginEnd="3dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/roleDesc" />
 
             </LinearLayout>
 
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layoutUsers"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/btnDeleteRole"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="@color/orange"
-                android:text="@string/btnDeleteRoleStr"
-                app:icon="@android:drawable/ic_delete" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvUsers"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <Button
-                android:id="@+id/btnAddUsertoRole"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="@string/btnAddUser" />
-
-        </LinearLayout>
-
-    </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 
 </LinearLayout>

@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     val apiURL_heroku: String = "https://wassistant.herokuapp.com"
     val apiURL_local: String = "http://10.226.96.21:5000"
-    val apiCurURL: String = apiURL_heroku
+    val apiCurURL: String = apiURL_local
 
     var imageLoader: ImageLoader? = null;
 

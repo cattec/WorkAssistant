@@ -61,7 +61,7 @@ class RCAdapterComment(
         holder.persMesDate_view?.text = CadrParm[position].fdatecreate
 
         holder.persIcon_view?.setOnLongClickListener {
-            holder.parent_view?.startActivity(Intent(holder.parent_view, UserCardActivity::class.java).putExtra("apiCurURL", apiURL))
+            holder.parent_view?.startActivity(Intent(holder.parent_view, UserCardActivity::class.java).putExtra("apiCurURL", apiURL).putExtra("CurUserID", CadrParm[position].f_users_create))
             true
         }
 
