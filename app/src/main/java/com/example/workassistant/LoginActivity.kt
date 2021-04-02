@@ -13,7 +13,6 @@ import java.net.URL
 
 class LoginActivity : AppCompatActivity() {
 
-    var apiCurURL: String = ""
     var myToken: cToken? = null
     var oldLogin: String = ""
 
@@ -37,7 +36,6 @@ class LoginActivity : AppCompatActivity() {
         findViewById<EditText>(R.id.ePass).setText(myPassword)
         oldLogin = myLogin
 
-        apiCurURL = intent.extras!!.getString("apiCurURL").toString()
     }
 
     fun pressOK(view: View) {
@@ -45,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
             val myLogin = findViewById<EditText>(R.id.eLogin).text.toString()
             val myPassword = findViewById<EditText>(R.id.ePass).text.toString()
 
-            myToken = getNewToken(getSharedPreferences("UserInfo", 0), apiCurURL, myLogin, myPassword)
+            myToken = getNewToken(getSharedPreferences("UserInfo", 0), myLogin, myPassword)
 
             if(myToken != null) {
                 if (oldLogin == myLogin)

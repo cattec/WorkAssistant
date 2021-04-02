@@ -20,9 +20,6 @@ import java.net.URL
 
 class RCAdapterRoles (
         private val imageLoader: ImageLoader,
-        private val token_type: String,
-        private val access_token: String,
-        private val apiURL:String,
         private val CadrParm: List<MyRole>) :
         RecyclerView.Adapter<RCAdapterRoles.MyViewHolderRole>() {
 
@@ -39,15 +36,16 @@ class RCAdapterRoles (
 
     override fun onBindViewHolder(holder: MyViewHolderRole, position: Int) {
 
-        val request = ImageRequest.Builder(holder.parent_view!!)
-                .data(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons.toString())
-                .addHeader("Authorization", token_type + ' ' + access_token)
+        /*val request = ImageRequest.Builder(holder.parent_view!!)
+                .data(apiCurURL + "/icon/?fkey=" + CadrParm[position].f_icons.toString())
+                .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
                 .build()
 
         GlobalScope.async {
             val resul = imageLoader.execute(request).drawable
             holder.userIcon_view?.load(resul)
-        }
+        }*/
+        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons.toString(), holder.userIcon_view!!)
 
         holder.roleName_view?.text = CadrParm[position].fname
         holder.roleUserCount_view?.text = CadrParm[position].usercount.toString()
@@ -86,7 +84,7 @@ class RCAdapterRoles (
     }
 
     fun addUserToRole(contex: Context, rv: RecyclerView, roleUserCount: TextView, fkey: String, roleName: String) {
-        val res = URL(apiURL + "/roles/role_users/?in_role=false&f_roles=" + fkey).getText(token_type, access_token)
+        val res = URL(apiCurURL + "/roles/role_users/?in_role=false&f_roles=" + fkey).getText()
         val data = Gson().fromJson(res, Array<MyCategories>::class.java).asList()
         val users = Array<String>(data.size) { i -> "[" + data[i].fkey.toString() + "] " + data[i].fname }
         //val users_checked = BooleanArray(data.size) { i -> false }
@@ -106,15 +104,15 @@ class RCAdapterRoles (
         val idbeg = userStr.indexOf("[",0,true) + 1
         val idend =  userStr.indexOf("]",0,true)
         var userID: String = userStr.substring(idbeg, idend)
-        URL(apiURL + "/roles/add_user/?f_roles=" + f_roles + "&f_users=" + userID).getText(token_type, access_token)
+        URL(apiCurURL + "/roles/add_user/?f_roles=" + f_roles + "&f_users=" + userID).getText()
     }
 
     private fun refreshAdapter(roleUserCount: TextView, fkey: String, fname: String): RCAdapterUsers {
-        return RCAdapterUsers(imageLoader, roleUserCount, token_type, access_token, apiURL, fkey, fname, fillUsersInRole(fkey))
+        return RCAdapterUsers(imageLoader, roleUserCount, fkey, fname, fillUsersInRole(fkey))
     }
 
     private fun fillUsersInRole(fkey: String): List<MyUser> {
-        val res = URL(apiURL + "/roles/role_users/?in_role=true&f_roles=" + fkey).getText(token_type,access_token)
+        val res = URL(apiCurURL + "/roles/role_users/?in_role=true&f_roles=" + fkey).getText()
         return Gson().fromJson(res, Array<MyUser>::class.java).asList()
     }
 

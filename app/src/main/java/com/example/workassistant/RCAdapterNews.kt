@@ -12,21 +12,14 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
-import coil.load
-import coil.request.ImageRequest
 import com.google.gson.Gson
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import java.net.URL
 
 
 class RCAdapterNews(
     private val imageLoader: ImageLoader,
     private val userID: Int,
-    private val token_type: String,
-    private val access_token: String,
     private val settings: SharedPreferences,
-    private val apiURL: String,
     private val CadrParm: List<MyMessage>
 ) :
     RecyclerView.Adapter<RCAdapterNews.MyViewHolderMessage>() {
@@ -48,16 +41,18 @@ class RCAdapterNews(
         //holder.imgCardSmall_view?.load(img)
         //holder.imgCard_view?.load(img)
 
-        val request = ImageRequest.Builder(holder.parent_view!!)
-            .data(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons)
-            .addHeader("Authorization", token_type + ' ' + access_token)
+        /*val request = ImageRequest.Builder(holder.parent_view!!)
+            .data(apiCurURL + "/icon/?fkey=" + CadrParm[position].f_icons)
+            .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
             .build()
 
         GlobalScope.async {
             val resul = imageLoader.execute(request).drawable
             holder.imgCardSmall_view?.load(resul)
             holder.imgCard_view?.load(resul)
-        }
+        }*/
+
+        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.imgCard_view!!)
 
         holder.tCard1_view?.text = CadrParm[position].fname
         holder.tCard2_view?.text = CadrParm[position].fbody
@@ -76,7 +71,7 @@ class RCAdapterNews(
         }
 
         holder.imgCard_view?.setOnLongClickListener {
-            holder.parent_view?.startActivity(Intent(holder.parent_view, MessageCardActivity::class.java).putExtra("apiCurURL", apiURL).putExtra("f_messages", CadrParm[position].fkey))
+            holder.parent_view?.startActivity(Intent(holder.parent_view, CardMessageActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("f_messages", CadrParm[position].fkey))
             true
         }
 
@@ -114,11 +109,7 @@ class RCAdapterNews(
                         CadrParm[position].fkey.toInt()
                 )
                 val outComment = Gson().toJson(nMess)
-                val requestResult = URL(apiURL + "/comments/add/").sendJSONRequest(
-                        token_type,
-                        access_token,
-                        outComment
-                )
+                val requestResult = URL(apiCurURL + "/comments/add/").sendJSONRequest(outComment)
                 //Toast.makeText(holder.parent_view, requestResult, Toast.LENGTH_LONG).show()
                 holder.tvComment_text_view?.text = null
                 holder.parent_view?.hideKeyBoard(it)
@@ -129,17 +120,11 @@ class RCAdapterNews(
     }
 
     private fun refreshAdapter(fkey: String): RCAdapterComment {
-        return RCAdapterComment(
-            imageLoader, token_type, access_token, apiURL,
-            fillComments(fkey)
-        )
+        return RCAdapterComment(imageLoader,fillComments(fkey))
     }
 
     private fun fillComments(fkey: String): List<MyComment> {
-        val res = URL(apiURL + "/comments/?f_messages=" + fkey).getText(
-            token_type,
-            access_token
-        )
+        val res = URL(apiCurURL + "/comments/?f_messages=" + fkey).getText()
         val data = Gson().fromJson(res, Array<MyComment>::class.java).asList()
         return data
     }

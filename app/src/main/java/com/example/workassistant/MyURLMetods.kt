@@ -6,10 +6,10 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 
-fun URL.getText(token_type: String, access_token: String): String {
+fun URL.getText(): String {
     return openConnection().run {
         this as HttpURLConnection
-        setRequestProperty("Authorization", token_type + ' ' + access_token);
+        setRequestProperty("Authorization", myToken.token_type + ' ' + myToken.access_token);
         inputStream.bufferedReader().readText()
     }
 }
@@ -21,32 +21,32 @@ fun URL.getText_noToken(): String {
     }
 }
 
-fun URL.getIcon(token_type: String, access_token: String): InputStream {
+fun URL.getIcon(): InputStream {
     return openConnection().run {
         this as HttpURLConnection
         doInput = true
-        setRequestProperty("Authorization", token_type + ' ' + access_token);
+        setRequestProperty("Authorization", myToken.token_type + ' ' + myToken.access_token);
         inputStream
     }
 }
 
-fun URL.saveIcon(token_type: String, access_token: String): InputStream {
+fun URL.saveIcon(): InputStream {
     return openConnection().run {
         this as HttpURLConnection
         doInput = true
-        setRequestProperty("Authorization", token_type + ' ' + access_token);
+        setRequestProperty("Authorization", myToken.token_type + ' ' + myToken.access_token);
         inputStream
     }
 }
 
 
-fun URL.sendJSONRequest(token_type: String, access_token: String, outComment:String): String{
+fun URL.sendJSONRequest(outComment:String): String{
     return openConnection().run {
         this as HttpURLConnection
         doOutput = true
         doInput = true
         requestMethod = "POST"
-        setRequestProperty("Authorization", token_type + ' ' + access_token);
+        setRequestProperty("Authorization", myToken.token_type + ' ' + myToken.access_token);
         setRequestProperty("Content-Type", "application/json");
         setRequestProperty("Accept", "application/json");
         outputStream.write(outComment.toByteArray())
@@ -61,11 +61,11 @@ fun URL.sendJSONRequest(token_type: String, access_token: String, outComment:Str
 }
 
 
-fun URL.checkToken(token_type: String, access_token: String): String {
+fun URL.checkToken(): String {
     return openConnection().run {
         this as HttpURLConnection
         requestMethod = "GET"
-        setRequestProperty("Authorization", token_type + ' ' + access_token);
+        setRequestProperty("Authorization", myToken.token_type + ' ' + myToken.access_token);
 
         if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
             return ""

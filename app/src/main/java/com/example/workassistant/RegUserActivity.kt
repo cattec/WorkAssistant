@@ -10,14 +10,11 @@ import kotlin.system.exitProcess
 
 class RegUserActivity : AppCompatActivity() {
 
-    var apiCurURL: String = ""
     val sa_pass: String = "544f336d43472b586d4e63314141484b4b6e764a58673d3d"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.reg_user_screen)
-
-        apiCurURL = intent.extras!!.getString("apiCurURL").toString()
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -61,7 +58,7 @@ class RegUserActivity : AppCompatActivity() {
 
                                     Toast.makeText(this, "Новый логин создан!", Toast.LENGTH_LONG).show()
                                     //получаем новый токен
-                                    getNewToken(getSharedPreferences("UserInfo", 0), apiCurURL, login, pass)
+                                    myToken = getNewToken(getSharedPreferences("UserInfo", 0), login, pass)!!
                                     //преезапускаем приложение
                                     //finish()
                                     exitProcess(0)

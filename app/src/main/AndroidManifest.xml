@@ -36,9 +36,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity" />
-        <activity android:name=".MessageCardActivity" />
+        <activity android:name=".CardMessageActivity" />
+        <activity android:name=".AdminToolsActivity" />
         <activity android:name=".RegUserActivity" />
-        <activity android:name=".UserCardActivity" />
+        <activity android:name=".CardUserActivity" />
         <activity android:name=".HelpActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".SupportActivity" />

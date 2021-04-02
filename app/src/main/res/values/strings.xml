@@ -73,4 +73,5 @@
     <string name="addNewRoleStr">Добавить новую роль</string>
     <string name="btnDeleteRoleStr">Удалить роль</string>
     <string name="findStringHint">введите строку для поиска...</string>
+    <string name="m_sup_admintools_text">Администрирование</string>
 </resources>

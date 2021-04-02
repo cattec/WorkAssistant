@@ -24,11 +24,8 @@ import java.net.URL
 import java.util.Base64
 
 
-class UserCardActivity: AppCompatActivity() {
+class CardUserActivity: AppCompatActivity() {
 
-    var apiCurURL: String = ""
-    var token_type: String = ""
-    var access_token: String = ""
     var CurUserID: String = ""
     var isNewIcon: Boolean = false
     var newIconID: Int = 0
@@ -41,13 +38,10 @@ class UserCardActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.user_card)
 
-        apiCurURL = intent.extras!!.getString("apiCurURL").toString()
         CurUserID = intent.extras!!.getString("CurUserID").toString()
 
         val settings = getSharedPreferences("UserInfo", 0)
         val userID: String = settings.getString("userID", "").toString()
-        token_type = settings.getString("token_type", "").toString()
-        access_token = settings.getString("access_token", "").toString()
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar1)
         setSupportActionBar(toolbar)
@@ -59,10 +53,7 @@ class UserCardActivity: AppCompatActivity() {
             finish();
         })
 
-        val userfullinfo = URL(apiCurURL + "/users/userfullinfo/?fkey=" + CurUserID).getText(
-            token_type,
-            access_token
-        )
+        val userfullinfo = URL(apiCurURL + "/users/userfullinfo/?fkey=" + CurUserID).getText()
         val data = Gson().fromJson('[' + userfullinfo + ']', Array<MyUser>::class.java).asList()
 
         val iconID: String = data[0].f_icons
@@ -74,10 +65,12 @@ class UserCardActivity: AppCompatActivity() {
         findViewById<EditText>(R.id.userCardName1).setText(full_name)
         findViewById<EditText>(R.id.userCardEmail1).setText(myEmail)
         findViewById<EditText>(R.id.UserCardDesc1).setText(myDescription)
-        if (iconID != "") findViewById<ImageView>(R.id.userAvaCard).load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader(
+
+        setImageImageView(this, iconID, findViewById<ImageView>(R.id.userAvaCard))
+        /*if (iconID != "") findViewById<ImageView>(R.id.userAvaCard).load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader(
             "Authorization",
-            token_type + ' ' + access_token
-        ) }
+            myToken.token_type + ' ' + myToken.access_token
+        ) }*/
 
         if (userID == CurUserID) {
 
@@ -149,11 +142,7 @@ class UserCardActivity: AppCompatActivity() {
                     myPass
                 )
                 val outResponse = Gson().toJson(nUserUpdate)
-                val requestResult = URL(apiCurURL + "/users/userupdate/").sendJSONRequest(
-                    token_type,
-                    access_token,
-                    outResponse
-                )
+                val requestResult = URL(apiCurURL + "/users/userupdate/").sendJSONRequest(outResponse)
                 if (requestResult.toString() == "\"OK\"") isNeedUpdate = true
             }
 
@@ -171,11 +160,7 @@ class UserCardActivity: AppCompatActivity() {
                     base64Encoded
                 )
                 val outResponse = Gson().toJson(nUserUpdateIcon)
-                val requestResult = URL(apiCurURL + "/users/userupdateIcon/").sendJSONRequest(
-                    token_type,
-                    access_token,
-                    outResponse
-                )
+                val requestResult = URL(apiCurURL + "/users/userupdateIcon/").sendJSONRequest(outResponse)
                 isNeedUpdate = true
 
                 if ( (requestResult != "") and (requestResult.isDigitsOnly()) ) newIconID = requestResult.toInt()

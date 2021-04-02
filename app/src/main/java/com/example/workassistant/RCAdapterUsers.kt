@@ -6,24 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.view.menu.MenuView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
-import coil.load
-import coil.request.ImageRequest
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import java.net.URL
 
 
 class RCAdapterUsers (
         private val imageLoader: ImageLoader,
         private val roleUserCount: TextView,
-        private val token_type: String,
-        private val access_token: String,
-        private val apiURL:String,
         private val roleID: String,
         private val roleName: String,
         private val CadrParm: List<MyUser>) :
@@ -42,22 +33,24 @@ class RCAdapterUsers (
 
     override fun onBindViewHolder(holder: MyViewHolderUser, position: Int) {
 
-        val request = ImageRequest.Builder(holder.parent_view!!)
-                .data(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons)
-                .addHeader("Authorization", token_type + ' ' + access_token)
+        /*val request = ImageRequest.Builder(holder.parent_view!!)
+                .data(apiCurURL + "/icon/?fkey=" + CadrParm[position].f_icons)
+                .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
                 .build()
-
         GlobalScope.async {
             val resul = imageLoader.execute(request).drawable
             holder.userIcon_view?.load(resul)
-        }
+        }*/
+
+        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.userIcon_view!!)
+
 
         holder.UserLogin_view?.text = CadrParm[position].flogin
         holder.UserName_view?.text = CadrParm[position].fname
         holder.UserDescription_view?.text = CadrParm[position].fdescription
 
         holder.userIcon_view?.setOnLongClickListener {
-            holder.parent_view?.startActivity(Intent(holder.parent_view, UserCardActivity::class.java).putExtra("apiCurURL", apiURL).putExtra("CurUserID", CadrParm[position].fkey))
+            holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("CurUserID", CadrParm[position].fkey))
             true
         }
 
@@ -70,7 +63,7 @@ class RCAdapterUsers (
                 }
                 .setPositiveButton("Удалить") { dialog, which ->
                     // Respond to positive button press
-                    URL(apiURL + "/roles/del_user/?f_roles=" + roleID + "&f_users=" + CadrParm[position].fkey).getText(token_type, access_token)
+                    URL(apiCurURL + "/roles/del_user/?f_roles=" + roleID + "&f_users=" + CadrParm[position].fkey).getText()
                     holder.userCardView_view?.visibility = View.GONE
                     roleUserCount.setText((roleUserCount.text.toString().toInt()-1).toString())
                 }

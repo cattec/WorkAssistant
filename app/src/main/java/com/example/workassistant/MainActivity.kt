@@ -29,6 +29,13 @@ import java.util.*
 import kotlin.concurrent.schedule
 
 
+val apiURL_heroku: String = "https://wassistant.herokuapp.com"
+val apiURL_local: String = "http://10.226.96.21:5000"
+val apiCurURL: String = apiURL_local
+
+var imageLoader: ImageLoader? = null;
+var myToken: cToken = cToken(0, 0, "", "", "")
+
 class MainActivity : AppCompatActivity() {
 
     private var NOTIFY_ID: Int = 154
@@ -37,15 +44,8 @@ class MainActivity : AppCompatActivity() {
     val CHANEL_DESC = "Оповещение отметка здоровья"
     val CHANEL_TEXT = "Пожулйста заполните ежедневную предрабочую карточку состояния здоровья"
 
-    val apiURL_heroku: String = "https://wassistant.herokuapp.com"
-    val apiURL_local: String = "http://10.226.96.21:5000"
-    val apiCurURL: String = apiURL_local
-
-    var imageLoader: ImageLoader? = null;
-
     var categories = arrayOf<String>()
     var lastCategory: String = "Все"
-    var myToken: cToken = cToken(0, 0, "", "", "")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
@@ -80,8 +80,8 @@ class MainActivity : AppCompatActivity() {
         }
         catch (e: Exception)
         {
-            //Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
-            etInfoShow(e.toString())
+            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
+            //etInfoShow(e.toString())
         }
     }
 
@@ -115,14 +115,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         //Проверяем старый токен действует еще или уже нет, если вернуло ответ то токен еще рабочий
-        val result = URL(apiCurURL + "/users/me/").checkToken(token_type, access_token)
+        val result = URL(apiCurURL + "/users/me/").checkToken()
         if ( result != "" ) {
             myToken = cToken(userID, iconID, full_name, access_token, token_type)
             return true
         }
 
         //токен устарел надо попрбовать сделать новый с реквизитами последнего пользователя
-        val newToken = getNewToken(getSharedPreferences("UserInfo", 0), apiCurURL, myLogin, myPassword)
+        val newToken = getNewToken(getSharedPreferences("UserInfo", 0), myLogin, myPassword)
         if(newToken != null) {
             myToken = newToken
             return true
@@ -156,19 +156,20 @@ class MainActivity : AppCompatActivity() {
 
         val navHeader = myNav.getHeaderView(0)
         navHeader.findViewById<LinearLayout>(R.id.head_leyout).setOnClickListener {
-            startActivity(Intent(this, UserCardActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("CurUserID", userID))
+            startActivity(Intent(this, CardUserActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("CurUserID", userID))
             //Toast.makeText(this, "Open User Profile Card!", Toast.LENGTH_SHORT).show()
         }
 
         myNav.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_item_three0 -> startActivity(Intent(this, MessageCardActivity::class.java).putExtra("apiCurURL", apiCurURL)) //openCloseNavigationDrawer(findViewById<NavigationView>(R.id.nav_view))
+                R.id.nav_item_three0 -> startActivity(Intent(this, CardMessageActivity::class.java))
                 R.id.nav_item_three1 -> createINNCNotify()
                 R.id.nav_item_three2 -> startActivity(Intent(this, ChannelsListActivity::class.java))
                 R.id.nav_item_three3 -> startActivity(Intent(this, SupportActivity::class.java))
                 R.id.nav_item_three4 -> startActivity(Intent(this, HelpActivity::class.java))
-                R.id.nav_item_three5 -> startActivity(Intent(this, SettingsActivity::class.java).putExtra("apiCurURL", apiCurURL))
-                R.id.nav_item_three_change_user -> startActivity(Intent(this, LoginActivity::class.java).putExtra("apiCurURL", apiCurURL))
+                R.id.nav_item_three5 -> startActivity(Intent(this, SettingsActivity::class.java))
+                R.id.nav_item_admintools -> startActivity(Intent(this, AdminToolsActivity::class.java))
+                R.id.nav_item_three_change_user -> startActivity(Intent(this, LoginActivity::class.java))
             }
             true
         }
@@ -182,7 +183,7 @@ class MainActivity : AppCompatActivity() {
             .build()*/
         val rv = findViewById<RecyclerView>(R.id.rv)
         rv.layoutManager = LinearLayoutManager(this)
-        rv.adapter = RCAdapterNews(imageLoader!!, myToken.userID, myToken.token_type, myToken.access_token, getSharedPreferences("UserInfo", 0), apiCurURL, fillMessageList())
+        rv.adapter = RCAdapterNews(imageLoader!!, myToken.userID, getSharedPreferences("UserInfo", 0), fillMessageList())
 
         /*
         val rv = findViewById<RecyclerView>(R.id.rv)
@@ -320,7 +321,7 @@ class MainActivity : AppCompatActivity() {
     private fun fillMessageList(): List<MyMessage> {
         var curCategory = "none"
         if (lastCategory != "Все") curCategory = lastCategory
-        val res = URL(apiCurURL + "/messages/get/?fkey=0&categ_name=" + curCategory).getText(myToken.token_type, myToken.access_token)
+        val res = URL(apiCurURL + "/messages/get/?fkey=0&categ_name=" + curCategory).getText()
         return Gson().fromJson(res, Array<MyMessage>::class.java).asList()
     }
 
@@ -337,7 +338,7 @@ class MainActivity : AppCompatActivity() {
     fun changeCategory(view: View) {
         try {
            if (categories.size == 0) {
-               categories = getCategories(apiCurURL, myToken.token_type, myToken.access_token)
+               categories = getCategories()
            }
             MaterialAlertDialogBuilder(this)
                     .setTitle("Категория сообщения?")

@@ -9,9 +9,14 @@ import android.graphics.Bitmap
 import android.provider.MediaStore
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import coil.load
+import coil.request.ImageRequest
 import com.google.gson.Gson
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import java.net.URL
 import java.util.*
 
@@ -33,7 +38,8 @@ class MyRole (
         var fname: String,
         var fdescription: String,
         var usercount: Int,
-        var f_icons: Int
+        var f_icons: Int,
+        val fsystem: Boolean
 )
 
 class MyMessage (
@@ -92,13 +98,13 @@ class MyUserUpdateIcon (
     var fdata: String
 )
 
-fun getNewToken(settings: SharedPreferences, apiCurURL: String, myLogin: String, myPassword: String): cToken? {
+fun getNewToken(settings: SharedPreferences, myLogin: String, myPassword: String): cToken? {
 
     val tokenResponse = URL(apiCurURL + "/token").getToken(myLogin, myPassword)
 
     //Если не было ошибки то возвращаем токен
     if (!tokenResponse.contains("you_error_detail")) {
-        val myToken = Gson().fromJson(
+        val myNewToken = Gson().fromJson(
                 '[' + tokenResponse + ']',
                 Array<cToken>::class.java
         ) [0]
@@ -107,14 +113,14 @@ fun getNewToken(settings: SharedPreferences, apiCurURL: String, myLogin: String,
         val editor = settings.edit()
         editor.putString("myLogin", myLogin)
         editor.putString("myPassword", myPassword)
-        editor.putString("userID", myToken.userID.toString())
-        editor.putString("iconID", myToken.iconID.toString())
-        editor.putString("full_name", myToken.full_name)
-        editor.putString("token_type", myToken.token_type)
-        editor.putString("access_token", myToken.access_token)
+        editor.putString("userID", myNewToken.userID.toString())
+        editor.putString("iconID", myNewToken.iconID.toString())
+        editor.putString("full_name", myNewToken.full_name)
+        editor.putString("token_type", myNewToken.token_type)
+        editor.putString("access_token", myNewToken.access_token)
         editor.putString("token_limit_date", Calendar.getInstance().time.time.toString())
         editor.commit()
-        return myToken
+        return myNewToken
     } else {
         return null
     }
@@ -149,8 +155,8 @@ fun getFromCamera(ac: Activity): Intent? {
     return null
 }
 
-fun getCategories (apiCurURL: String, token_type: String, access_token: String): Array<String> {
-    val res = URL(apiCurURL + "/categories/").getText(token_type, access_token)
+fun getCategories (): Array<String> {
+    val res = URL(apiCurURL + "/categories/").getText()
     val data = Gson().fromJson(res, Array<MyCategories>::class.java).asList()
     return Array<String>(data.size) { i -> data[i].fname }
 }
@@ -176,4 +182,22 @@ fun resizeBitmap (maxSize: Int, bitmap: Bitmap): Bitmap {
         y = maxSize
     }
     return Bitmap.createScaledBitmap(cropedImg, x, y, true)
+}
+
+fun getImageFromURL(context: Context, f_icons: String): ImageRequest {
+    return ImageRequest.Builder(context)
+        .data(apiCurURL + "/icon/?fkey=" + f_icons)
+        .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
+        .build()
+}
+
+fun setImageImageView (context: Context, f_icons: String, imgView: ImageView) {
+    GlobalScope.async {
+        val request = ImageRequest.Builder(context)
+            .data(apiCurURL + "/icon/?fkey=" + f_icons)
+            .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
+            .build()
+        val resul = imageLoader!!.execute(request).drawable
+        imgView.load(resul)
+    }
 }

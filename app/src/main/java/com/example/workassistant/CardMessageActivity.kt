@@ -19,14 +19,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Base64
 
-class MessageCardActivity: AppCompatActivity()  {
+class CardMessageActivity: AppCompatActivity()  {
 
     var fkey: Int = 0
     var isNewIcon: Boolean = false
     var userID: String = ""
-    var token_type: String = ""
-    var access_token: String = ""
-    var apiCurURL: String = ""
     var old_fname: String = ""
     var old_fbody: String = ""
     var old_categ_name: String = ""
@@ -35,18 +32,15 @@ class MessageCardActivity: AppCompatActivity()  {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.message_card)
 
-        apiCurURL = intent.extras!!.getString("apiCurURL").toString()
         val cfkey = intent.extras!!.getString("f_messages")
         if (cfkey != null)
             if (cfkey.isDigitsOnly()) fkey = cfkey.toInt()
 
         val settings = getSharedPreferences("UserInfo", 0)
         userID = settings.getString("userID", "").toString()
-        token_type = settings.getString("token_type", "").toString()
-        access_token = settings.getString("access_token", "").toString()
 
         if (fkey > 0) {
-            val res = URL(apiCurURL + "/messages/get/?fkey=" + fkey.toString() + "&categ_name=none").getText(token_type, access_token)
+            val res = URL(apiCurURL + "/messages/get/?fkey=" + fkey.toString() + "&categ_name=none").getText()
             val curMessage = Gson().fromJson(res, Array<MyMessage>::class.java).asList()
             old_fname = curMessage[0].fname
             old_fbody = curMessage[0].fbody
@@ -55,8 +49,9 @@ class MessageCardActivity: AppCompatActivity()  {
             findViewById<TextView>(R.id.tMesDate).setText(curMessage[0].fdatecreate)
             findViewById<EditText>(R.id.tMesText).setText(curMessage[0].fbody)
             findViewById<TextView>(R.id.tMesCateg).setText(curMessage[0].categ_name)
-            if (curMessage[0].f_icons != "")
-                findViewById<ImageView>(R.id.imgCard).load(apiCurURL + "/icon/?fkey=" + curMessage[0].f_icons) { addHeader("Authorization",token_type + ' ' + access_token) }
+            setImageImageView(this, curMessage[0].f_icons, findViewById<ImageView>(R.id.imgCard))
+            /*if (curMessage[0].f_icons != "")
+                findViewById<ImageView>(R.id.imgCard).load(apiCurURL + "/icon/?fkey=" + curMessage[0].f_icons) { addHeader("Authorization",myToken.token_type + ' ' + myToken.access_token) }*/
         } else {
             val mesDate = SimpleDateFormat("HH:mm dd.MM.yyyy").format(Calendar.getInstance().time)
             findViewById<TextView>(R.id.tMesDate).setText(mesDate)
@@ -99,7 +94,7 @@ class MessageCardActivity: AppCompatActivity()  {
         if (fkey > 0) {
             if ((fname != old_fname) or (fbody != old_fbody) or (categ_name != old_categ_name) ) {
                 //что то измениллось апдейтим запись
-                val requestResult = URL(apiCurURL + "/messages/save/").sendJSONRequest(token_type, access_token, outResponse)
+                val requestResult = URL(apiCurURL + "/messages/save/").sendJSONRequest(outResponse)
                 isSave = true
             }
         } else {
@@ -110,7 +105,7 @@ class MessageCardActivity: AppCompatActivity()  {
                 Toast.makeText(this, "Cat't save message NO Message Text!", Toast.LENGTH_LONG)
                     .show()
             } else {
-                val requestResult = URL(apiCurURL + "/messages/save/").sendJSONRequest(token_type, access_token, outResponse)
+                val requestResult = URL(apiCurURL + "/messages/save/").sendJSONRequest(outResponse)
                 if ((requestResult != "") and (requestResult.isDigitsOnly())) {
                     //Сохраняем ключ новой записи
                     fkey = requestResult.toInt()
@@ -134,11 +129,7 @@ class MessageCardActivity: AppCompatActivity()  {
                     base64Encoded
                 )
                 val outResponse = Gson().toJson(nUserUpdateIcon)
-                val requestResult = URL(apiCurURL + "/messages/updateicon/").sendJSONRequest(
-                    token_type,
-                    access_token,
-                    outResponse
-                )
+                val requestResult = URL(apiCurURL + "/messages/updateicon/").sendJSONRequest(outResponse)
                 isSave = true
             }
         }
@@ -150,7 +141,7 @@ class MessageCardActivity: AppCompatActivity()  {
             /*val res = URL(apiCurURL + "/categories/").getText(token_type, access_token)
             val data = Gson().fromJson(res, Array<MyCategories>::class.java).asList()
             val categories = Array<String>(data.size) { i -> data[i].fname }*/
-            val categories = getCategories(apiCurURL, token_type, access_token)
+            val categories = getCategories()
             MaterialAlertDialogBuilder(ac)
                     .setTitle("Категория сообщения?")
                     .setIcon(R.drawable.arni)
