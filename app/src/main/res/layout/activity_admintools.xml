@@ -12,7 +12,7 @@
             android:id="@+id/toolbar4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
+            android:background="@color/teal_700"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme" />
 
@@ -27,6 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
+                android:backgroundTint="@color/back1_red"
                 android:text="@string/addNewRoleStr" />
 
             <androidx.recyclerview.widget.RecyclerView

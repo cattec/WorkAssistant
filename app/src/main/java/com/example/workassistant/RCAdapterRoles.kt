@@ -45,7 +45,7 @@ class RCAdapterRoles (
             val resul = imageLoader.execute(request).drawable
             holder.userIcon_view?.load(resul)
         }*/
-        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons.toString(), holder.userIcon_view!!)
+        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons.toString(), holder.roleIcon_view!!)
 
         holder.roleName_view?.text = CadrParm[position].fname
         holder.roleUserCount_view?.text = CadrParm[position].usercount.toString()
@@ -79,6 +79,11 @@ class RCAdapterRoles (
                 holder.rvUsers_view?.layoutManager = LinearLayoutManager(holder.parent_view)
                 holder.rvUsers_view?.adapter = refreshAdapter(holder.roleUserCount_view!!, CadrParm[position].fkey.toString(),CadrParm[position].fname)
             }
+        }
+
+        holder.roleIcon_view?.setOnLongClickListener {
+            holder.parent_view?.startActivity(Intent(holder.parent_view, CardRoleActivity::class.java).putExtra("CurRoleID", CadrParm[position].fkey.toString()))
+            true
         }
 
     }
@@ -117,7 +122,7 @@ class RCAdapterRoles (
     }
 
     class MyViewHolderRole(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var userIcon_view: ImageView? = null
+        var roleIcon_view: ImageView? = null
         var roleName_view: TextView? = null
         var roleUserCount_view: TextView? = null
         var roleDescription_view: TextView? = null
@@ -129,7 +134,7 @@ class RCAdapterRoles (
         var btnDeleteRole_view: Button? = null
 
         init {
-            userIcon_view = itemView?.findViewById(R.id.userIcon)
+            roleIcon_view = itemView?.findViewById(R.id.userIcon)
             roleName_view = itemView?.findViewById(R.id.roleName)
             roleUserCount_view = itemView?.findViewById(R.id.roleUserCount)
             roleDescription_view = itemView?.findViewById(R.id.roleDescription)

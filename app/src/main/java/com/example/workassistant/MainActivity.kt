@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity() {
 
         val navHeader = myNav.getHeaderView(0)
         navHeader.findViewById<LinearLayout>(R.id.head_leyout).setOnClickListener {
-            startActivity(Intent(this, CardUserActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("CurUserID", userID))
+            startActivity(Intent(this, CardUserActivity::class.java).putExtra("CurUserID", userID))
             //Toast.makeText(this, "Open User Profile Card!", Toast.LENGTH_SHORT).show()
         }
 
@@ -183,7 +183,7 @@ class MainActivity : AppCompatActivity() {
             .build()*/
         val rv = findViewById<RecyclerView>(R.id.rv)
         rv.layoutManager = LinearLayoutManager(this)
-        rv.adapter = RCAdapterNews(imageLoader!!, myToken.userID, getSharedPreferences("UserInfo", 0), fillMessageList())
+        rv.adapter = RCAdapterMessage(imageLoader!!, myToken.userID, getSharedPreferences("UserInfo", 0), fillMessageList())
 
         /*
         val rv = findViewById<RecyclerView>(R.id.rv)

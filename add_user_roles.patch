@@ -1,0 +1,1133 @@
+Index: app/src/main/java/com/example/workassistant/LoginActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/workassistant/LoginActivity.kt	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/java/com/example/workassistant/LoginActivity.kt	(date 1617362375414)
+@@ -13,7 +13,6 @@
+ 
+ class LoginActivity : AppCompatActivity() {
+ 
+-    var apiCurURL: String = ""
+     var myToken: cToken? = null
+     var oldLogin: String = ""
+ 
+@@ -37,7 +36,6 @@
+         findViewById<EditText>(R.id.ePass).setText(myPassword)
+         oldLogin = myLogin
+ 
+-        apiCurURL = intent.extras!!.getString("apiCurURL").toString()
+     }
+ 
+     fun pressOK(view: View) {
+@@ -45,7 +43,7 @@
+             val myLogin = findViewById<EditText>(R.id.eLogin).text.toString()
+             val myPassword = findViewById<EditText>(R.id.ePass).text.toString()
+ 
+-            myToken = getNewToken(getSharedPreferences("UserInfo", 0), apiCurURL, myLogin, myPassword)
++            myToken = getNewToken(getSharedPreferences("UserInfo", 0), myLogin, myPassword)
+ 
+             if(myToken != null) {
+                 if (oldLogin == myLogin)
+Index: app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_main.xml	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/res/layout/activity_main.xml	(date 1617358413227)
+@@ -145,6 +145,7 @@
+                     android:id="@+id/rv"
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent"
++                    android:scrollbars="vertical"
+                     app:layout_constraintBottom_toBottomOf="parent"
+                     app:layout_constraintEnd_toEndOf="parent"
+                     app:layout_constraintStart_toStartOf="parent"
+Index: app/src/main/res/layout/settings_screen.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/settings_screen.xml	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/res/layout/settings_screen.xml	(date 1617362125452)
+@@ -51,25 +51,5 @@
+ 
+         </LinearLayout>
+ 
+-        <LinearLayout
+-            android:layout_width="match_parent"
+-            android:layout_height="wrap_content"
+-            android:orientation="vertical">
+-
+-            <Button
+-                android:id="@+id/addNewRole"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:layout_marginLeft="10dp"
+-                android:layout_marginRight="10dp"
+-                android:text="@string/addNewRoleStr" />
+-
+-            <androidx.recyclerview.widget.RecyclerView
+-                android:id="@+id/rvRoles"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content" />
+-
+-        </LinearLayout>
+-
+     </LinearLayout>
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/strings.xml	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/res/values/strings.xml	(date 1617361827329)
+@@ -73,4 +73,5 @@
+     <string name="addNewRoleStr">Добавить новую роль</string>
+     <string name="btnDeleteRoleStr">Удалить роль</string>
+     <string name="findStringHint">введите строку для поиска...</string>
++    <string name="m_sup_admintools_text">Администрирование</string>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/java/com/example/workassistant/RCAdapterRoles.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/workassistant/RCAdapterRoles.kt	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/java/com/example/workassistant/RCAdapterRoles.kt	(date 1617356992072)
+@@ -20,9 +20,6 @@
+ 
+ class RCAdapterRoles (
+         private val imageLoader: ImageLoader,
+-        private val token_type: String,
+-        private val access_token: String,
+-        private val apiURL:String,
+         private val CadrParm: List<MyRole>) :
+         RecyclerView.Adapter<RCAdapterRoles.MyViewHolderRole>() {
+ 
+@@ -39,15 +36,16 @@
+ 
+     override fun onBindViewHolder(holder: MyViewHolderRole, position: Int) {
+ 
+-        val request = ImageRequest.Builder(holder.parent_view!!)
+-                .data(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons.toString())
+-                .addHeader("Authorization", token_type + ' ' + access_token)
++        /*val request = ImageRequest.Builder(holder.parent_view!!)
++                .data(apiCurURL + "/icon/?fkey=" + CadrParm[position].f_icons.toString())
++                .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
+                 .build()
+ 
+         GlobalScope.async {
+             val resul = imageLoader.execute(request).drawable
+             holder.userIcon_view?.load(resul)
+-        }
++        }*/
++        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons.toString(), holder.userIcon_view!!)
+ 
+         holder.roleName_view?.text = CadrParm[position].fname
+         holder.roleUserCount_view?.text = CadrParm[position].usercount.toString()
+@@ -86,7 +84,7 @@
+     }
+ 
+     fun addUserToRole(contex: Context, rv: RecyclerView, roleUserCount: TextView, fkey: String, roleName: String) {
+-        val res = URL(apiURL + "/roles/role_users/?in_role=false&f_roles=" + fkey).getText(token_type, access_token)
++        val res = URL(apiCurURL + "/roles/role_users/?in_role=false&f_roles=" + fkey).getText()
+         val data = Gson().fromJson(res, Array<MyCategories>::class.java).asList()
+         val users = Array<String>(data.size) { i -> "[" + data[i].fkey.toString() + "] " + data[i].fname }
+         //val users_checked = BooleanArray(data.size) { i -> false }
+@@ -106,15 +104,15 @@
+         val idbeg = userStr.indexOf("[",0,true) + 1
+         val idend =  userStr.indexOf("]",0,true)
+         var userID: String = userStr.substring(idbeg, idend)
+-        URL(apiURL + "/roles/add_user/?f_roles=" + f_roles + "&f_users=" + userID).getText(token_type, access_token)
++        URL(apiCurURL + "/roles/add_user/?f_roles=" + f_roles + "&f_users=" + userID).getText()
+     }
+ 
+     private fun refreshAdapter(roleUserCount: TextView, fkey: String, fname: String): RCAdapterUsers {
+-        return RCAdapterUsers(imageLoader, roleUserCount, token_type, access_token, apiURL, fkey, fname, fillUsersInRole(fkey))
++        return RCAdapterUsers(imageLoader, roleUserCount, fkey, fname, fillUsersInRole(fkey))
+     }
+ 
+     private fun fillUsersInRole(fkey: String): List<MyUser> {
+-        val res = URL(apiURL + "/roles/role_users/?in_role=true&f_roles=" + fkey).getText(token_type,access_token)
++        val res = URL(apiCurURL + "/roles/role_users/?in_role=true&f_roles=" + fkey).getText()
+         return Gson().fromJson(res, Array<MyUser>::class.java).asList()
+     }
+ 
+Index: app/src/main/java/com/example/workassistant/MessageCardActivity.kt
+===================================================================
+--- app/src/main/java/com/example/workassistant/MessageCardActivity.kt	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/java/com/example/workassistant/CardMessageActivity.kt	(date 1617357855960)
+@@ -19,14 +19,11 @@
+ import java.util.*
+ import java.util.Base64
+ 
+-class MessageCardActivity: AppCompatActivity()  {
++class CardMessageActivity: AppCompatActivity()  {
+ 
+     var fkey: Int = 0
+     var isNewIcon: Boolean = false
+     var userID: String = ""
+-    var token_type: String = ""
+-    var access_token: String = ""
+-    var apiCurURL: String = ""
+     var old_fname: String = ""
+     var old_fbody: String = ""
+     var old_categ_name: String = ""
+@@ -35,18 +32,15 @@
+         super.onCreate(savedInstanceState)
+         setContentView(R.layout.message_card)
+ 
+-        apiCurURL = intent.extras!!.getString("apiCurURL").toString()
+         val cfkey = intent.extras!!.getString("f_messages")
+         if (cfkey != null)
+             if (cfkey.isDigitsOnly()) fkey = cfkey.toInt()
+ 
+         val settings = getSharedPreferences("UserInfo", 0)
+         userID = settings.getString("userID", "").toString()
+-        token_type = settings.getString("token_type", "").toString()
+-        access_token = settings.getString("access_token", "").toString()
+ 
+         if (fkey > 0) {
+-            val res = URL(apiCurURL + "/messages/get/?fkey=" + fkey.toString() + "&categ_name=none").getText(token_type, access_token)
++            val res = URL(apiCurURL + "/messages/get/?fkey=" + fkey.toString() + "&categ_name=none").getText()
+             val curMessage = Gson().fromJson(res, Array<MyMessage>::class.java).asList()
+             old_fname = curMessage[0].fname
+             old_fbody = curMessage[0].fbody
+@@ -55,8 +49,9 @@
+             findViewById<TextView>(R.id.tMesDate).setText(curMessage[0].fdatecreate)
+             findViewById<EditText>(R.id.tMesText).setText(curMessage[0].fbody)
+             findViewById<TextView>(R.id.tMesCateg).setText(curMessage[0].categ_name)
+-            if (curMessage[0].f_icons != "")
+-                findViewById<ImageView>(R.id.imgCard).load(apiCurURL + "/icon/?fkey=" + curMessage[0].f_icons) { addHeader("Authorization",token_type + ' ' + access_token) }
++            setImageImageView(this, curMessage[0].f_icons, findViewById<ImageView>(R.id.imgCard))
++            /*if (curMessage[0].f_icons != "")
++                findViewById<ImageView>(R.id.imgCard).load(apiCurURL + "/icon/?fkey=" + curMessage[0].f_icons) { addHeader("Authorization",myToken.token_type + ' ' + myToken.access_token) }*/
+         } else {
+             val mesDate = SimpleDateFormat("HH:mm dd.MM.yyyy").format(Calendar.getInstance().time)
+             findViewById<TextView>(R.id.tMesDate).setText(mesDate)
+@@ -99,7 +94,7 @@
+         if (fkey > 0) {
+             if ((fname != old_fname) or (fbody != old_fbody) or (categ_name != old_categ_name) ) {
+                 //что то измениллось апдейтим запись
+-                val requestResult = URL(apiCurURL + "/messages/save/").sendJSONRequest(token_type, access_token, outResponse)
++                val requestResult = URL(apiCurURL + "/messages/save/").sendJSONRequest(outResponse)
+                 isSave = true
+             }
+         } else {
+@@ -110,7 +105,7 @@
+                 Toast.makeText(this, "Cat't save message NO Message Text!", Toast.LENGTH_LONG)
+                     .show()
+             } else {
+-                val requestResult = URL(apiCurURL + "/messages/save/").sendJSONRequest(token_type, access_token, outResponse)
++                val requestResult = URL(apiCurURL + "/messages/save/").sendJSONRequest(outResponse)
+                 if ((requestResult != "") and (requestResult.isDigitsOnly())) {
+                     //Сохраняем ключ новой записи
+                     fkey = requestResult.toInt()
+@@ -134,11 +129,7 @@
+                     base64Encoded
+                 )
+                 val outResponse = Gson().toJson(nUserUpdateIcon)
+-                val requestResult = URL(apiCurURL + "/messages/updateicon/").sendJSONRequest(
+-                    token_type,
+-                    access_token,
+-                    outResponse
+-                )
++                val requestResult = URL(apiCurURL + "/messages/updateicon/").sendJSONRequest(outResponse)
+                 isSave = true
+             }
+         }
+@@ -150,7 +141,7 @@
+             /*val res = URL(apiCurURL + "/categories/").getText(token_type, access_token)
+             val data = Gson().fromJson(res, Array<MyCategories>::class.java).asList()
+             val categories = Array<String>(data.size) { i -> data[i].fname }*/
+-            val categories = getCategories(apiCurURL, token_type, access_token)
++            val categories = getCategories()
+             MaterialAlertDialogBuilder(ac)
+                     .setTitle("Категория сообщения?")
+                     .setIcon(R.drawable.arni)
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/AndroidManifest.xml	(date 1617362286896)
+@@ -36,9 +36,10 @@
+             </intent-filter>
+         </activity>
+         <activity android:name=".LoginActivity" />
+-        <activity android:name=".MessageCardActivity" />
++        <activity android:name=".CardMessageActivity" />
++        <activity android:name=".AdminToolsActivity" />
+         <activity android:name=".RegUserActivity" />
+-        <activity android:name=".UserCardActivity" />
++        <activity android:name=".CardUserActivity" />
+         <activity android:name=".HelpActivity" />
+         <activity android:name=".SettingsActivity" />
+         <activity android:name=".SupportActivity" />
+Index: app/src/main/java/com/example/workassistant/RegUserActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/workassistant/RegUserActivity.kt	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/java/com/example/workassistant/RegUserActivity.kt	(date 1617357677963)
+@@ -10,15 +10,12 @@
+ 
+ class RegUserActivity : AppCompatActivity() {
+ 
+-    var apiCurURL: String = ""
+     val sa_pass: String = "544f336d43472b586d4e63314141484b4b6e764a58673d3d"
+ 
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+         setContentView(R.layout.reg_user_screen)
+ 
+-        apiCurURL = intent.extras!!.getString("apiCurURL").toString()
+-
+         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+         setSupportActionBar(toolbar)
+         supportActionBar!!.setDisplayShowTitleEnabled(true)
+@@ -61,7 +58,7 @@
+ 
+                                     Toast.makeText(this, "Новый логин создан!", Toast.LENGTH_LONG).show()
+                                     //получаем новый токен
+-                                    getNewToken(getSharedPreferences("UserInfo", 0), apiCurURL, login, pass)
++                                    myToken = getNewToken(getSharedPreferences("UserInfo", 0), login, pass)!!
+                                     //преезапускаем приложение
+                                     //finish()
+                                     exitProcess(0)
+Index: app/src/main/java/com/example/workassistant/MyURLMetods.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/workassistant/MyURLMetods.kt	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/java/com/example/workassistant/MyURLMetods.kt	(date 1617351385663)
+@@ -6,10 +6,10 @@
+ import java.net.URL
+ 
+ 
+-fun URL.getText(token_type: String, access_token: String): String {
++fun URL.getText(): String {
+     return openConnection().run {
+         this as HttpURLConnection
+-        setRequestProperty("Authorization", token_type + ' ' + access_token);
++        setRequestProperty("Authorization", myToken.token_type + ' ' + myToken.access_token);
+         inputStream.bufferedReader().readText()
+     }
+ }
+@@ -21,32 +21,32 @@
+     }
+ }
+ 
+-fun URL.getIcon(token_type: String, access_token: String): InputStream {
++fun URL.getIcon(): InputStream {
+     return openConnection().run {
+         this as HttpURLConnection
+         doInput = true
+-        setRequestProperty("Authorization", token_type + ' ' + access_token);
++        setRequestProperty("Authorization", myToken.token_type + ' ' + myToken.access_token);
+         inputStream
+     }
+ }
+ 
+-fun URL.saveIcon(token_type: String, access_token: String): InputStream {
++fun URL.saveIcon(): InputStream {
+     return openConnection().run {
+         this as HttpURLConnection
+         doInput = true
+-        setRequestProperty("Authorization", token_type + ' ' + access_token);
++        setRequestProperty("Authorization", myToken.token_type + ' ' + myToken.access_token);
+         inputStream
+     }
+ }
+ 
+ 
+-fun URL.sendJSONRequest(token_type: String, access_token: String, outComment:String): String{
++fun URL.sendJSONRequest(outComment:String): String{
+     return openConnection().run {
+         this as HttpURLConnection
+         doOutput = true
+         doInput = true
+         requestMethod = "POST"
+-        setRequestProperty("Authorization", token_type + ' ' + access_token);
++        setRequestProperty("Authorization", myToken.token_type + ' ' + myToken.access_token);
+         setRequestProperty("Content-Type", "application/json");
+         setRequestProperty("Accept", "application/json");
+         outputStream.write(outComment.toByteArray())
+@@ -61,11 +61,11 @@
+ }
+ 
+ 
+-fun URL.checkToken(token_type: String, access_token: String): String {
++fun URL.checkToken(): String {
+     return openConnection().run {
+         this as HttpURLConnection
+         requestMethod = "GET"
+-        setRequestProperty("Authorization", token_type + ' ' + access_token);
++        setRequestProperty("Authorization", myToken.token_type + ' ' + myToken.access_token);
+ 
+         if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+             return ""
+Index: app/src/main/java/com/example/workassistant/MyClasses.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/workassistant/MyClasses.kt	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/java/com/example/workassistant/MyClasses.kt	(date 1617360931476)
+@@ -9,9 +9,14 @@
+ import android.provider.MediaStore
+ import android.view.View
+ import android.view.inputmethod.InputMethodManager
++import android.widget.ImageView
+ import androidx.core.app.ActivityCompat
+ import androidx.core.content.ContextCompat
++import coil.load
++import coil.request.ImageRequest
+ import com.google.gson.Gson
++import kotlinx.coroutines.GlobalScope
++import kotlinx.coroutines.async
+ import java.net.URL
+ import java.util.*
+ 
+@@ -33,7 +38,8 @@
+         var fname: String,
+         var fdescription: String,
+         var usercount: Int,
+-        var f_icons: Int
++        var f_icons: Int,
++        val fsystem: Boolean
+ )
+ 
+ class MyMessage (
+@@ -92,13 +98,13 @@
+     var fdata: String
+ )
+ 
+-fun getNewToken(settings: SharedPreferences, apiCurURL: String, myLogin: String, myPassword: String): cToken? {
++fun getNewToken(settings: SharedPreferences, myLogin: String, myPassword: String): cToken? {
+ 
+     val tokenResponse = URL(apiCurURL + "/token").getToken(myLogin, myPassword)
+ 
+     //Если не было ошибки то возвращаем токен
+     if (!tokenResponse.contains("you_error_detail")) {
+-        val myToken = Gson().fromJson(
++        val myNewToken = Gson().fromJson(
+                 '[' + tokenResponse + ']',
+                 Array<cToken>::class.java
+         ) [0]
+@@ -107,14 +113,14 @@
+         val editor = settings.edit()
+         editor.putString("myLogin", myLogin)
+         editor.putString("myPassword", myPassword)
+-        editor.putString("userID", myToken.userID.toString())
+-        editor.putString("iconID", myToken.iconID.toString())
+-        editor.putString("full_name", myToken.full_name)
+-        editor.putString("token_type", myToken.token_type)
+-        editor.putString("access_token", myToken.access_token)
++        editor.putString("userID", myNewToken.userID.toString())
++        editor.putString("iconID", myNewToken.iconID.toString())
++        editor.putString("full_name", myNewToken.full_name)
++        editor.putString("token_type", myNewToken.token_type)
++        editor.putString("access_token", myNewToken.access_token)
+         editor.putString("token_limit_date", Calendar.getInstance().time.time.toString())
+         editor.commit()
+-        return myToken
++        return myNewToken
+     } else {
+         return null
+     }
+@@ -149,8 +155,8 @@
+     return null
+ }
+ 
+-fun getCategories (apiCurURL: String, token_type: String, access_token: String): Array<String> {
+-    val res = URL(apiCurURL + "/categories/").getText(token_type, access_token)
++fun getCategories (): Array<String> {
++    val res = URL(apiCurURL + "/categories/").getText()
+     val data = Gson().fromJson(res, Array<MyCategories>::class.java).asList()
+     return Array<String>(data.size) { i -> data[i].fname }
+ }
+@@ -176,4 +182,22 @@
+         y = maxSize
+     }
+     return Bitmap.createScaledBitmap(cropedImg, x, y, true)
++}
++
++fun getImageFromURL(context: Context, f_icons: String): ImageRequest {
++    return ImageRequest.Builder(context)
++        .data(apiCurURL + "/icon/?fkey=" + f_icons)
++        .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
++        .build()
++}
++
++fun setImageImageView (context: Context, f_icons: String, imgView: ImageView) {
++    GlobalScope.async {
++        val request = ImageRequest.Builder(context)
++            .data(apiCurURL + "/icon/?fkey=" + f_icons)
++            .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
++            .build()
++        val resul = imageLoader!!.execute(request).drawable
++        imgView.load(resul)
++    }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/workassistant/RCAdapterNews.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/workassistant/RCAdapterNews.kt	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/java/com/example/workassistant/RCAdapterNews.kt	(date 1617357856056)
+@@ -12,21 +12,14 @@
+ import androidx.recyclerview.widget.LinearLayoutManager
+ import androidx.recyclerview.widget.RecyclerView
+ import coil.ImageLoader
+-import coil.load
+-import coil.request.ImageRequest
+ import com.google.gson.Gson
+-import kotlinx.coroutines.GlobalScope
+-import kotlinx.coroutines.async
+ import java.net.URL
+ 
+ 
+ class RCAdapterNews(
+     private val imageLoader: ImageLoader,
+     private val userID: Int,
+-    private val token_type: String,
+-    private val access_token: String,
+     private val settings: SharedPreferences,
+-    private val apiURL: String,
+     private val CadrParm: List<MyMessage>
+ ) :
+     RecyclerView.Adapter<RCAdapterNews.MyViewHolderMessage>() {
+@@ -48,16 +41,18 @@
+         //holder.imgCardSmall_view?.load(img)
+         //holder.imgCard_view?.load(img)
+ 
+-        val request = ImageRequest.Builder(holder.parent_view!!)
+-            .data(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons)
+-            .addHeader("Authorization", token_type + ' ' + access_token)
++        /*val request = ImageRequest.Builder(holder.parent_view!!)
++            .data(apiCurURL + "/icon/?fkey=" + CadrParm[position].f_icons)
++            .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
+             .build()
+ 
+         GlobalScope.async {
+             val resul = imageLoader.execute(request).drawable
+             holder.imgCardSmall_view?.load(resul)
+             holder.imgCard_view?.load(resul)
+-        }
++        }*/
++
++        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.imgCard_view!!)
+ 
+         holder.tCard1_view?.text = CadrParm[position].fname
+         holder.tCard2_view?.text = CadrParm[position].fbody
+@@ -76,7 +71,7 @@
+         }
+ 
+         holder.imgCard_view?.setOnLongClickListener {
+-            holder.parent_view?.startActivity(Intent(holder.parent_view, MessageCardActivity::class.java).putExtra("apiCurURL", apiURL).putExtra("f_messages", CadrParm[position].fkey))
++            holder.parent_view?.startActivity(Intent(holder.parent_view, CardMessageActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("f_messages", CadrParm[position].fkey))
+             true
+         }
+ 
+@@ -114,11 +109,7 @@
+                         CadrParm[position].fkey.toInt()
+                 )
+                 val outComment = Gson().toJson(nMess)
+-                val requestResult = URL(apiURL + "/comments/add/").sendJSONRequest(
+-                        token_type,
+-                        access_token,
+-                        outComment
+-                )
++                val requestResult = URL(apiCurURL + "/comments/add/").sendJSONRequest(outComment)
+                 //Toast.makeText(holder.parent_view, requestResult, Toast.LENGTH_LONG).show()
+                 holder.tvComment_text_view?.text = null
+                 holder.parent_view?.hideKeyBoard(it)
+@@ -129,17 +120,11 @@
+     }
+ 
+     private fun refreshAdapter(fkey: String): RCAdapterComment {
+-        return RCAdapterComment(
+-            imageLoader, token_type, access_token, apiURL,
+-            fillComments(fkey)
+-        )
++        return RCAdapterComment(imageLoader,fillComments(fkey))
+     }
+ 
+     private fun fillComments(fkey: String): List<MyComment> {
+-        val res = URL(apiURL + "/comments/?f_messages=" + fkey).getText(
+-            token_type,
+-            access_token
+-        )
++        val res = URL(apiCurURL + "/comments/?f_messages=" + fkey).getText()
+         val data = Gson().fromJson(res, Array<MyComment>::class.java).asList()
+         return data
+     }
+Index: app/src/main/java/com/example/workassistant/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/workassistant/MainActivity.kt	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/java/com/example/workassistant/MainActivity.kt	(date 1617362483295)
+@@ -29,6 +29,13 @@
+ import kotlin.concurrent.schedule
+ 
+ 
++val apiURL_heroku: String = "https://wassistant.herokuapp.com"
++val apiURL_local: String = "http://10.226.96.21:5000"
++val apiCurURL: String = apiURL_local
++
++var imageLoader: ImageLoader? = null;
++var myToken: cToken = cToken(0, 0, "", "", "")
++
+ class MainActivity : AppCompatActivity() {
+ 
+     private var NOTIFY_ID: Int = 154
+@@ -37,15 +44,8 @@
+     val CHANEL_DESC = "Оповещение отметка здоровья"
+     val CHANEL_TEXT = "Пожулйста заполните ежедневную предрабочую карточку состояния здоровья"
+ 
+-    val apiURL_heroku: String = "https://wassistant.herokuapp.com"
+-    val apiURL_local: String = "http://10.226.96.21:5000"
+-    val apiCurURL: String = apiURL_local
+-
+-    var imageLoader: ImageLoader? = null;
+-
+     var categories = arrayOf<String>()
+     var lastCategory: String = "Все"
+-    var myToken: cToken = cToken(0, 0, "", "", "")
+ 
+     override fun onCreate(savedInstanceState: Bundle?) {
+         try {
+@@ -80,8 +80,8 @@
+         }
+         catch (e: Exception)
+         {
+-            //Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
+-            etInfoShow(e.toString())
++            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
++            //etInfoShow(e.toString())
+         }
+     }
+ 
+@@ -115,14 +115,14 @@
+         }
+ 
+         //Проверяем старый токен действует еще или уже нет, если вернуло ответ то токен еще рабочий
+-        val result = URL(apiCurURL + "/users/me/").checkToken(token_type, access_token)
++        val result = URL(apiCurURL + "/users/me/").checkToken()
+         if ( result != "" ) {
+             myToken = cToken(userID, iconID, full_name, access_token, token_type)
+             return true
+         }
+ 
+         //токен устарел надо попрбовать сделать новый с реквизитами последнего пользователя
+-        val newToken = getNewToken(getSharedPreferences("UserInfo", 0), apiCurURL, myLogin, myPassword)
++        val newToken = getNewToken(getSharedPreferences("UserInfo", 0), myLogin, myPassword)
+         if(newToken != null) {
+             myToken = newToken
+             return true
+@@ -156,19 +156,20 @@
+ 
+         val navHeader = myNav.getHeaderView(0)
+         navHeader.findViewById<LinearLayout>(R.id.head_leyout).setOnClickListener {
+-            startActivity(Intent(this, UserCardActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("CurUserID", userID))
++            startActivity(Intent(this, CardUserActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("CurUserID", userID))
+             //Toast.makeText(this, "Open User Profile Card!", Toast.LENGTH_SHORT).show()
+         }
+ 
+         myNav.setNavigationItemSelectedListener { menuItem ->
+             when (menuItem.itemId) {
+-                R.id.nav_item_three0 -> startActivity(Intent(this, MessageCardActivity::class.java).putExtra("apiCurURL", apiCurURL)) //openCloseNavigationDrawer(findViewById<NavigationView>(R.id.nav_view))
++                R.id.nav_item_three0 -> startActivity(Intent(this, CardMessageActivity::class.java))
+                 R.id.nav_item_three1 -> createINNCNotify()
+                 R.id.nav_item_three2 -> startActivity(Intent(this, ChannelsListActivity::class.java))
+                 R.id.nav_item_three3 -> startActivity(Intent(this, SupportActivity::class.java))
+                 R.id.nav_item_three4 -> startActivity(Intent(this, HelpActivity::class.java))
+-                R.id.nav_item_three5 -> startActivity(Intent(this, SettingsActivity::class.java).putExtra("apiCurURL", apiCurURL))
+-                R.id.nav_item_three_change_user -> startActivity(Intent(this, LoginActivity::class.java).putExtra("apiCurURL", apiCurURL))
++                R.id.nav_item_three5 -> startActivity(Intent(this, SettingsActivity::class.java))
++                R.id.nav_item_admintools -> startActivity(Intent(this, AdminToolsActivity::class.java))
++                R.id.nav_item_three_change_user -> startActivity(Intent(this, LoginActivity::class.java))
+             }
+             true
+         }
+@@ -182,7 +183,7 @@
+             .build()*/
+         val rv = findViewById<RecyclerView>(R.id.rv)
+         rv.layoutManager = LinearLayoutManager(this)
+-        rv.adapter = RCAdapterNews(imageLoader!!, myToken.userID, myToken.token_type, myToken.access_token, getSharedPreferences("UserInfo", 0), apiCurURL, fillMessageList())
++        rv.adapter = RCAdapterNews(imageLoader!!, myToken.userID, getSharedPreferences("UserInfo", 0), fillMessageList())
+ 
+         /*
+         val rv = findViewById<RecyclerView>(R.id.rv)
+@@ -320,7 +321,7 @@
+     private fun fillMessageList(): List<MyMessage> {
+         var curCategory = "none"
+         if (lastCategory != "Все") curCategory = lastCategory
+-        val res = URL(apiCurURL + "/messages/get/?fkey=0&categ_name=" + curCategory).getText(myToken.token_type, myToken.access_token)
++        val res = URL(apiCurURL + "/messages/get/?fkey=0&categ_name=" + curCategory).getText()
+         return Gson().fromJson(res, Array<MyMessage>::class.java).asList()
+     }
+ 
+@@ -337,7 +338,7 @@
+     fun changeCategory(view: View) {
+         try {
+            if (categories.size == 0) {
+-               categories = getCategories(apiCurURL, myToken.token_type, myToken.access_token)
++               categories = getCategories()
+            }
+             MaterialAlertDialogBuilder(this)
+                     .setTitle("Категория сообщения?")
+Index: app/src/main/java/com/example/workassistant/UserCardActivity.kt
+===================================================================
+--- app/src/main/java/com/example/workassistant/UserCardActivity.kt	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/java/com/example/workassistant/CardUserActivity.kt	(date 1617357856015)
+@@ -24,11 +24,8 @@
+ import java.util.Base64
+ 
+ 
+-class UserCardActivity: AppCompatActivity() {
++class CardUserActivity: AppCompatActivity() {
+ 
+-    var apiCurURL: String = ""
+-    var token_type: String = ""
+-    var access_token: String = ""
+     var CurUserID: String = ""
+     var isNewIcon: Boolean = false
+     var newIconID: Int = 0
+@@ -41,13 +38,10 @@
+         super.onCreate(savedInstanceState)
+         setContentView(R.layout.user_card)
+ 
+-        apiCurURL = intent.extras!!.getString("apiCurURL").toString()
+         CurUserID = intent.extras!!.getString("CurUserID").toString()
+ 
+         val settings = getSharedPreferences("UserInfo", 0)
+         val userID: String = settings.getString("userID", "").toString()
+-        token_type = settings.getString("token_type", "").toString()
+-        access_token = settings.getString("access_token", "").toString()
+ 
+         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar1)
+         setSupportActionBar(toolbar)
+@@ -59,10 +53,7 @@
+             finish();
+         })
+ 
+-        val userfullinfo = URL(apiCurURL + "/users/userfullinfo/?fkey=" + CurUserID).getText(
+-            token_type,
+-            access_token
+-        )
++        val userfullinfo = URL(apiCurURL + "/users/userfullinfo/?fkey=" + CurUserID).getText()
+         val data = Gson().fromJson('[' + userfullinfo + ']', Array<MyUser>::class.java).asList()
+ 
+         val iconID: String = data[0].f_icons
+@@ -74,10 +65,12 @@
+         findViewById<EditText>(R.id.userCardName1).setText(full_name)
+         findViewById<EditText>(R.id.userCardEmail1).setText(myEmail)
+         findViewById<EditText>(R.id.UserCardDesc1).setText(myDescription)
+-        if (iconID != "") findViewById<ImageView>(R.id.userAvaCard).load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader(
++
++        setImageImageView(this, iconID, findViewById<ImageView>(R.id.userAvaCard))
++        /*if (iconID != "") findViewById<ImageView>(R.id.userAvaCard).load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader(
+             "Authorization",
+-            token_type + ' ' + access_token
+-        ) }
++            myToken.token_type + ' ' + myToken.access_token
++        ) }*/
+ 
+         if (userID == CurUserID) {
+ 
+@@ -149,11 +142,7 @@
+                     myPass
+                 )
+                 val outResponse = Gson().toJson(nUserUpdate)
+-                val requestResult = URL(apiCurURL + "/users/userupdate/").sendJSONRequest(
+-                    token_type,
+-                    access_token,
+-                    outResponse
+-                )
++                val requestResult = URL(apiCurURL + "/users/userupdate/").sendJSONRequest(outResponse)
+                 if (requestResult.toString() == "\"OK\"") isNeedUpdate = true
+             }
+ 
+@@ -171,11 +160,7 @@
+                     base64Encoded
+                 )
+                 val outResponse = Gson().toJson(nUserUpdateIcon)
+-                val requestResult = URL(apiCurURL + "/users/userupdateIcon/").sendJSONRequest(
+-                    token_type,
+-                    access_token,
+-                    outResponse
+-                )
++                val requestResult = URL(apiCurURL + "/users/userupdateIcon/").sendJSONRequest(outResponse)
+                 isNeedUpdate = true
+ 
+                 if ( (requestResult != "") and (requestResult.isDigitsOnly()) ) newIconID = requestResult.toInt()
+Index: app/src/main/res/menu/nav_menu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/menu/nav_menu.xml	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/res/menu/nav_menu.xml	(date 1617361931483)
+@@ -30,13 +30,22 @@
+         <item
+             android:id="@+id/nav_item_three4"
+             android:icon="@drawable/ic_baseline_help_outline_24"
+-
+             android:title="@string/m_sup_help_text" />
+         <item
+             android:id="@+id/nav_item_three5"
+             android:icon="@drawable/ic_baseline_settings_24"
+             android:title="@string/m_sup_setting_text" />
+ 
++
++    </group>
++
++    <group android:id="@+id/grpAdm" android:checkableBehavior="single">
++
++        <item
++            android:id="@+id/nav_item_admintools"
++            android:icon="@drawable/ic_baseline_admin_panel_settings_24"
++            android:title="@string/m_sup_admintools_text" />
++
+     </group>
+ 
+     <group android:id="@+id/grp3" android:checkableBehavior="single">
+Index: app/src/main/res/drawable/ic_baseline_admin_panel_settings_24.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_baseline_admin_panel_settings_24.xml	(date 1617361922881)
++++ app/src/main/res/drawable/ic_baseline_admin_panel_settings_24.xml	(date 1617361922881)
+@@ -0,0 +1,13 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24"
++    android:tint="?attr/colorControlNormal">
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M17,11c0.34,0 0.67,0.04 1,0.09V6.27L10.5,3L3,6.27v4.91c0,4.54 3.2,8.79 7.5,9.82c0.55,-0.13 1.08,-0.32 1.6,-0.55C11.41,19.47 11,18.28 11,17C11,13.69 13.69,11 17,11z"/>
++  <path
++      android:fillColor="@android:color/white"
++      android:pathData="M17,13c-2.21,0 -4,1.79 -4,4c0,2.21 1.79,4 4,4s4,-1.79 4,-4C21,14.79 19.21,13 17,13zM17,14.38c0.62,0 1.12,0.51 1.12,1.12s-0.51,1.12 -1.12,1.12s-1.12,-0.51 -1.12,-1.12S16.38,14.38 17,14.38zM17,19.75c-0.93,0 -1.74,-0.46 -2.24,-1.17c0.05,-0.72 1.51,-1.08 2.24,-1.08s2.19,0.36 2.24,1.08C18.74,19.29 17.93,19.75 17,19.75z"/>
++</vector>
+Index: app/src/main/res/layout/activity_admintools.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_admintools.xml	(date 1617362125421)
++++ app/src/main/res/layout/activity_admintools.xml	(date 1617362125421)
+@@ -0,0 +1,40 @@
++<?xml version="1.0" encoding="utf-8"?>
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="wrap_content">
++
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:orientation="vertical">
++
++        <androidx.appcompat.widget.Toolbar
++            android:id="@+id/toolbar4"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:background="?attr/colorPrimary"
++            android:minHeight="?attr/actionBarSize"
++            android:theme="?attr/actionBarTheme" />
++
++        <LinearLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:orientation="vertical">
++
++            <Button
++                android:id="@+id/addNewRole"
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:layout_marginLeft="10dp"
++                android:layout_marginRight="10dp"
++                android:text="@string/addNewRoleStr" />
++
++            <androidx.recyclerview.widget.RecyclerView
++                android:id="@+id/rvRoles"
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content" />
++
++        </LinearLayout>
++
++    </LinearLayout>
++</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/item_message.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/item_message.xml	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/res/layout/item_message.xml	(date 1617360162072)
+@@ -209,7 +209,8 @@
+                 <androidx.recyclerview.widget.RecyclerView
+                     android:id="@+id/rvComments"
+                     android:layout_width="match_parent"
+-                    android:layout_height="match_parent">
++                    android:layout_height="match_parent"
++                    android:scrollbars="vertical">
+ 
+                 </androidx.recyclerview.widget.RecyclerView>
+ 
+Index: app/src/main/java/com/example/workassistant/RCAdapterComment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/workassistant/RCAdapterComment.kt	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/java/com/example/workassistant/RCAdapterComment.kt	(date 1617357856028)
+@@ -9,17 +9,10 @@
+ import android.widget.TextView
+ import androidx.recyclerview.widget.RecyclerView
+ import coil.ImageLoader
+-import coil.load
+-import coil.request.ImageRequest
+-import kotlinx.coroutines.GlobalScope
+-import kotlinx.coroutines.async
+ 
+ 
+ class RCAdapterComment(
+     private val imageLoader: ImageLoader,
+-    private val token_type: String,
+-    private val access_token: String,
+-    private val apiURL:String,
+     private val CadrParm: List<MyComment>) :
+     RecyclerView.Adapter<RCAdapterComment.MyViewHolderComment>() {
+ 
+@@ -44,15 +37,19 @@
+             .build()
+         val disposable = imageLoader.enqueue(request)*/
+ 
+-        val request = ImageRequest.Builder(holder.parent_view!!)
+-            .data(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons)
+-            .addHeader("Authorization", token_type + ' ' + access_token)
++
++        //val request = getImageFromURL(holder.parent_view!!, CadrParm[position].f_icons)
++        /*val request = ImageRequest.Builder(holder.parent_view!!)
++            .data(apiCurURL + "/icon/?fkey=" + CadrParm[position].f_icons)
++            .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
+             .build()
+-
+         GlobalScope.async {
+             val resul = imageLoader.execute(request).drawable
+             holder.persIcon_view?.load(resul)
+-        }
++        }*/
++
++        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.persIcon_view!!)
++
+ 
+         //holder.persIcon_view?.load(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons) { addHeader("Authorization", token_type + ' ' + access_token) }
+ 
+@@ -61,7 +58,7 @@
+         holder.persMesDate_view?.text = CadrParm[position].fdatecreate
+ 
+         holder.persIcon_view?.setOnLongClickListener {
+-            holder.parent_view?.startActivity(Intent(holder.parent_view, UserCardActivity::class.java).putExtra("apiCurURL", apiURL).putExtra("CurUserID", CadrParm[position].f_users_create))
++            holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("CurUserID", CadrParm[position].f_users_create))
+             true
+         }
+ 
+Index: app/src/main/java/com/example/workassistant/RCAdapterUsers.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/workassistant/RCAdapterUsers.kt	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/java/com/example/workassistant/RCAdapterUsers.kt	(date 1617357856040)
+@@ -6,24 +6,15 @@
+ import android.view.View
+ import android.view.ViewGroup
+ import android.widget.*
+-import androidx.appcompat.view.menu.MenuView
+-import androidx.recyclerview.widget.LinearLayoutManager
+ import androidx.recyclerview.widget.RecyclerView
+ import coil.ImageLoader
+-import coil.load
+-import coil.request.ImageRequest
+ import com.google.android.material.dialog.MaterialAlertDialogBuilder
+-import kotlinx.coroutines.GlobalScope
+-import kotlinx.coroutines.async
+ import java.net.URL
+ 
+ 
+ class RCAdapterUsers (
+         private val imageLoader: ImageLoader,
+         private val roleUserCount: TextView,
+-        private val token_type: String,
+-        private val access_token: String,
+-        private val apiURL:String,
+         private val roleID: String,
+         private val roleName: String,
+         private val CadrParm: List<MyUser>) :
+@@ -42,22 +33,24 @@
+ 
+     override fun onBindViewHolder(holder: MyViewHolderUser, position: Int) {
+ 
+-        val request = ImageRequest.Builder(holder.parent_view!!)
+-                .data(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons)
+-                .addHeader("Authorization", token_type + ' ' + access_token)
++        /*val request = ImageRequest.Builder(holder.parent_view!!)
++                .data(apiCurURL + "/icon/?fkey=" + CadrParm[position].f_icons)
++                .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
+                 .build()
+-
+         GlobalScope.async {
+             val resul = imageLoader.execute(request).drawable
+             holder.userIcon_view?.load(resul)
+-        }
++        }*/
++
++        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.userIcon_view!!)
++
+ 
+         holder.UserLogin_view?.text = CadrParm[position].flogin
+         holder.UserName_view?.text = CadrParm[position].fname
+         holder.UserDescription_view?.text = CadrParm[position].fdescription
+ 
+         holder.userIcon_view?.setOnLongClickListener {
+-            holder.parent_view?.startActivity(Intent(holder.parent_view, UserCardActivity::class.java).putExtra("apiCurURL", apiURL).putExtra("CurUserID", CadrParm[position].fkey))
++            holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("CurUserID", CadrParm[position].fkey))
+             true
+         }
+ 
+@@ -70,7 +63,7 @@
+                 }
+                 .setPositiveButton("Удалить") { dialog, which ->
+                     // Respond to positive button press
+-                    URL(apiURL + "/roles/del_user/?f_roles=" + roleID + "&f_users=" + CadrParm[position].fkey).getText(token_type, access_token)
++                    URL(apiCurURL + "/roles/del_user/?f_roles=" + roleID + "&f_users=" + CadrParm[position].fkey).getText()
+                     holder.userCardView_view?.visibility = View.GONE
+                     roleUserCount.setText((roleUserCount.text.toString().toInt()-1).toString())
+                 }
+Index: app/src/main/java/com/example/workassistant/AdminToolsActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/workassistant/AdminToolsActivity.kt	(date 1617362219949)
++++ app/src/main/java/com/example/workassistant/AdminToolsActivity.kt	(date 1617362219949)
+@@ -0,0 +1,44 @@
++package com.example.workassistant
++
++import android.os.Bundle
++import android.view.View
++import androidx.appcompat.app.AppCompatActivity
++import androidx.recyclerview.widget.LinearLayoutManager
++import androidx.recyclerview.widget.RecyclerView
++
++import com.google.gson.Gson
++import java.net.URL
++
++class AdminToolsActivity : AppCompatActivity() {
++
++    var userID: String = ""
++
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.activity_admintools)
++
++        val settings = getSharedPreferences("UserInfo", 0)
++        userID = settings.getString("userID", "").toString()
++
++        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar4)
++        setSupportActionBar(toolbar)
++        supportActionBar!!.setDisplayShowTitleEnabled(true)
++        supportActionBar!!.setTitle("Настройки")
++        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
++        toolbar.setNavigationOnClickListener(View.OnClickListener {
++            finish();
++        })
++
++        //Проверку на админа еще поставить и если не админ скурывать этот список и не загрудать его вообще load roles list
++        val rvRoles = findViewById<RecyclerView>(R.id.rvRoles)
++        rvRoles.layoutManager = LinearLayoutManager(this)
++        rvRoles.adapter = RCAdapterRoles(imageLoader!!, fillRoleList())
++
++    }
++
++    private fun fillRoleList(): List<MyRole> {
++        val res = URL(apiCurURL + "/roles/get/").getText()
++        return Gson().fromJson(res, Array<MyRole>::class.java).asList()
++    }
++
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/workassistant/SettingsActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/workassistant/SettingsActivity.kt	(revision 6cc6e0e77acbca15ac1743518090c7b8b62f0734)
++++ app/src/main/java/com/example/workassistant/SettingsActivity.kt	(date 1617362256520)
+@@ -15,28 +15,12 @@
+ 
+ class SettingsActivity : AppCompatActivity() {
+ 
+-    var apiCurURL: String = ""
+-    var userID: String = ""
+-    var token_type: String = ""
+-    var access_token: String = ""
+-
+     private val TimeReceiver: MyTimeReceiver = MyTimeReceiver()
+ 
+     override fun onCreate(savedInstanceState: Bundle?) {
+         super.onCreate(savedInstanceState)
+         setContentView(R.layout.settings_screen)
+ 
+-        apiCurURL = intent.extras!!.getString("apiCurURL").toString()
+-        val imageLoader = ImageLoader.Builder(this)
+-                .availableMemoryPercentage(0.25)
+-                .crossfade(true)
+-                .build()
+-
+-        val settings = getSharedPreferences("UserInfo", 0)
+-        userID = settings.getString("userID", "").toString()
+-        token_type = settings.getString("token_type", "").toString()
+-        access_token = settings.getString("access_token", "").toString()
+-
+         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar4)
+         setSupportActionBar(toolbar)
+         supportActionBar!!.setDisplayShowTitleEnabled(true)
+@@ -46,16 +30,6 @@
+             finish();
+         })
+ 
+-        //Проверку на админа еще поставить и если не админ скурывать этот список и не загрудать его вообще load roles list
+-        val rvRoles = findViewById<RecyclerView>(R.id.rvRoles)
+-        rvRoles.layoutManager = LinearLayoutManager(this)
+-        rvRoles.adapter = RCAdapterRoles(imageLoader, token_type, access_token, apiCurURL, fillRoleList())
+-
+-    }
+-
+-    private fun fillRoleList(): List<MyRole> {
+-        val res = URL(apiCurURL + "/roles/get/").getText(token_type, access_token)
+-        return Gson().fromJson(res, Array<MyRole>::class.java).asList()
+     }
+ 
+     fun onClickReceiver (view: View)

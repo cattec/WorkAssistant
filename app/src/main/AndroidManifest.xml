@@ -37,6 +37,7 @@
         </activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".CardMessageActivity" />
+        <activity android:name=".CardRoleActivity" />
         <activity android:name=".AdminToolsActivity" />
         <activity android:name=".RegUserActivity" />
         <activity android:name=".CardUserActivity" />

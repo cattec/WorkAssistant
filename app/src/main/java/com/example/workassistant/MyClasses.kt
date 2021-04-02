@@ -78,12 +78,6 @@ class MyCommentOut (
         val f_messages: Int
 )
 
-class MyMessageUpdateIcon (
-    var fkey: Int,
-    var f_messages: Int,
-    var fdata: String
-    )
-
 class myUserUpdate (
     val fkey: Int,
     val fname: String,
@@ -92,7 +86,14 @@ class myUserUpdate (
     val fpass: String
 )
 
-class MyUserUpdateIcon (
+class myRoleUpdate (
+    val fkey: Int,
+    val fname: String,
+    val fdescription: String,
+    val fsystem: Boolean
+)
+
+class MyUpdateIcon (
     var fkey: Int,
     var f_users: Int,
     var fdata: String

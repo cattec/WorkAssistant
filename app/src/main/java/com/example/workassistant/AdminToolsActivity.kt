@@ -1,7 +1,9 @@
 package com.example.workassistant
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,16 +31,23 @@ class AdminToolsActivity : AppCompatActivity() {
             finish();
         })
 
-        //Проверку на админа еще поставить и если не админ скурывать этот список и не загрудать его вообще load roles list
         val rvRoles = findViewById<RecyclerView>(R.id.rvRoles)
         rvRoles.layoutManager = LinearLayoutManager(this)
         rvRoles.adapter = RCAdapterRoles(imageLoader!!, fillRoleList())
 
+        findViewById<Button>(R.id.addNewRole).setOnClickListener(){
+            addNewRole()
+        }
+
     }
 
     private fun fillRoleList(): List<MyRole> {
-        val res = URL(apiCurURL + "/roles/get/").getText()
+        val res = URL(apiCurURL + "/roles/get/?f_roles=0").getText()
         return Gson().fromJson(res, Array<MyRole>::class.java).asList()
+    }
+
+    fun addNewRole() {
+        startActivity(Intent(this, CardRoleActivity::class.java).putExtra("CurRoleID", 0))
     }
 
 }

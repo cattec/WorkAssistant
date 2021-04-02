@@ -16,13 +16,13 @@ import com.google.gson.Gson
 import java.net.URL
 
 
-class RCAdapterNews(
+class RCAdapterMessage(
     private val imageLoader: ImageLoader,
     private val userID: Int,
     private val settings: SharedPreferences,
     private val CadrParm: List<MyMessage>
 ) :
-    RecyclerView.Adapter<RCAdapterNews.MyViewHolderMessage>() {
+    RecyclerView.Adapter<RCAdapterMessage.MyViewHolderMessage>() {
 
     override fun getItemCount() = CadrParm.size
 
@@ -52,6 +52,7 @@ class RCAdapterNews(
             holder.imgCard_view?.load(resul)
         }*/
 
+        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.imgCardSmall_view!!)
         setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.imgCard_view!!)
 
         holder.tCard1_view?.text = CadrParm[position].fname
@@ -71,7 +72,7 @@ class RCAdapterNews(
         }
 
         holder.imgCard_view?.setOnLongClickListener {
-            holder.parent_view?.startActivity(Intent(holder.parent_view, CardMessageActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("f_messages", CadrParm[position].fkey))
+            holder.parent_view?.startActivity(Intent(holder.parent_view, CardMessageActivity::class.java).putExtra("f_messages", CadrParm[position].fkey))
             true
         }
 

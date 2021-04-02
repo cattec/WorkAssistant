@@ -74,4 +74,7 @@
     <string name="btnDeleteRoleStr">Удалить роль</string>
     <string name="findStringHint">введите строку для поиска...</string>
     <string name="m_sup_admintools_text">Администрирование</string>
+    <string name="btnDelCard">Удалить</string>
+    <string name="coutUserTxt">Пользователей:</string>
+    <string name="isSystemTxt">Системная</string>
 </resources>

@@ -123,13 +123,13 @@ class CardMessageActivity: AppCompatActivity()  {
                 val image = stream.toByteArray()
                 val base64Encoded: String = Base64.getEncoder().encodeToString(image)
 
-                val nUserUpdateIcon = MyMessageUpdateIcon (
+                val nUserUpdateIcon = MyUpdateIcon (
                     0,
                     fkey,
                     base64Encoded
                 )
                 val outResponse = Gson().toJson(nUserUpdateIcon)
-                val requestResult = URL(apiCurURL + "/messages/updateicon/").sendJSONRequest(outResponse)
+                val requestResult = URL(apiCurURL + "/icons/updateObjectIcon/?ftable=messages").sendJSONRequest(outResponse)
                 isSave = true
             }
         }
