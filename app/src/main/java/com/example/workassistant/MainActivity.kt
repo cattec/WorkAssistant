@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
             //установка необходимых прав
             val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
             StrictMode.setThreadPolicy(policy)
-            findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
+            //findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
 
             imageLoader = ImageLoader.Builder(this)
                 .availableMemoryPercentage(0.25)
@@ -132,37 +132,31 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    fun etInfoShow(inpStr: String) {
-        val etInfo = findViewById<TextView>(R.id.etInfo)
-        etInfo.setText(inpStr)
-        etInfo.visibility = View.VISIBLE
+    fun etInfoShow(inpStr: String?) {
+        if (inpStr != null) {
+            val etInfo = findViewById<TextView>(R.id.etInfo)
+            etInfo.setText(inpStr)
+            etInfo.visibility = View.VISIBLE
+        }
     }
 
     fun navMenuEvents() {
-
-        val settings = getSharedPreferences("UserInfo", 0)
-        val userID: String = settings.getString("userID", "").toString()
-        val full_name: String = settings.getString("full_name", "")!!
-        val iconID: String = settings.getString("iconID", "").toString()
-        val token_type: String = settings.getString("token_type", "").toString()
-        val access_token: String = settings.getString("access_token", "").toString()
-
         val myNav = findViewById<NavigationView>(R.id.nav_view)
         val header = myNav.getHeaderView(0)
         val nav_head_text = header.findViewById<TextView>(R.id.nav_header_textView)
-        nav_head_text.setText(full_name)
+        nav_head_text.setText(myToken.full_name)
         val nav_header_imageView = header.findViewById<ImageView>(R.id.nav_header_imageView)
-        if (iconID != "") nav_header_imageView.load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader("Authorization", token_type + ' ' + access_token) }
+        //if (iconID != "") nav_header_imageView.load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader("Authorization", token_type + ' ' + access_token) }
+        if (myToken.iconID > 0) setImageImageView(this, myToken.iconID.toString(), nav_header_imageView)
 
         val navHeader = myNav.getHeaderView(0)
         navHeader.findViewById<LinearLayout>(R.id.head_leyout).setOnClickListener {
-            startActivity(Intent(this, CardUserActivity::class.java).putExtra("CurUserID", userID))
-            //Toast.makeText(this, "Open User Profile Card!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, CardUserActivity::class.java).putExtra("CurUserID", myToken.userID.toString()))
         }
 
         myNav.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_item_three0 -> startActivity(Intent(this, CardMessageActivity::class.java))
+                R.id.nav_item_three0 -> startActivity(Intent(this, CardMessageActivity::class.java).putExtra("f_messages", 0))
                 R.id.nav_item_three1 -> createINNCNotify()
                 R.id.nav_item_three2 -> startActivity(Intent(this, ChannelsListActivity::class.java))
                 R.id.nav_item_three3 -> startActivity(Intent(this, SupportActivity::class.java))

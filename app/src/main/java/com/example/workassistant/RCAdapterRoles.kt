@@ -50,23 +50,11 @@ class RCAdapterRoles (
         holder.roleName_view?.text = CadrParm[position].fname
         holder.roleUserCount_view?.text = CadrParm[position].usercount.toString()
         holder.roleDescription_view?.text = CadrParm[position].fdescription
+        if (CadrParm[position].fsystem) holder.ivIsSsytem_view?.visibility = View.VISIBLE else holder.ivIsSsytem_view?.visibility = View.GONE
 
         holder.btnAddUsertoRole_view?.setOnClickListener {
             addUserToRole(holder?.parent_view!!, holder.rvUsers_view!!, holder.roleUserCount_view!!, CadrParm[position].fkey.toString(), CadrParm[position].fname)
             //Toast.makeText(holder.parent_view, "Add users to Role", Toast.LENGTH_LONG).show()
-        }
-
-        holder.btnDeleteRole_view?.setOnClickListener {
-            MaterialAlertDialogBuilder(holder.parent_view!!)
-                .setTitle("Удаление роли")
-                .setMessage("Вы уверены что хотите удалить роль <"+ CadrParm[position].fname +"> ?")
-                .setNegativeButton("Отмена") { dialog, which ->
-                    // Respond to negative button press
-                }
-                .setPositiveButton("Удалить") { dialog, which ->
-                    // Respond to positive button press
-                }
-                .show()
         }
 
         holder.ibRoleOpen_view?.setOnClickListener {
@@ -131,7 +119,7 @@ class RCAdapterRoles (
         var layoutUsers_view: LinearLayout? = null
         var rvUsers_view: RecyclerView? = null
         var btnAddUsertoRole_view: Button? = null
-        var btnDeleteRole_view: Button? = null
+        var ivIsSsytem_view: ImageView? = null
 
         init {
             roleIcon_view = itemView?.findViewById(R.id.userIcon)
@@ -143,7 +131,7 @@ class RCAdapterRoles (
             layoutUsers_view = itemView?.findViewById(R.id.layoutUsers)
             rvUsers_view = itemView?.findViewById(R.id.rvUsers)
             btnAddUsertoRole_view = itemView?.findViewById(R.id.btnAddUsertoRole)
-            btnDeleteRole_view = itemView?.findViewById(R.id.btnDeleteRole)
+            ivIsSsytem_view = itemView?.findViewById(R.id.ivIsSsytem)
         }
     }
 

@@ -94,8 +94,8 @@ class myRoleUpdate (
 )
 
 class MyUpdateIcon (
-    var fkey: Int,
-    var f_users: Int,
+    var f_icons: Int,
+    var f_tableKey: Int,
     var fdata: String
 )
 

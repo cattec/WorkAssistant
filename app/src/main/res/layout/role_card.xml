@@ -133,6 +133,17 @@
                 android:inputType="textMultiLine" />
         </LinearLayout>
 
+        <EditText
+            android:id="@+id/ettInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="start|top"
+            android:inputType="textMultiLine"
+            android:textColor="@color/orange"
+            android:textSize="24sp"
+            android:visibility="gone" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

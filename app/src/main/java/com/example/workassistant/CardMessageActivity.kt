@@ -32,6 +32,8 @@ class CardMessageActivity: AppCompatActivity()  {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.message_card)
 
+        intent.extras!!
+
         val cfkey = intent.extras!!.getString("f_messages")
         if (cfkey != null)
             if (cfkey.isDigitsOnly()) fkey = cfkey.toInt()

@@ -153,18 +153,11 @@ class CardUserActivity: AppCompatActivity() {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 70, stream)
                 val image = stream.toByteArray()
                 val base64Encoded: String = Base64.getEncoder().encodeToString(image)
-
-                val nUserUpdateIcon = MyUpdateIcon(
-                    0,
-                    CurUserID.toInt(),
-                    base64Encoded
-                )
+                val nUserUpdateIcon = MyUpdateIcon(0, CurUserID.toInt(), base64Encoded)
                 val outResponse = Gson().toJson(nUserUpdateIcon)
                 val requestResult = URL(apiCurURL + "/icons/updateObjectIcon/?ftable=users").sendJSONRequest(outResponse)
                 isNeedUpdate = true
-
                 if ( (requestResult != "") and (requestResult.isDigitsOnly()) ) newIconID = requestResult.toInt()
-
             }
 
             if (isNeedUpdate == true) {

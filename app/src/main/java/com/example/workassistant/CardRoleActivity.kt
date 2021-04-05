@@ -18,7 +18,7 @@ import java.util.Base64
 
 class CardRoleActivity: AppCompatActivity() {
 
-    var CurRoleID: String = ""
+    var CurRoleID: Int = 0
     var isNewIcon: Boolean = false
     var newIconID: Int = 0
 
@@ -31,7 +31,7 @@ class CardRoleActivity: AppCompatActivity() {
         setContentView(R.layout.role_card)
 
         val resID = intent.extras!!.getString("CurRoleID")
-        if (resID != null) CurRoleID = resID.toString()
+        if (resID != null) CurRoleID = resID.toInt()
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar1)
         setSupportActionBar(toolbar)
@@ -42,7 +42,7 @@ class CardRoleActivity: AppCompatActivity() {
             finish();
         })
 
-        if (CurRoleID > "") {
+        if (CurRoleID != 0) {
             val userfullinfo = URL(apiCurURL + "/roles/get/?f_roles=" + CurRoleID).getText()
             val data = Gson().fromJson(userfullinfo, Array<MyRole>::class.java).asList()
 
@@ -60,11 +60,34 @@ class CardRoleActivity: AppCompatActivity() {
             setImageImageView(this, iconID.toString(), findViewById<ImageView>(R.id.roleAvaCard))
         }
 
-        findViewById<ImageView>(R.id.roleAvaCard).setOnClickListener {getNewImage(this)}
+        findViewById<ImageView>(R.id.roleAvaCard).setOnClickListener { getNewImage(this) }
+        findViewById<Button>(R.id.btnSaveCard).setOnClickListener { pressSave() }
+        findViewById<Button>(R.id.btnDeleteCard).setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Удаление роли")
+                .setMessage("Вы уверены что хотите удалить роль <"+ old_name +"> ?")
+                .setNegativeButton("Отмена") { dialog, which ->
+                    // Respond to negative button press
+                }
+                .setPositiveButton("Удалить") { dialog, which ->
+                    // Respond to positive button press
+                    if (CurRoleID != 0) {
+                        if (findViewById<Switch>(R.id.isSystem).isChecked) {
+                            val eInfo = findViewById<EditText>(R.id.ettInfo)
+                            eInfo.setText("Невозможно удалить группу т.к. она Системная!")
+                            eInfo.visibility = View.VISIBLE
+                        } else {
+                            URL(apiCurURL + "/roles/delete/?f_roles=" + CurRoleID.toString()).getText()
+                            finish()
+                        }
+                    }
+                }
+                .show()
+        }
 
     }
 
-    fun pressSave(view: View) {
+    fun pressSave() {
         try {
             val name = findViewById<EditText>(R.id.roleCardName1).text.toString()
             val myDescription = findViewById<EditText>(R.id.roleCardDesc1).text.toString()
@@ -72,31 +95,40 @@ class CardRoleActivity: AppCompatActivity() {
 
             var isNeedUpdate: Boolean = false
 
-            //Если хоть что то изменилось то делаем апдетй в базу
-            if ((old_name != name) or (old_fsystem != fsystem) or (old_myDescription != myDescription)) {
-                //формируем запрос
-                val nRoleUpdate = myRoleUpdate(
-                    CurRoleID.toInt(),
-                    name,
-                    myDescription,
-                    fsystem
-                )
-                val outResponse = Gson().toJson(nRoleUpdate)
-                val requestResult = URL(apiCurURL + "/role/roleupdate/").sendJSONRequest(outResponse)
-                if (requestResult.toString() == "\"OK\"") isNeedUpdate = true
+            val nRoleUpdate = myRoleUpdate(CurRoleID, name, myDescription, fsystem)
+            val outResponse = Gson().toJson(nRoleUpdate)
+
+            if (CurRoleID != 0) {
+                if ((old_name != name) or (old_fsystem != fsystem) or (old_myDescription != myDescription)) {
+                    //что то измениллось апдейтим запись
+                    val requestResult = URL(apiCurURL + "/roles/roleupdate/").sendJSONRequest(outResponse)
+                    isNeedUpdate = true
+                }
+            } else {
+                //создание новой записи
+                if (name == "") {
+                    Toast.makeText(this, "Cat't save message NO Role Name!", Toast.LENGTH_LONG).show()
+                } else {
+                    val requestResult = URL(apiCurURL + "/roles/roleupdate/").sendJSONRequest(outResponse)
+                    if ((requestResult != "") and (requestResult.isDigitsOnly())) {
+                        //Сохраняем ключ новой записи
+                        CurRoleID = requestResult.toInt()
+                        isNeedUpdate = true
+                    }
+                }
             }
 
             //Сохраняем новую иконку
             if (isNewIcon == true) {
                 val stream = ByteArrayOutputStream()
-                val bitmap = resizeBitmap(200,(findViewById<ImageView>(R.id.userAvaCard).getDrawable() as BitmapDrawable).bitmap)
+                val bitmap = resizeBitmap(200,(findViewById<ImageView>(R.id.roleAvaCard).getDrawable() as BitmapDrawable).bitmap)
                 bitmap.compress(Bitmap.CompressFormat.PNG, 70, stream)
                 val image = stream.toByteArray()
                 val base64Encoded: String = Base64.getEncoder().encodeToString(image)
 
                 val nUserUpdateIcon = MyUpdateIcon(
                     0,
-                    CurRoleID.toInt(),
+                    CurRoleID,
                     base64Encoded
                 )
                 val outResponse = Gson().toJson(nUserUpdateIcon)
