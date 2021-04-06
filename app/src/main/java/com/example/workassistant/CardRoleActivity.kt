@@ -57,11 +57,11 @@ class CardRoleActivity: AppCompatActivity() {
             findViewById<EditText>(R.id.roleCardDesc1).setText(old_myDescription)
             val roleUserCount = findViewById<TextView>(R.id.roleUserCount)
             roleUserCount.setText(roleUserCount.text.toString() + " " + usercount.toString())
-            setImageImageView(this, iconID.toString(), findViewById<ImageView>(R.id.roleAvaCard))
+            if (iconID > 0) setImageImageView(this, iconID.toString(), findViewById<ImageView>(R.id.roleAvaCard))
         }
 
         findViewById<ImageView>(R.id.roleAvaCard).setOnClickListener { getNewImage(this) }
-        findViewById<Button>(R.id.btnSaveCard).setOnClickListener { pressSave() }
+        findViewById<Button>(R.id.btnSaveCard).setOnClickListener() { pressSave(it) }
         findViewById<Button>(R.id.btnDeleteCard).setOnClickListener {
             MaterialAlertDialogBuilder(this)
                 .setTitle("Удаление роли")
@@ -73,9 +73,7 @@ class CardRoleActivity: AppCompatActivity() {
                     // Respond to positive button press
                     if (CurRoleID != 0) {
                         if (findViewById<Switch>(R.id.isSystem).isChecked) {
-                            val eInfo = findViewById<EditText>(R.id.ettInfo)
-                            eInfo.setText("Невозможно удалить группу т.к. она Системная!")
-                            eInfo.visibility = View.VISIBLE
+                            setInfo("Невозможно удалить группу т.к. она Системная!")
                         } else {
                             URL(apiCurURL + "/roles/delete/?f_roles=" + CurRoleID.toString()).getText()
                             finish()
@@ -87,7 +85,13 @@ class CardRoleActivity: AppCompatActivity() {
 
     }
 
-    fun pressSave() {
+    fun setInfo(inpTxt: String) {
+        val eInfo = findViewById<EditText>(R.id.ettInfo)
+        eInfo.setText(inpTxt)
+        eInfo.visibility = View.VISIBLE
+    }
+
+    fun pressSave(it: View) {
         try {
             val name = findViewById<EditText>(R.id.roleCardName1).text.toString()
             val myDescription = findViewById<EditText>(R.id.roleCardDesc1).text.toString()
@@ -107,7 +111,7 @@ class CardRoleActivity: AppCompatActivity() {
             } else {
                 //создание новой записи
                 if (name == "") {
-                    Toast.makeText(this, "Cat't save message NO Role Name!", Toast.LENGTH_LONG).show()
+                    setInfo("Cat't save message NO Role Name!")
                 } else {
                     val requestResult = URL(apiCurURL + "/roles/roleupdate/").sendJSONRequest(outResponse)
                     if ((requestResult != "") and (requestResult.isDigitsOnly())) {
@@ -141,12 +145,15 @@ class CardRoleActivity: AppCompatActivity() {
 
             if (isNeedUpdate == true) {
                 Toast.makeText(this, "Role Saved", Toast.LENGTH_LONG).show()
+                intent.putExtra("needUpate","1")
+                setResult(RESULT_OK, intent)
+                this.hideKeyBoard(it)
                 finish()
             }
-            else Toast.makeText(this, "Cant't save role card", Toast.LENGTH_LONG).show()
+            else setInfo("Cant't save role card")
 
         } catch (e: Exception) {
-            Toast.makeText(this, "Cant't save role card: " + e.toString(), Toast.LENGTH_LONG).show()
+            setInfo("Cant't save role card")
         }
     }
 

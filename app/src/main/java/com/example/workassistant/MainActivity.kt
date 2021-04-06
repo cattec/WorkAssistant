@@ -4,7 +4,10 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteDatabase.openOrCreateDatabase
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
@@ -19,7 +22,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
-import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.*
@@ -35,6 +37,9 @@ val apiCurURL: String = apiURL_local
 
 var imageLoader: ImageLoader? = null;
 var myToken: cToken = cToken(0, 0, "", "", "")
+var wasist_db: DataBaseHandler? = null
+
+//var mydatabase: SQLiteDatabase = openOrCreateDatabase("wasist_local.db", SQLiteDatabase.CursorFactory( ))
 
 class MainActivity : AppCompatActivity() {
 
@@ -59,8 +64,12 @@ class MainActivity : AppCompatActivity() {
 
             imageLoader = ImageLoader.Builder(this)
                 .availableMemoryPercentage(0.25)
+                //.bitmapPoolingEnabled(true)
+                //.bitmapPoolPercentage(0.25)
                 .crossfade(true)
                 .build()
+
+            wasist_db = DataBaseHandler(this)
 
             //загрузка токена
             getToken()
@@ -110,7 +119,13 @@ class MainActivity : AppCompatActivity() {
 
         //Проверяем токен на время истечения 25 минут
         if (Calendar.getInstance().time.time - token_limit_date < 1500000) {
-            if (myToken.userID == 0) myToken = cToken(userID, iconID, full_name, access_token, token_type)
+            if (myToken.userID == 0) myToken = cToken(
+                userID,
+                iconID,
+                full_name,
+                access_token,
+                token_type
+            )
             return true
         }
 
@@ -147,23 +162,52 @@ class MainActivity : AppCompatActivity() {
         nav_head_text.setText(myToken.full_name)
         val nav_header_imageView = header.findViewById<ImageView>(R.id.nav_header_imageView)
         //if (iconID != "") nav_header_imageView.load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader("Authorization", token_type + ' ' + access_token) }
-        if (myToken.iconID > 0) setImageImageView(this, myToken.iconID.toString(), nav_header_imageView)
+        if (myToken.iconID > 0) setImageImageView(
+            this,
+            myToken.iconID.toString(),
+            nav_header_imageView
+        )
 
         val navHeader = myNav.getHeaderView(0)
         navHeader.findViewById<LinearLayout>(R.id.head_leyout).setOnClickListener {
-            startActivity(Intent(this, CardUserActivity::class.java).putExtra("CurUserID", myToken.userID.toString()))
+            startActivity(
+                Intent(this, CardUserActivity::class.java).putExtra(
+                    "CurUserID",
+                    myToken.userID.toString()
+                )
+            )
         }
 
         myNav.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_item_three0 -> startActivity(Intent(this, CardMessageActivity::class.java).putExtra("f_messages", 0))
+                R.id.nav_item_three0 -> startActivity(
+                    Intent(this, CardMessageActivity::class.java).putExtra(
+                        "f_messages",
+                        0
+                    )
+                )
                 R.id.nav_item_three1 -> createINNCNotify()
-                R.id.nav_item_three2 -> startActivity(Intent(this, ChannelsListActivity::class.java))
+                R.id.nav_item_three2 -> startActivity(
+                    Intent(
+                        this,
+                        ChannelsListActivity::class.java
+                    )
+                )
                 R.id.nav_item_three3 -> startActivity(Intent(this, SupportActivity::class.java))
                 R.id.nav_item_three4 -> startActivity(Intent(this, HelpActivity::class.java))
                 R.id.nav_item_three5 -> startActivity(Intent(this, SettingsActivity::class.java))
-                R.id.nav_item_admintools -> startActivity(Intent(this, AdminToolsActivity::class.java))
-                R.id.nav_item_three_change_user -> startActivity(Intent(this, LoginActivity::class.java))
+                R.id.nav_item_admintools -> startActivity(
+                    Intent(
+                        this,
+                        AdminToolsActivity::class.java
+                    )
+                )
+                R.id.nav_item_three_change_user -> startActivity(
+                    Intent(
+                        this,
+                        LoginActivity::class.java
+                    )
+                )
             }
             true
         }
@@ -177,7 +221,11 @@ class MainActivity : AppCompatActivity() {
             .build()*/
         val rv = findViewById<RecyclerView>(R.id.rv)
         rv.layoutManager = LinearLayoutManager(this)
-        rv.adapter = RCAdapterMessage(imageLoader!!, myToken.userID, getSharedPreferences("UserInfo", 0), fillMessageList())
+        rv.adapter = RCAdapterMessage(
+            myToken.userID,
+            getSharedPreferences("UserInfo", 0),
+            fillMessageList()
+        )
 
         /*
         val rv = findViewById<RecyclerView>(R.id.rv)
@@ -252,33 +300,33 @@ class MainActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
                 val contentIntent = PendingIntent.getActivity(
+                    this,
+                    0,
+                    Intent(
                         this,
-                        0,
-                        Intent(
-                                this,
-                                MainActivity::class.java
-                        ).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                        PendingIntent.FLAG_CANCEL_CURRENT
+                        MainActivity::class.java
+                    ).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                    PendingIntent.FLAG_CANCEL_CURRENT
                 )
 
                 val contentIntentYes = PendingIntent.getActivity(
+                    this,
+                    0,
+                    Intent(
                         this,
-                        0,
-                        Intent(
-                                this,
-                                SupportActivity::class.java
-                        ).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                        PendingIntent.FLAG_CANCEL_CURRENT
+                        SupportActivity::class.java
+                    ).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                    PendingIntent.FLAG_CANCEL_CURRENT
                 )
 
                 val contentIntentNo = PendingIntent.getActivity(
+                    this,
+                    0,
+                    Intent(
                         this,
-                        0,
-                        Intent(
-                                this,
-                                HelpActivity::class.java
-                        ).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                        PendingIntent.FLAG_CANCEL_CURRENT
+                        HelpActivity::class.java
+                    ).setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                    PendingIntent.FLAG_CANCEL_CURRENT
                 )
 
                 val builder = NotificationCompat.Builder(this, CHANNEL_ID)
@@ -295,9 +343,9 @@ class MainActivity : AppCompatActivity() {
                         .setStyle(NotificationCompat.BigTextStyle().bigText(CHANEL_TEXT))
 
                 val channel = NotificationChannel(
-                        CHANNEL_ID,
-                        CHANEL_NAME,
-                        NotificationManager.IMPORTANCE_DEFAULT
+                    CHANNEL_ID,
+                    CHANEL_NAME,
+                    NotificationManager.IMPORTANCE_DEFAULT
                 ).apply {
                     description = CHANEL_DESC
                 }

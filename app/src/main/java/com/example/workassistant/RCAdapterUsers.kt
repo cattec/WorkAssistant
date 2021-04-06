@@ -13,7 +13,6 @@ import java.net.URL
 
 
 class RCAdapterUsers (
-        private val imageLoader: ImageLoader,
         private val roleUserCount: TextView,
         private val roleID: String,
         private val roleName: String,

@@ -12,7 +12,6 @@ import coil.ImageLoader
 
 
 class RCAdapterComment(
-    private val imageLoader: ImageLoader,
     private val CadrParm: List<MyComment>) :
     RecyclerView.Adapter<RCAdapterComment.MyViewHolderComment>() {
 

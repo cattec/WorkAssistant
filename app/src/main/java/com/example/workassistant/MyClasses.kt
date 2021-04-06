@@ -1,11 +1,15 @@
 package com.example.workassistant
 
+import android.R
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.provider.MediaStore
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -17,52 +21,54 @@ import coil.request.ImageRequest
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import java.io.ByteArrayOutputStream
 import java.net.URL
 import java.util.*
 
-class cToken (
-        val userID: Int,
-        val iconID: Int,
-        val full_name: String,
-        val access_token: String,
-        val token_type: String
+
+class cToken(
+    val userID: Int,
+    val iconID: Int,
+    val full_name: String,
+    val access_token: String,
+    val token_type: String
 )
 
-class MyCategories (
-        var fkey: Int,
-        var fname: String
+class MyCategories(
+    var fkey: Int,
+    var fname: String
 )
 
-class MyRole (
-        var fkey: Int,
-        var fname: String,
-        var fdescription: String,
-        var usercount: Int,
-        var f_icons: Int,
-        val fsystem: Boolean
+class MyRole(
+    var fkey: Int,
+    var fname: String,
+    var fdescription: String,
+    var usercount: Int,
+    var f_icons: Int,
+    val fsystem: Boolean
 )
 
-class MyMessage (
-        var fkey: String,
-        var fname: String,
-        var fdatecreate: String,
-        var fbody: String,
-        var categ_name: String,
-        var f_categories: String,
-        var f_icons: String,
-        var f_users_create: String
+class MyMessage(
+    var fkey: String,
+    var fname: String,
+    var fdatecreate: String,
+    var fbody: String,
+    var categ_name: String,
+    var f_categories: String,
+    var f_icons: String,
+    var f_users_create: String
 )
 
-class MyComment (
-        var fkey: String,
-        var f_users_create: String,
-        var fname: String,
-        var fdatecreate: String,
-        var fbody: String,
-        var f_icons: String
+class MyComment(
+    var fkey: String,
+    var f_users_create: String,
+    var fname: String,
+    var fdatecreate: String,
+    var fbody: String,
+    var f_icons: String
 )
 
-class MyUser (
+class MyUser(
     var fkey: String,
     var flogin: String,
     var fname: String,
@@ -72,13 +78,13 @@ class MyUser (
     var f_icons: String
 )
 
-class MyCommentOut (
-        val f_users_create: Int,
-        val fbody: String,
-        val f_messages: Int
+class MyCommentOut(
+    val f_users_create: Int,
+    val fbody: String,
+    val f_messages: Int
 )
 
-class myUserUpdate (
+class myUserUpdate(
     val fkey: Int,
     val fname: String,
     val femail: String,
@@ -86,14 +92,14 @@ class myUserUpdate (
     val fpass: String
 )
 
-class myRoleUpdate (
+class myRoleUpdate(
     val fkey: Int,
     val fname: String,
     val fdescription: String,
     val fsystem: Boolean
 )
 
-class MyUpdateIcon (
+class MyUpdateIcon(
     var f_icons: Int,
     var f_tableKey: Int,
     var fdata: String
@@ -106,9 +112,9 @@ fun getNewToken(settings: SharedPreferences, myLogin: String, myPassword: String
     //Если не было ошибки то возвращаем токен
     if (!tokenResponse.contains("you_error_detail")) {
         val myNewToken = Gson().fromJson(
-                '[' + tokenResponse + ']',
-                Array<cToken>::class.java
-        ) [0]
+            '[' + tokenResponse + ']',
+            Array<cToken>::class.java
+        )[0]
 
         //После того как был успешный логин сохраняем последние удачные данные
         val editor = settings.edit()
@@ -140,17 +146,17 @@ fun getFromGalery(): Intent {
 
 fun getFromCamera(ac: Activity): Intent? {
     val permissionStatus = ContextCompat.checkSelfPermission(
-            ac,
-            android.Manifest.permission.CAMERA
+        ac,
+        android.Manifest.permission.CAMERA
     )
     if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         return intent
     } else {
         ActivityCompat.requestPermissions(
-                ac,
-                arrayOf(android.Manifest.permission.CAMERA),
-                101
+            ac,
+            arrayOf(android.Manifest.permission.CAMERA),
+            101
         );
     }
     return null
@@ -162,7 +168,7 @@ fun getCategories (): Array<String> {
     return Array<String>(data.size) { i -> data[i].fname }
 }
 
-fun cropBitmap (bitmap: Bitmap): Bitmap {
+fun cropBitmap(bitmap: Bitmap): Bitmap {
     val x = bitmap.width
     val y = bitmap.height
     val lenMin = if (x > y) y else x
@@ -171,7 +177,7 @@ fun cropBitmap (bitmap: Bitmap): Bitmap {
     return Bitmap.createBitmap(bitmap, xbeg, ybeg, lenMin, lenMin)
 }
 
-fun resizeBitmap (maxSize: Int, bitmap: Bitmap): Bitmap {
+fun resizeBitmap(maxSize: Int, bitmap: Bitmap): Bitmap {
     val cropedImg = cropBitmap(bitmap)
     var x = cropedImg.width
     var y = cropedImg.height
@@ -192,7 +198,35 @@ fun getImageFromURL(context: Context, f_icons: String): ImageRequest {
         .build()
 }
 
-fun setImageImageView (context: Context, f_icons: String, imgView: ImageView) {
+fun setImageImageView(context: Context, f_icons: String, imgView: ImageView) {
+    GlobalScope.async {
+
+        val icoResult = wasist_db?.readIcon(f_icons.toInt())
+        if (icoResult != null) {
+            //load image from LOCAL DB
+            val img: Bitmap = BitmapFactory.decodeByteArray(icoResult, 0, icoResult.size)
+            imgView.load(img)
+        } else {
+            //load from GLOBAL BD
+            val request = ImageRequest.Builder(context)
+                .data(apiCurURL + "/icon/?fkey=" + f_icons)
+                .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
+                .build()
+            val result = imageLoader!!.execute(request).drawable
+            imgView.load(result)
+
+            //load image to LOCAL DB
+            val bitmap = (result as BitmapDrawable).bitmap
+            val stream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            val bitMapData: ByteArray = stream.toByteArray()
+            wasist_db?.insertIcon(f_icons.toInt(), bitMapData)
+        }
+
+    }
+}
+
+fun setImageImageView_old(context: Context, f_icons: String, imgView: ImageView) {
     GlobalScope.async {
         val request = ImageRequest.Builder(context)
             .data(apiCurURL + "/icon/?fkey=" + f_icons)
@@ -200,5 +234,17 @@ fun setImageImageView (context: Context, f_icons: String, imgView: ImageView) {
             .build()
         val resul = imageLoader!!.execute(request).drawable
         imgView.load(resul)
+    }
+}
+
+fun setImageImageView_working_memcach(context: Context, f_icons: String, imgView: ImageView) {
+    GlobalScope.async {
+        val request = ImageRequest.Builder(context)
+            .data(apiCurURL + "/icon/?fkey=" + f_icons)
+            .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
+            .target(imgView)
+            .crossfade(true)
+            .build()
+        imageLoader!!.enqueue(request)
     }
 }

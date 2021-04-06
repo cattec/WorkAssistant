@@ -44,7 +44,7 @@
                 android:layout_marginRight="1dp"
                 android:layout_marginBottom="1dp"
                 android:contentDescription="@string/card_img"
-                app:srcCompat="@android:drawable/ic_menu_add" />
+                app:srcCompat="@drawable/ic_baseline_help_outline_24" />
 
             <LinearLayout
                 android:id="@+id/layoutLeft"

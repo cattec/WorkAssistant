@@ -4,6 +4,8 @@ package com.example.workassistant
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +19,6 @@ import java.net.URL
 
 
 class RCAdapterMessage(
-    private val imageLoader: ImageLoader,
     private val userID: Int,
     private val settings: SharedPreferences,
     private val CadrParm: List<MyMessage>
@@ -37,7 +38,7 @@ class RCAdapterMessage(
 
     override fun onBindViewHolder(holder: MyViewHolderMessage, position: Int) {
         //загрузить картинку
-        //val img: Bitmap = BitmapFactory.decodeStream(URL(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons.toInt()).getIcon(token_type, access_token))
+        //val img: Bitmap = BitmapFactory.decodeStream(URL(apiCurURL + "/icon/?fkey=" + CadrParm[position].f_icons.toInt()).getIcon())
         //holder.imgCardSmall_view?.load(img)
         //holder.imgCard_view?.load(img)
 
@@ -52,7 +53,6 @@ class RCAdapterMessage(
             holder.imgCard_view?.load(resul)
         }*/
 
-        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.imgCardSmall_view!!)
         setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.imgCard_view!!)
 
         holder.tCard1_view?.text = CadrParm[position].fname
@@ -61,9 +61,11 @@ class RCAdapterMessage(
         holder.tDate_view?.text = CadrParm[position].fdatecreate
 
         holder.imgCard_view?.setOnClickListener {
+            holder.leyoutComment_view?.visibility = View.VISIBLE
             holder.imgCard_view?.visibility = View.GONE
             holder.layout_small_image?.visibility = View.VISIBLE
-            holder.leyoutComment_view?.visibility = View.VISIBLE
+            setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.imgCardSmall_view!!)
+            //holder.layoutLeft_view?.layoutParams!!.height = ViewGroup.LayoutParams.WRAP_CONTENT
             //load Comments if needed
             holder.rvComments_view?.layoutManager = LinearLayoutManager(holder.parent_view)
             holder.rvComments_view?.adapter = refreshAdapter(CadrParm[position].fkey)
@@ -88,6 +90,7 @@ class RCAdapterMessage(
                 holder.imgCard_view?.visibility = View.GONE
                 holder.layout_small_image?.visibility = View.VISIBLE
                 holder.leyoutComment_view?.visibility = View.VISIBLE
+                setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.imgCardSmall_view!!)
                 holder.rvComments_view?.layoutManager = LinearLayoutManager(holder.parent_view)
                 holder.rvComments_view?.adapter = refreshAdapter(CadrParm[position].fkey)
                 if (holder.rvComments_view?.childCount!! > 0) holder.tvComment_view?.visibility = View.VISIBLE
@@ -121,7 +124,7 @@ class RCAdapterMessage(
     }
 
     private fun refreshAdapter(fkey: String): RCAdapterComment {
-        return RCAdapterComment(imageLoader,fillComments(fkey))
+        return RCAdapterComment(fillComments(fkey))
     }
 
     private fun fillComments(fkey: String): List<MyComment> {
@@ -146,6 +149,7 @@ class RCAdapterMessage(
         var tvComment_text_view: EditText? = null
         var tvComment_view: TextView? = null
         var iBFullView_view: ImageButton? = null
+        var layoutLeft_view: LinearLayout? = null
 
         init {
             vCards_view = itemView?.findViewById(R.id.vCards)
@@ -163,6 +167,7 @@ class RCAdapterMessage(
             tvComment_text_view = itemView?.findViewById(R.id.tvComment_text)
             tvComment_view = itemView?.findViewById(R.id.tvComment)
             iBFullView_view = itemView?.findViewById(R.id.iBFullView)
+            layoutLeft_view = itemView?.findViewById(R.id.layoutLeft)
         }
 
     }

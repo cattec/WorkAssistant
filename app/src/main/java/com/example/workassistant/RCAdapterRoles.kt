@@ -1,11 +1,13 @@
 package com.example.workassistant
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
@@ -19,7 +21,6 @@ import java.net.URL
 
 
 class RCAdapterRoles (
-        private val imageLoader: ImageLoader,
         private val CadrParm: List<MyRole>) :
         RecyclerView.Adapter<RCAdapterRoles.MyViewHolderRole>() {
 
@@ -101,7 +102,7 @@ class RCAdapterRoles (
     }
 
     private fun refreshAdapter(roleUserCount: TextView, fkey: String, fname: String): RCAdapterUsers {
-        return RCAdapterUsers(imageLoader, roleUserCount, fkey, fname, fillUsersInRole(fkey))
+        return RCAdapterUsers(roleUserCount, fkey, fname, fillUsersInRole(fkey))
     }
 
     private fun fillUsersInRole(fkey: String): List<MyUser> {

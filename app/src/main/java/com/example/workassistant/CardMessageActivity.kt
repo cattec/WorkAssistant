@@ -32,8 +32,6 @@ class CardMessageActivity: AppCompatActivity()  {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.message_card)
 
-        intent.extras!!
-
         val cfkey = intent.extras!!.getString("f_messages")
         if (cfkey != null)
             if (cfkey.isDigitsOnly()) fkey = cfkey.toInt()
@@ -51,7 +49,7 @@ class CardMessageActivity: AppCompatActivity()  {
             findViewById<TextView>(R.id.tMesDate).setText(curMessage[0].fdatecreate)
             findViewById<EditText>(R.id.tMesText).setText(curMessage[0].fbody)
             findViewById<TextView>(R.id.tMesCateg).setText(curMessage[0].categ_name)
-            setImageImageView(this, curMessage[0].f_icons, findViewById<ImageView>(R.id.imgCard))
+            if (curMessage[0].f_icons != "") setImageImageView(this, curMessage[0].f_icons, findViewById<ImageView>(R.id.imgCard))
             /*if (curMessage[0].f_icons != "")
                 findViewById<ImageView>(R.id.imgCard).load(apiCurURL + "/icon/?fkey=" + curMessage[0].f_icons) { addHeader("Authorization",myToken.token_type + ' ' + myToken.access_token) }*/
         } else {
