@@ -39,6 +39,8 @@
         <activity android:name=".CardMessageActivity" />
         <activity android:name=".CardRoleActivity" />
         <activity android:name=".AdminToolsActivity" />
+        <activity android:name=".ChatRoomActivity" />
+        <activity android:name=".ChatChanelsActivity" />
         <activity android:name=".RegUserActivity" />
         <activity android:name=".CardUserActivity" />
         <activity android:name=".HelpActivity" />

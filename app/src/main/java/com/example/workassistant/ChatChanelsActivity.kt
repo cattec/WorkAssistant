@@ -1,0 +1,77 @@
+package com.example.workassistant
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.ImageButton
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.isDigitsOnly
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.Gson
+import java.net.URL
+
+class ChatChanelsActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.chat_chanels_activity)
+
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar7)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayShowTitleEnabled(true)
+        supportActionBar!!.setTitle("Чат")
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener(View.OnClickListener {
+            finish();
+        })
+
+        findViewById<ImageButton>(R.id.btnAddChatRoom).setOnClickListener {
+            addChatChanel()
+        }
+
+        messageListRefresh()
+    }
+
+    fun addChatChanel() {
+        val res = URL(apiCurURL + "/users/get/").getText()
+        val data = Gson().fromJson(res, Array<MyUserShort>::class.java).asList()
+        val users = Array<String>(data.size) { i -> "[" + data[i].fkey.toString() + "] " + data[i].fname }
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Добавить в чат пользователя:")
+            .setIcon(R.drawable.ic_baseline_help_outline_24)
+            .setItems(users) { dialog, which ->
+                val chatID = CreateChat(users[which])
+                if (chatID > 0) {
+                    messageListRefresh()
+                    startActivity(
+                        Intent(this, ChatRoomActivity::class.java)
+                        .putExtra("f_messages", chatID.toString())
+                        .putExtra("roomName", users[which]))
+                }
+            }
+            .show()
+    }
+
+    fun CreateChat(userStr: String): Int {
+        val idbeg = userStr.indexOf("[",0,true) + 1
+        val idend =  userStr.indexOf("]",0,true)
+        val userID2: String = userStr.substring(idbeg, idend)
+        val requestResult = URL(apiCurURL + "/messages/create/room/?user1=" + myToken.userID.toString() +"&user2=" + userID2).getText()
+        if ((requestResult != "") and (requestResult.isDigitsOnly())) {
+            return requestResult.toInt()
+        }
+        return 0
+    }
+
+    fun messageListRefresh() {
+        val rvPersMessage = findViewById<RecyclerView>(R.id.rvPersMessage)
+        rvPersMessage.layoutManager = LinearLayoutManager(this)
+        rvPersMessage.adapter = RCAdapterPersMessages(fillPersMessageList())
+    }
+
+    private fun fillPersMessageList(): List<MyPersMessage> {
+        val res = URL(apiCurURL + "/messages/get/pers/?f_users=" + myToken.userID).getText()
+        return Gson().fromJson(res, Array<MyPersMessage>::class.java).asList()
+    }
+}

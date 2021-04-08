@@ -77,4 +77,7 @@
     <string name="btnDelCard">Удалить</string>
     <string name="coutUserTxt">Пользователей:</string>
     <string name="isSystemTxt">Системная</string>
+    <string name="tvChatMembers">Учасники</string>
+    <string name="tvChatDatetxt">Дата последнего сообщения</string>
+    <string name="tvChatLastMesstxt">Последнее сообщение</string>
 </resources>

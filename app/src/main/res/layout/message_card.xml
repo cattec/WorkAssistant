@@ -20,15 +20,25 @@
             android:background="@color/teal_700"
             app:title="@string/mesCartTitle">
 
-            <Button
-                android:id="@+id/btnSaveCard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginLeft="40dp"
-                android:text="@string/btnSaveCard" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnSaveCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="10dp"
+                    android:text="@string/btnSaveCard" />
+
+            </LinearLayout>
+
 
         </androidx.appcompat.widget.Toolbar>
+
 
         <LinearLayout
             android:layout_width="match_parent"

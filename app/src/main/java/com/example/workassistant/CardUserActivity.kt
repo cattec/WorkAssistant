@@ -1,22 +1,16 @@
 package com.example.workassistant
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.text.isDigitsOnly
 import androidx.core.widget.addTextChangedListener
-import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
@@ -72,11 +66,11 @@ class CardUserActivity: AppCompatActivity() {
             myToken.token_type + ' ' + myToken.access_token
         ) }*/
 
-        if (userID == CurUserID) {
+        old_full_name = full_name
+        old_myEmail = myEmail
+        old_myDescription = myDescription
 
-            old_full_name = full_name
-            old_myEmail = myEmail
-            old_myDescription = myDescription
+        if (userID == CurUserID) {
 
             findViewById<LinearLayout>(R.id.repeatNewPassLayout).visibility = View.GONE
             findViewById<Button>(R.id.tbnSendPersMessage).visibility = View.GONE
@@ -117,6 +111,18 @@ class CardUserActivity: AppCompatActivity() {
             findViewById<EditText>(R.id.UserCardDesc1).isEnabled = false
         }
 
+    }
+
+    fun pressSendPersonalMessage(view: View) {
+        val requestResult = URL(apiCurURL + "/messages/create/room/?user1=" + myToken.userID.toString() +"&user2=" + CurUserID).getText()
+        if ((requestResult != "") and (requestResult.isDigitsOnly())) {
+            //Сохраняем ключ новой записи
+            val f_message = requestResult.toInt()
+            startActivity(Intent(this, ChatRoomActivity::class.java)
+                    .putExtra("f_messages", f_message.toString())
+                    .putExtra("roomName", old_full_name)
+            )
+        }
     }
 
     fun pressSave(view: View) {

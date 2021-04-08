@@ -3,9 +3,6 @@ package com.example.workassistant
 //import com.getstream.sdk.chat.ImageLoader.load
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,23 +10,21 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import coil.ImageLoader
 import com.google.gson.Gson
 import java.net.URL
 
 
-class RCAdapterMessage(
+class RCAdapterNewsMessages(
     private val userID: Int,
-    private val settings: SharedPreferences,
     private val CadrParm: List<MyMessage>
 ) :
-    RecyclerView.Adapter<RCAdapterMessage.MyViewHolderMessage>() {
+    RecyclerView.Adapter<RCAdapterNewsMessages.MyViewHolderMessage>() {
 
     override fun getItemCount() = CadrParm.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolderMessage {
         val itemView = LayoutInflater.from(parent?.context).inflate(
-            R.layout.item_message,
+            R.layout.item_news_message,
             parent,
             false
         )
@@ -118,13 +113,13 @@ class RCAdapterMessage(
                 holder.tvComment_text_view?.text = null
                 holder.parent_view?.hideKeyBoard(it)
                 holder.rvComments_view?.adapter = refreshAdapter(CadrParm[position].fkey)
-                holder.btnSendMessage_view?.isEnabled = false
+                holder.btnSendMessage_view?.isEnabled = true
             }
         }
     }
 
     private fun refreshAdapter(fkey: String): RCAdapterComment {
-        return RCAdapterComment(fillComments(fkey))
+        return RCAdapterComment(true, fillComments(fkey))
     }
 
     private fun fillComments(fkey: String): List<MyComment> {

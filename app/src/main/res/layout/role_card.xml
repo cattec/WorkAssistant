@@ -18,27 +18,34 @@
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme" >
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnDeleteCard"
-                android:layout_width="40dp"
-                android:layout_height="50dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginLeft="40dp"
-                android:backgroundTint="@color/orange"
-                app:icon="@android:drawable/ic_delete"
-                app:iconGravity="top"
-                app:iconPadding="0dp" />
+                <Button
+                    android:id="@+id/btnDeleteCard"
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="40dp"
+                    android:backgroundTint="@color/orange"
+                    app:icon="@android:drawable/ic_delete"
+                    app:iconGravity="top"
+                    app:iconPadding="0dp" />
 
-            <Button
-                android:id="@+id/btnSaveCard"
-                android:layout_width="40dp"
-                android:layout_height="50dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginLeft="20dp"
-                app:icon="@android:drawable/ic_menu_save"
-                app:iconGravity="top"
-                app:iconPadding="0dp" />
+                <Button
+                    android:id="@+id/btnSaveCard"
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="20dp"
+                    app:icon="@android:drawable/ic_menu_save"
+                    app:iconGravity="top"
+                    app:iconPadding="0dp" />
+
+            </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
 

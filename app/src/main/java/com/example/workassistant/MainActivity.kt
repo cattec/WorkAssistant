@@ -4,10 +4,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteDatabase.openOrCreateDatabase
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
@@ -180,34 +177,14 @@ class MainActivity : AppCompatActivity() {
 
         myNav.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_item_three0 -> startActivity(
-                    Intent(this, CardMessageActivity::class.java).putExtra(
-                        "f_messages",
-                        0
-                    )
-                )
+                R.id.nav_item_three0 -> startActivity(Intent(this, CardMessageActivity::class.java))
                 R.id.nav_item_three1 -> createINNCNotify()
-                R.id.nav_item_three2 -> startActivity(
-                    Intent(
-                        this,
-                        ChannelsListActivity::class.java
-                    )
-                )
+                R.id.nav_item_chat -> startActivity(Intent(this, ChatChanelsActivity::class.java))
                 R.id.nav_item_three3 -> startActivity(Intent(this, SupportActivity::class.java))
                 R.id.nav_item_three4 -> startActivity(Intent(this, HelpActivity::class.java))
                 R.id.nav_item_three5 -> startActivity(Intent(this, SettingsActivity::class.java))
-                R.id.nav_item_admintools -> startActivity(
-                    Intent(
-                        this,
-                        AdminToolsActivity::class.java
-                    )
-                )
-                R.id.nav_item_three_change_user -> startActivity(
-                    Intent(
-                        this,
-                        LoginActivity::class.java
-                    )
-                )
+                R.id.nav_item_admintools -> startActivity(Intent(this, AdminToolsActivity::class.java))
+                R.id.nav_item_three_change_user -> startActivity(Intent(this,LoginActivity::class.java))
             }
             true
         }
@@ -221,11 +198,7 @@ class MainActivity : AppCompatActivity() {
             .build()*/
         val rv = findViewById<RecyclerView>(R.id.rv)
         rv.layoutManager = LinearLayoutManager(this)
-        rv.adapter = RCAdapterMessage(
-            myToken.userID,
-            getSharedPreferences("UserInfo", 0),
-            fillMessageList()
-        )
+        rv.adapter = RCAdapterNewsMessages(myToken.userID, fillMessageList())
 
         /*
         val rv = findViewById<RecyclerView>(R.id.rv)

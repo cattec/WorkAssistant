@@ -82,6 +82,7 @@
                         android:layout_marginRight="5dp"
                         android:layout_marginBottom="5dp"
                         android:contentDescription="@string/img_todo"
+                        android:visibility="visible"
                         app:srcCompat="@drawable/logo" />
 
                     <LinearLayout
@@ -106,7 +107,7 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_gravity="center"
-                            android:layout_marginLeft="3dp"
+                            android:layout_marginLeft="5dp"
                             app:srcCompat="@drawable/ic_baseline_arrow_drop_down_24" />
 
                     </LinearLayout>
@@ -150,7 +151,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:listitem="@layout/item_message" />
+                    tools:listitem="@layout/item_news_message" />
 
             </LinearLayout>
 

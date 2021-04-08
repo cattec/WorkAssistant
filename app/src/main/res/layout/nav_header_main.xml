@@ -30,7 +30,7 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:contentDescription="@string/img_todo"
-                app:srcCompat="@drawable/logo" />
+                app:srcCompat="@drawable/ic_baseline_help_outline_24" />
 
             <ImageView
                 android:id="@+id/imageView3"

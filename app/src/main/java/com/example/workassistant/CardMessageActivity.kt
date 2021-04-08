@@ -32,9 +32,11 @@ class CardMessageActivity: AppCompatActivity()  {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.message_card)
 
-        val cfkey = intent.extras!!.getString("f_messages")
-        if (cfkey != null)
-            if (cfkey.isDigitsOnly()) fkey = cfkey.toInt()
+        if (intent.extras != null) {
+            val cfkey = intent.extras!!.getString("f_messages")
+            if (cfkey != null)
+                if (cfkey.isDigitsOnly()) fkey = cfkey.toInt()
+        }
 
         val settings = getSharedPreferences("UserInfo", 0)
         userID = settings.getString("userID", "").toString()

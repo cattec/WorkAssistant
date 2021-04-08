@@ -17,7 +17,18 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                android:id="@+id/btnAddChatRoom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="10dp"
+                android:background="?attr/colorPrimary"
+                app:srcCompat="@android:drawable/ic_input_add" />
+
+        </androidx.appcompat.widget.Toolbar>>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPersMessage"

@@ -59,12 +59,27 @@ class MyMessage(
     var f_users_create: String
 )
 
+class MyPersMessage(
+        var f_messages: Int,
+        var f_icons: Int,
+        var fname: String,
+        var chat_type: String,
+        var lastmessage: String,
+        var fdatecreate: String
+)
+
 class MyComment(
     var fkey: String,
     var f_users_create: String,
     var fname: String,
     var fdatecreate: String,
     var fbody: String,
+    var f_icons: String
+)
+
+class MyUserShort(
+    var fkey: String,
+    var fname: String,
     var f_icons: String
 )
 

@@ -14,7 +14,7 @@
             android:icon="@drawable/ic_baseline_notification_important_24"
             android:title="@string/m_notif_text" />
         <item
-            android:id="@+id/nav_item_three2"
+            android:id="@+id/nav_item_chat"
             android:icon="@drawable/ic_baseline_message_24"
             android:title="@string/m_chat_text" />
 
