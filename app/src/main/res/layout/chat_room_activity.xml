@@ -62,7 +62,7 @@
                 android:ems="10"
                 android:gravity="start|top"
                 android:hint="@string/editComment_hintText"
-                android:inputType="textMultiLine" />
+                android:inputType="textMultiLine|textPhonetic|textCapSentences" />
 
             <Button
                 android:id="@+id/btnSendMessageRoom"

@@ -82,7 +82,7 @@
                             android:layout_marginBottom="5dp"
                             android:autofillHints=""
                             android:hint="@string/card_title"
-                            android:inputType="textMultiLine"
+                            android:inputType="textMultiLine|textPhonetic|textCapSentences"
                             android:textSize="24sp" />
 
                         <TextView
@@ -123,7 +123,7 @@
             android:layout_marginBottom="3dp"
             android:autofillHints=""
             android:hint="@string/card_text"
-            android:inputType="textMultiLine"
+            android:inputType="textMultiLine|textPhonetic|textCapSentences"
             android:textSize="24sp" />
 
     </LinearLayout>

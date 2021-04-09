@@ -19,13 +19,13 @@
             android:id="@+id/layoutHeadComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
             android:orientation="horizontal">
 
             <FrameLayout
                 android:id="@+id/layoutUser"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="visible">
 
                 <ImageView
                     android:id="@+id/persIcon"
@@ -52,9 +52,10 @@
             </FrameLayout>
 
             <LinearLayout
+                android:id="@+id/layoutText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#F1F6F6"
+                android:background="#F4F6F1"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -66,8 +67,8 @@
                         android:id="@+id/persName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="5dp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginRight="3dp"
                         android:text="@string/persDefaultName" />
 
                     <TextView
@@ -83,42 +84,13 @@
                     android:id="@+id/tvMessageBody"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="7dp"
+                    android:layout_marginStart="3dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginEnd="3dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="3dp"
                     android:hint="@string/tvMessageDefault"
                     android:text="@string/tvMessageDefault" />
             </LinearLayout>
-
-            <FrameLayout
-                android:id="@+id/layoutUserMe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/persIconMe"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginBottom="3dp"
-                    android:contentDescription="@string/persDefaultIcon"
-                    tools:srcCompat="@tools:sample/avatars" />
-
-                <ImageView
-                    android:id="@+id/imageView3Me"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginBottom="3dp"
-                    android:contentDescription="@string/maskPict"
-                    app:srcCompat="@drawable/ic_avatar_form" />
-
-            </FrameLayout>
 
         </LinearLayout>
 

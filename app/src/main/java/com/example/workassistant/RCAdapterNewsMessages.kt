@@ -122,9 +122,11 @@ class RCAdapterNewsMessages(
         return RCAdapterComment(true, fillComments(fkey))
     }
 
-    private fun fillComments(fkey: String): List<MyComment> {
+    private fun fillComments(fkey: String): ArrayList<MyComment> {
         val res = URL(apiCurURL + "/comments/?f_messages=" + fkey).getText()
-        val data = Gson().fromJson(res, Array<MyComment>::class.java).asList()
+        val data = Gson().fromJson(res, Array<MyComment>::class.java).let { intList ->
+            ArrayList<MyComment>(intList.size).apply { intList.forEach { add(it) } }
+        }
         return data
     }
 

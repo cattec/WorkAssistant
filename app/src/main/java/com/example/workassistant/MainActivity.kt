@@ -36,8 +36,6 @@ var imageLoader: ImageLoader? = null;
 var myToken: cToken = cToken(0, 0, "", "", "")
 var wasist_db: DataBaseHandler? = null
 
-//var mydatabase: SQLiteDatabase = openOrCreateDatabase("wasist_local.db", SQLiteDatabase.CursorFactory( ))
-
 class MainActivity : AppCompatActivity() {
 
     private var NOTIFY_ID: Int = 154
@@ -70,11 +68,16 @@ class MainActivity : AppCompatActivity() {
 
             //загрузка токена
             getToken()
-            Timer().schedule(60000){
-                getToken()
+            Timer("chat", true).schedule(60000, period = 60000){
+                runOnUiThread(object : TimerTask() {
+                    override fun run() {
+                        getToken()
+                    }
+                })
             }
 
             //обработка собый основной ленты сообщений
+            findViewById<RecyclerView>(R.id.rv).layoutManager = LinearLayoutManager(this)
             mainListRefresh()
 
             //События навигационного меню
@@ -197,7 +200,7 @@ class MainActivity : AppCompatActivity() {
             .crossfade(true)
             .build()*/
         val rv = findViewById<RecyclerView>(R.id.rv)
-        rv.layoutManager = LinearLayoutManager(this)
+        //rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = RCAdapterNewsMessages(myToken.userID, fillMessageList())
 
         /*

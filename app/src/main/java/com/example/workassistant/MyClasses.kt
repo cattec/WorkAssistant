@@ -23,6 +23,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import java.io.ByteArrayOutputStream
 import java.net.URL
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -262,4 +263,8 @@ fun setImageImageView_working_memcach(context: Context, f_icons: String, imgView
             .build()
         imageLoader!!.enqueue(request)
     }
+}
+
+fun now(): String {
+    return SimpleDateFormat("HH:mm dd.MM.yyyy").format(Calendar.getInstance().time)
 }

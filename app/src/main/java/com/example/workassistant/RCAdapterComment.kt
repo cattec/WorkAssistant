@@ -2,10 +2,13 @@ package com.example.workassistant
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
+import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -15,7 +18,7 @@ import coil.ImageLoader
 
 class RCAdapterComment(
         private val isfull: Boolean,
-        private val CadrParm: List<MyComment>) :
+        private val CadrParm: ArrayList<MyComment>) :
         RecyclerView.Adapter<RCAdapterComment.MyViewHolderComment>() {
 
     override fun getItemCount() = CadrParm.size
@@ -29,7 +32,6 @@ class RCAdapterComment(
         return MyViewHolderComment(itemView)
     }
 
-    //@InternalStreamChatApi
     override fun onBindViewHolder(holder: MyViewHolderComment, position: Int) {
 
         /*val request = ImageRequest.Builder(holder.parent_view!!)
@@ -38,8 +40,6 @@ class RCAdapterComment(
             .target(holder.persIcon_view!!)
             .build()
         val disposable = imageLoader.enqueue(request)*/
-
-
         //val request = getImageFromURL(holder.parent_view!!, CadrParm[position].f_icons)
         /*val request = ImageRequest.Builder(holder.parent_view!!)
             .data(apiCurURL + "/icon/?fkey=" + CadrParm[position].f_icons)
@@ -50,19 +50,17 @@ class RCAdapterComment(
             holder.persIcon_view?.load(resul)
         }*/
 
-        if (CadrParm[position].f_users_create.toInt() == myToken.userID) {
-            setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.persIconMe_view!!)
-            holder.layoutHeadComment_view?.gravity = Gravity.END
-            holder.persIconMe_view?.setOnLongClickListener {
-                holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("CurUserID", CadrParm[position].f_users_create))
-                true
-            }
+        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.persIcon_view!!)
+        holder.persIcon_view?.setOnLongClickListener {
+            holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("CurUserID", CadrParm[position].f_users_create))
+            true
+        }
+
+        if (CadrParm[position].f_users_create == myToken.userID.toString()) {
+            holder.leyoutText_view?.setBackgroundColor(Color.argb(125,242,255,243))
+            //holder.layoutHeadComment_view?.gravity = Gravity.END
         } else {
-            setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.persIcon_view!!)
-            holder.persIcon_view?.setOnLongClickListener {
-                holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("CurUserID", CadrParm[position].f_users_create))
-                true
-            }
+            holder.leyoutText_view?.setBackgroundColor(Color.argb(125,196,231,255))
         }
 
         holder.persName_view?.text = CadrParm[position].fname
@@ -79,22 +77,24 @@ class RCAdapterComment(
     class MyViewHolderComment(itemView: View) : RecyclerView.ViewHolder(itemView) {
         //var vCards_view: CardView? = null
         var persIcon_view: ImageView? = null
-        var persIconMe_view: ImageView? = null
         var persName_view: TextView? = null
         var persMesDate_view: TextView? = null
         var tvMessageBody: TextView? = null
         var parent_view: Context? = null
         var layoutHeadComment_view: LinearLayout? = null
+        var layoutUser_view: FrameLayout? = null
+        var leyoutText_view: LinearLayout? = null
 
         init {
             //vCards_view = itemView?.findViewById(R.id.vCards)
             persIcon_view = itemView?.findViewById(R.id.persIcon)
-            persIconMe_view = itemView?.findViewById(R.id.persIconMe)
             persName_view = itemView?.findViewById(R.id.persName)
             persMesDate_view = itemView?.findViewById(R.id.persMesDate)
             tvMessageBody = itemView?.findViewById(R.id.tvMessageBody)
             parent_view = itemView?.context
             layoutHeadComment_view = itemView?.findViewById(R.id.layoutHeadComment)
+            layoutUser_view = itemView?.findViewById(R.id.layoutUser)
+            leyoutText_view = itemView?.findViewById(R.id.layoutText)
         }
     }
 

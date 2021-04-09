@@ -55,8 +55,7 @@ class CardMessageActivity: AppCompatActivity()  {
             /*if (curMessage[0].f_icons != "")
                 findViewById<ImageView>(R.id.imgCard).load(apiCurURL + "/icon/?fkey=" + curMessage[0].f_icons) { addHeader("Authorization",myToken.token_type + ' ' + myToken.access_token) }*/
         } else {
-            val mesDate = SimpleDateFormat("HH:mm dd.MM.yyyy").format(Calendar.getInstance().time)
-            findViewById<TextView>(R.id.tMesDate).setText(mesDate)
+            findViewById<TextView>(R.id.tMesDate).setText(now())
         }
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar6)
