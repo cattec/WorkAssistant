@@ -30,7 +30,7 @@ import kotlin.concurrent.schedule
 
 val apiURL_heroku: String = "https://wassistant.herokuapp.com"
 val apiURL_local: String = "http://10.226.96.21:5000"
-val apiCurURL: String = apiURL_local
+var apiCurURL: String = apiURL_local
 
 var imageLoader: ImageLoader? = null;
 var myToken: cToken = cToken(0, 0, "", "", "")
@@ -57,6 +57,9 @@ class MainActivity : AppCompatActivity() {
             StrictMode.setThreadPolicy(policy)
             //findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
 
+            //проверка есть ли интернет, ели есть то переключаемся на внешний канал, если нет то на внутренний
+            //if (isReallyOnline()) apiCurURL = apiURL_heroku
+
             imageLoader = ImageLoader.Builder(this)
                 .availableMemoryPercentage(0.25)
                 //.bitmapPoolingEnabled(true)
@@ -65,6 +68,7 @@ class MainActivity : AppCompatActivity() {
                 .build()
 
             wasist_db = DataBaseHandler(this)
+            wasist_db?.onUpgrade(wasist_db?.writableDatabase,0,0)
 
             //загрузка токена
             getToken()
@@ -158,18 +162,14 @@ class MainActivity : AppCompatActivity() {
     fun navMenuEvents() {
         val myNav = findViewById<NavigationView>(R.id.nav_view)
         val header = myNav.getHeaderView(0)
-        val nav_head_text = header.findViewById<TextView>(R.id.nav_header_textView)
-        nav_head_text.setText(myToken.full_name)
-        val nav_header_imageView = header.findViewById<ImageView>(R.id.nav_header_imageView)
-        //if (iconID != "") nav_header_imageView.load(apiCurURL + "/icon/?fkey=" + iconID) { addHeader("Authorization", token_type + ' ' + access_token) }
+        header.findViewById<TextView>(R.id.nav_header_textView).setText(myToken.full_name)
         if (myToken.iconID > 0) setImageImageView(
             this,
             myToken.iconID.toString(),
-            nav_header_imageView
+            header.findViewById<ImageView>(R.id.nav_header_imageView)
         )
 
-        val navHeader = myNav.getHeaderView(0)
-        navHeader.findViewById<LinearLayout>(R.id.head_leyout).setOnClickListener {
+        header.findViewById<LinearLayout>(R.id.head_leyout).setOnClickListener {
             startActivity(
                 Intent(this, CardUserActivity::class.java).putExtra(
                     "CurUserID",
@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_item_three1 -> createINNCNotify()
                 R.id.nav_item_chat -> startActivity(Intent(this, ChatChanelsActivity::class.java))
                 R.id.nav_item_three3 -> startActivity(Intent(this, SupportActivity::class.java))
-                R.id.nav_item_three4 -> startActivity(Intent(this, HelpActivity::class.java))
+                R.id.nav_item_help -> startActivity(Intent(this, HelpActivity::class.java))
                 R.id.nav_item_three5 -> startActivity(Intent(this, SettingsActivity::class.java))
                 R.id.nav_item_admintools -> startActivity(Intent(this, AdminToolsActivity::class.java))
                 R.id.nav_item_three_change_user -> startActivity(Intent(this,LoginActivity::class.java))
@@ -360,7 +360,7 @@ class MainActivity : AppCompatActivity() {
            }
             MaterialAlertDialogBuilder(this)
                     .setTitle("Категория сообщения?")
-                    .setIcon(R.drawable.arni)
+                    .setIcon(R.drawable.ic_baseline_help_outline_24)
                     .setItems(categories) { dialog, which ->
                         if (lastCategory != categories[which]) {
                             lastCategory = categories[which]

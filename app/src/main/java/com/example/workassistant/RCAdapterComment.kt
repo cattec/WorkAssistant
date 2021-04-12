@@ -18,6 +18,7 @@ import coil.ImageLoader
 
 class RCAdapterComment(
         private val isfull: Boolean,
+        private val youLastMessageRead: Int,
         private val CadrParm: ArrayList<MyComment>) :
         RecyclerView.Adapter<RCAdapterComment.MyViewHolderComment>() {
 
@@ -34,22 +35,6 @@ class RCAdapterComment(
 
     override fun onBindViewHolder(holder: MyViewHolderComment, position: Int) {
 
-        /*val request = ImageRequest.Builder(holder.parent_view!!)
-            .data(apiURL + "/icon/?fkey=" + CadrParm[position].f_icons)
-            .addHeader("Authorization", token_type + ' ' + access_token)
-            .target(holder.persIcon_view!!)
-            .build()
-        val disposable = imageLoader.enqueue(request)*/
-        //val request = getImageFromURL(holder.parent_view!!, CadrParm[position].f_icons)
-        /*val request = ImageRequest.Builder(holder.parent_view!!)
-            .data(apiCurURL + "/icon/?fkey=" + CadrParm[position].f_icons)
-            .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
-            .build()
-        GlobalScope.async {
-            val resul = imageLoader.execute(request).drawable
-            holder.persIcon_view?.load(resul)
-        }*/
-
         setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.persIcon_view!!)
         holder.persIcon_view?.setOnLongClickListener {
             holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("CurUserID", CadrParm[position].f_users_create))
@@ -62,6 +47,11 @@ class RCAdapterComment(
         } else {
             holder.leyoutText_view?.setBackgroundColor(Color.argb(125,196,231,255))
         }
+
+        if (youLastMessageRead > 0)
+            if (youLastMessageRead < CadrParm[position].fkey.toInt()) {
+                holder.ivNotReaded_view?.visibility = View.VISIBLE
+            }
 
         holder.persName_view?.text = CadrParm[position].fname
         holder.tvMessageBody?.text = CadrParm[position].fbody
@@ -84,6 +74,7 @@ class RCAdapterComment(
         var layoutHeadComment_view: LinearLayout? = null
         var layoutUser_view: FrameLayout? = null
         var leyoutText_view: LinearLayout? = null
+        var ivNotReaded_view: ImageView? = null
 
         init {
             //vCards_view = itemView?.findViewById(R.id.vCards)
@@ -95,6 +86,7 @@ class RCAdapterComment(
             layoutHeadComment_view = itemView?.findViewById(R.id.layoutHeadComment)
             layoutUser_view = itemView?.findViewById(R.id.layoutUser)
             leyoutText_view = itemView?.findViewById(R.id.layoutText)
+            ivNotReaded_view = itemView?.findViewById(R.id.ivNotReaded)
         }
     }
 

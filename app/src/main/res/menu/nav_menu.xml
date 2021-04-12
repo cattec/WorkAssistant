@@ -28,7 +28,7 @@
             android:icon="@drawable/ic_baseline_campaign_24"
             android:title="@string/m_sup_task_text" />
         <item
-            android:id="@+id/nav_item_three4"
+            android:id="@+id/nav_item_help"
             android:icon="@drawable/ic_baseline_help_outline_24"
             android:title="@string/m_sup_help_text" />
         <item

@@ -10,7 +10,7 @@
         android:id="@+id/vMessCards"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardUseCompatPadding="true" >
+        app:cardUseCompatPadding="true">
 
         <LinearLayout
             android:id="@+id/layoutRoom"
@@ -44,6 +44,16 @@
                     android:layout_marginBottom="3dp"
                     android:contentDescription="@string/maskPict"
                     app:srcCompat="@drawable/ic_avatar_form" />
+
+                <ImageView
+                    android:id="@+id/ivNotReaded"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/stream_ic_error" />
 
             </FrameLayout>
 

@@ -1,6 +1,5 @@
 package com.example.workassistant
 
-import android.R
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -9,7 +8,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.provider.MediaStore
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -61,12 +59,13 @@ class MyMessage(
 )
 
 class MyPersMessage(
-        var f_messages: Int,
-        var f_icons: Int,
-        var fname: String,
-        var chat_type: String,
-        var lastmessage: String,
-        var fdatecreate: String
+    var f_messages: Int,
+    var f_icons: Int,
+    var fname: String,
+    var chat_type: String,
+    var lastmessage: String,
+    var fdatecreate: String,
+    var f_messages_last: Int
 )
 
 class MyComment(
@@ -91,7 +90,8 @@ class MyUser(
     var fdisable: String,
     var fdescription: String,
     var femail: String,
-    var f_icons: String
+    var f_icons: String,
+    var isSelected: Boolean
 )
 
 class MyCommentOut(
@@ -267,4 +267,18 @@ fun setImageImageView_working_memcach(context: Context, f_icons: String, imgView
 
 fun now(): String {
     return SimpleDateFormat("HH:mm dd.MM.yyyy").format(Calendar.getInstance().time)
+}
+
+fun isReallyOnline(): Boolean {
+    val runtime = Runtime.getRuntime()
+    try {
+        val ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8")
+        val exitValue = ipProcess.waitFor()
+        return exitValue == 0
+    } catch (e: Exception) {
+        e.printStackTrace()
+    } catch (e: InterruptedException) {
+        e.printStackTrace()
+    }
+    return false
 }

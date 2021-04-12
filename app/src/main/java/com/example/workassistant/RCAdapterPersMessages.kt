@@ -32,10 +32,17 @@ class RCAdapterPersMessages(
         holder.tvChatDate_view?.text = CadrParm[position].fdatecreate
         holder.tvChatLastMess_view?.text = CadrParm[position].lastmessage
 
+        val youLastMessageRead = wasist_db?.getLastChatMessage(CadrParm[position].f_messages)!!
+        if (CadrParm[position].f_messages_last > youLastMessageRead)
+        {
+            holder.ivNotReaded_view?.visibility = View.VISIBLE
+        }
+
         holder.layoutRoom_view?.setOnClickListener() {
             holder.parent_view?.startActivity(Intent(holder.parent_view, ChatRoomActivity::class.java)
                     .putExtra("f_messages", CadrParm[position].f_messages.toString())
                     .putExtra("roomName", CadrParm[position].fname)
+                    .putExtra("youLastMessageRead", youLastMessageRead.toString())
             )
         }
 
@@ -48,6 +55,7 @@ class RCAdapterPersMessages(
         var tvChatLastMess_view: TextView? = null
         var parent_view: Context? = null
         var layoutRoom_view: LinearLayout? = null
+        var ivNotReaded_view: ImageView? = null
 
         init {
             MesIcon_view = itemView?.findViewById(R.id.MesIcon)
@@ -56,6 +64,7 @@ class RCAdapterPersMessages(
             tvChatLastMess_view = itemView?.findViewById(R.id.tvChatLastMess)
             parent_view = itemView?.context
             layoutRoom_view = itemView?.findViewById(R.id.layoutRoom)
+            ivNotReaded_view = itemView?.findViewById(R.id.ivNotReaded)
         }
 
     }

@@ -119,7 +119,7 @@ class RCAdapterNewsMessages(
     }
 
     private fun refreshAdapter(fkey: String): RCAdapterComment {
-        return RCAdapterComment(true, fillComments(fkey))
+        return RCAdapterComment(true, 0, fillComments(fkey))
     }
 
     private fun fillComments(fkey: String): ArrayList<MyComment> {

@@ -24,6 +24,8 @@ class ChatRoomActivity : AppCompatActivity() {
     var MessageList: ArrayList<MyComment>? = null
     var lastMessageID: Int = 0
     var roomTimer: TimerTask? = null
+    var newMessageWait: Int = 5
+    var youLastMessageRead: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,8 +33,10 @@ class ChatRoomActivity : AppCompatActivity() {
 
         if (intent.extras != null) {
             val cfkey = intent.extras!!.getString("f_messages")!!
-            if (cfkey.isDigitsOnly()) f_messages = cfkey.toInt()
+            if (cfkey.isDigitsOnly())
+                f_messages = cfkey.toInt()
             roomName = intent.extras!!.getString("roomName")!!
+            youLastMessageRead = intent.extras!!.getString("youLastMessageRead")!!.toInt()
         }
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar8)
@@ -46,10 +50,12 @@ class ChatRoomActivity : AppCompatActivity() {
 
         MessageList = fillPersMessageList()
         lastMessageID = MessageList!![MessageList?.count()!!-1].fkey.toInt()
+        wasist_db?.setLastMesage(f_messages, lastMessageID)
         val rvPersMessage = findViewById<RecyclerView>(R.id.rvPersRoom)
         rvPersMessage.layoutManager = LinearLayoutManager(this)
         RoomFill(rvPersMessage)
 
+        //Отправка сообщения
         val btnSendMessageRoom = findViewById<Button>(R.id.btnSendMessageRoom)
         findViewById<Button>(R.id.btnSendMessageRoom).setOnClickListener {
             val tvComment_textRoom = findViewById<EditText>(R.id.tvComment_textRoom)
@@ -62,11 +68,11 @@ class ChatRoomActivity : AppCompatActivity() {
                 val requestResult = URL(apiCurURL + "/comments/add/").sendJSONRequest(outComment)
                 tvComment_textRoom.text = null
                 //this.hideKeyBoard(it)
-                //RoomRefresh(rvPersMessage)
                 if (requestResult.isDigitsOnly()) {
                     val newID = requestResult.toInt()
                     if (newID > lastMessageID) {
                         lastMessageID = newID
+                        wasist_db?.setLastMesage(f_messages, lastMessageID)
                         AddMessage(rvPersMessage, MyComment(requestResult, myToken.userID.toString(), "", now(), commentText, myToken.iconID.toString()))
                     }
 
@@ -75,12 +81,12 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         }
 
+        //Добавление нового собеседника в чат
         findViewById<ImageButton>(R.id.btnAddUserToRoom).setOnClickListener {
             AddUserToRoom()
         }
 
-
-        //загрузка токена
+        //бновление чата по таймеру
         roomTimer = Timer("chat_" + f_messages.toString(), false).schedule(5000, period = 5000){
             runOnUiThread(object : TimerTask() {
                 override fun run() {
@@ -112,7 +118,7 @@ class ChatRoomActivity : AppCompatActivity() {
     }
 
     fun RoomFill(rvPersMessage: RecyclerView) {
-        rvPersMessage.adapter = RCAdapterComment(false, MessageList!!)
+        rvPersMessage.adapter = RCAdapterComment(false, youLastMessageRead, MessageList!!)
         rvPersMessage.scrollToPosition(rvPersMessage.adapter?.itemCount!! - 1)
     }
 
@@ -121,10 +127,18 @@ class ChatRoomActivity : AppCompatActivity() {
         if (newMessages.count() > 0) {
             //бновляем ключь а последний сразу
             val lastKey = newMessages[newMessages.count() - 1].fkey.toInt()
-            if (lastKey > lastMessageID) lastMessageID = lastKey
+            if (lastKey > lastMessageID) {
+                lastMessageID = lastKey
+                wasist_db?.setLastMesage(f_messages, lastMessageID)
+            }
             //дбовляем все новые записи
             newMessages.forEach() {
                 AddMessage(rvPersMessage, it)
+            }
+            //сбрасываем таймер новых сообщений
+            if (youLastMessageRead > 0 ) {
+                if (newMessageWait > 0) newMessageWait -= newMessageWait
+                else youLastMessageRead = 0
             }
         }
     }

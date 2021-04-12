@@ -49,6 +49,16 @@
                     android:contentDescription="@string/maskPict"
                     app:srcCompat="@drawable/ic_avatar_form" />
 
+                <ImageView
+                    android:id="@+id/ivNotReaded"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/stream_ic_error" />
+
             </FrameLayout>
 
             <LinearLayout

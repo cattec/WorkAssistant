@@ -11,8 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import java.net.URL
+import java.util.*
+import kotlin.concurrent.schedule
 
 class ChatChanelsActivity : AppCompatActivity() {
+
+    var chanelsTimer: TimerTask? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_chanels_activity)
@@ -30,7 +35,19 @@ class ChatChanelsActivity : AppCompatActivity() {
             addChatChanel()
         }
 
+
+        findViewById<RecyclerView>(R.id.rvPersMessage).layoutManager = LinearLayoutManager(this)
         messageListRefresh()
+
+        //загрузка токена
+        chanelsTimer = Timer("chanelsTimer", false).schedule(10000, period = 10000){
+            runOnUiThread(object : TimerTask() {
+                override fun run() {
+                    messageListRefresh()
+                }
+            })
+        }
+
     }
 
     fun addChatChanel() {
@@ -66,7 +83,7 @@ class ChatChanelsActivity : AppCompatActivity() {
 
     fun messageListRefresh() {
         val rvPersMessage = findViewById<RecyclerView>(R.id.rvPersMessage)
-        rvPersMessage.layoutManager = LinearLayoutManager(this)
+        //rvPersMessage.layoutManager = LinearLayoutManager(this)
         rvPersMessage.adapter = RCAdapterPersMessages(fillPersMessageList())
     }
 
@@ -74,4 +91,10 @@ class ChatChanelsActivity : AppCompatActivity() {
         val res = URL(apiCurURL + "/messages/get/pers/?f_users=" + myToken.userID).getText()
         return Gson().fromJson(res, Array<MyPersMessage>::class.java).asList()
     }
+
+    override fun onStop() {
+        super.onStop()
+        chanelsTimer?.cancel()
+    }
+
 }
