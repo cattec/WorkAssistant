@@ -7,7 +7,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/innc"/>
+            android:src="@drawable/innc1_11"/>
     </item>
 
 

@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             //findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
 
             //проверка есть ли интернет, ели есть то переключаемся на внешний канал, если нет то на внутренний
-            //if (isReallyOnline()) apiCurURL = apiURL_heroku
+            if (isReallyOnline()) apiCurURL = apiURL_heroku
 
             imageLoader = ImageLoader.Builder(this)
                 .availableMemoryPercentage(0.25)
