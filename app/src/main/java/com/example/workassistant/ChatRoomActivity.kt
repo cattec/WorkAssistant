@@ -17,7 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.schedule
 
-class ChatRoomActivity : AppCompatActivity() {
+class ChatRoomActivity : AppCompatActivity(), FragFindUser.OnSelectedButtonListener {
 
     var f_messages: Int = 0
     var roomName: String = "Комната"
@@ -45,8 +45,16 @@ class ChatRoomActivity : AppCompatActivity() {
         supportActionBar!!.setTitle(roomName)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener(View.OnClickListener {
-            finish()
+            if (findViewById<View>(R.id.layoutFragFindUser1).visibility == View.VISIBLE) {
+                findViewById<View>(R.id.layoutFragFindUser1).visibility = View.GONE
+                findViewById<ImageButton>(R.id.btnAddUserToRoom).visibility = View.VISIBLE
+                supportActionBar!!.setTitle(roomName)
+            } else {
+                finish()
+            }
         })
+
+        findViewById<View>(R.id.layoutFragFindUser1).visibility = View.GONE
 
         MessageList = fillPersMessageList()
         lastMessageID = MessageList!![MessageList?.count()!!-1].fkey.toInt()
@@ -75,7 +83,6 @@ class ChatRoomActivity : AppCompatActivity() {
                         wasist_db?.setLastMesage(f_messages, lastMessageID)
                         AddMessage(rvPersMessage, MyComment(requestResult, myToken.userID.toString(), "", now(), commentText, myToken.iconID.toString()))
                     }
-
                 }
                 btnSendMessageRoom.isEnabled = true
             }
@@ -83,21 +90,26 @@ class ChatRoomActivity : AppCompatActivity() {
 
         //Добавление нового собеседника в чат
         findViewById<ImageButton>(R.id.btnAddUserToRoom).setOnClickListener {
-            AddUserToRoom()
-        }
-
-        //бновление чата по таймеру
-        roomTimer = Timer("chat_" + f_messages.toString(), false).schedule(5000, period = 5000){
-            runOnUiThread(object : TimerTask() {
-                override fun run() {
-                    CheckIncomeMassage(rvPersMessage)
-                }
-            })
+            findViewById<View>(R.id.layoutFragFindUser1).visibility = View.VISIBLE
+            findViewById<ImageButton>(R.id.btnAddUserToRoom).visibility = View.GONE
+            supportActionBar!!.setTitle("Вернуться")
+            //AddUserToRoom_old()
         }
 
     }
 
-    fun AddUserToRoom() {
+    override fun selectedUsers(users: ArrayList<Int>) {
+        findViewById<View>(R.id.layoutFragFindUser1).visibility = View.GONE
+        findViewById<ImageButton>(R.id.btnAddUserToRoom).visibility = View.VISIBLE
+        supportActionBar!!.setTitle(roomName)
+        users.forEach(){ AddUser(it.toString()) }
+    }
+
+    fun AddUser(userStr: String) {
+        URL(apiCurURL + "/messages/room/add/?f_messages=" + f_messages + "&f_user=" + userStr).getText()
+    }
+
+    fun AddUserToRoom_old() {
         val res = URL(apiCurURL + "/users/get/").getText()
         val data = Gson().fromJson(res, Array<MyUserShort>::class.java).asList()
         val users = Array<String>(data.size) { i -> "[" + data[i].fkey.toString() + "] " + data[i].fname }
@@ -110,7 +122,7 @@ class ChatRoomActivity : AppCompatActivity() {
             .show()
     }
 
-    fun AddUser(userStr: String) {
+    fun AddUser_old(userStr: String) {
         val idbeg = userStr.indexOf("[", 0, true) + 1
         val idend =  userStr.indexOf("]", 0, true)
         val userID: String = userStr.substring(idbeg, idend)
@@ -158,8 +170,21 @@ class ChatRoomActivity : AppCompatActivity() {
     }
 
 
+    override fun onStart() {
+        super.onStart()
+        //бновление чата по таймеру
+        roomTimer = Timer("chat_" + f_messages.toString(), false).schedule(5000, period = 5000){
+            runOnUiThread(object : TimerTask() {
+                override fun run() {
+                    CheckIncomeMassage(findViewById<RecyclerView>(R.id.rvPersRoom))
+                }
+            })
+        }
+    }
+
     override fun onStop() {
         super.onStop()
         roomTimer?.cancel()
     }
+
 }

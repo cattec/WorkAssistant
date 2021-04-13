@@ -5,9 +5,7 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,30 +14,42 @@ import java.net.URL
 
 class FragFindUser: Fragment() {
 
-    var cur_userList: List<MyUser>? = null
+    interface OnSelectedButtonListener {
+        fun selectedUsers(users: ArrayList<Int>)
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
+
         val rootView = inflater.inflate(R.layout.fragment_select_user, container, false)
 
         val rvUserMessage = rootView.findViewById<RecyclerView>(R.id.rvFindUser)
         rvUserMessage.layoutManager = LinearLayoutManager(rootView.context)
-        findUsersUpdate(rvUserMessage,"")
+        //findUsersUpdate(rvUserMessage,"")
 
         rootView.findViewById<Button>(R.id.btnFindUser).setOnClickListener(){
             findUsers(rootView, rvUserMessage)
         }
 
         rootView.findViewById<Button>(R.id.btnSelectUsers).setOnClickListener(){
-            var users: String = ""
+            val users = ArrayList<Int>()
             (rvUserMessage.adapter as RCAdapterUsersSimple).CadrParm.forEach {
-                users += if (it.isSelected) it.fkey + "," else ""
+                //users += if (it.isSelected) it.fkey + "," else ""
+                if (it.isSelected) users.add(it.fkey.toInt())
             }
-            users = users.substring(0, users.length-1)
-            Toast.makeText(it.context, "Select Users!!!!", Toast.LENGTH_LONG).show()
+            if (users.count() > 0) {
+                val listener = activity as OnSelectedButtonListener?
+                listener?.selectedUsers(users)
+                (rvUserMessage.adapter as RCAdapterUsersSimple).CadrParm.forEach {
+                    it.isSelected = false
+                }
+                (rvUserMessage.adapter as RCAdapterUsersSimple).notifyDataSetChanged()
+            } else {
+                Toast.makeText( it.context,"Нечего не выбрано!", Toast.LENGTH_LONG).show()
+            }
         }
 
         rootView.findViewById<EditText>(R.id.eUserFindString).setOnEditorActionListener() {it, kcode, event ->
@@ -59,8 +69,7 @@ class FragFindUser: Fragment() {
 
     fun findUsersUpdate(rvUserMessage: RecyclerView, filter:  String) {
         val res = URL(apiCurURL + "/users/get/?filter=" + filter).getText()
-        cur_userList = Gson().fromJson(res, Array<MyUser>::class.java).asList()
-        rvUserMessage.adapter = RCAdapterUsersSimple(cur_userList!!)
+        rvUserMessage.adapter = RCAdapterUsersSimple(Gson().fromJson(res, Array<MyUser>::class.java).asList())
     }
 
 }

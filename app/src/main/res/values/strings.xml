@@ -81,4 +81,5 @@
     <string name="tvChatDatetxt">Дата последнего сообщения</string>
     <string name="tvChatLastMesstxt">Последнее сообщение</string>
     <string name="btnSelectUserstxt">Выбрать пользователей</string>
+    <string name="tvSelectUserstxt">Выбрать пользователей</string>
 </resources>

@@ -29,7 +29,7 @@ class RCAdapterUsersSimple (
 
         setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.userIcon_view!!)
 
-        //holder.UserLogin_view?.text = CadrParm[position].flogin
+        holder.UserLogin_view?.visibility = View.GONE
         holder.UserName_view?.text = CadrParm[position].fname
         holder.UserDescription_view?.text = CadrParm[position].fdescription
         holder.btnDeleteUserFromRole_view?.visibility = View.GONE

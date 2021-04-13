@@ -3,6 +3,7 @@ package com.example.workassistant
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
@@ -14,7 +15,7 @@ import java.net.URL
 import java.util.*
 import kotlin.concurrent.schedule
 
-class ChatChanelsActivity : AppCompatActivity() {
+class ChatChanelsActivity : AppCompatActivity(), FragFindUser.OnSelectedButtonListener {
 
     var chanelsTimer: TimerTask? = null
 
@@ -28,26 +29,42 @@ class ChatChanelsActivity : AppCompatActivity() {
         supportActionBar!!.setTitle("Чат")
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener(View.OnClickListener {
-            finish();
+            if (findViewById<View>(R.id.layoutFragFindUser1).visibility == View.VISIBLE) {
+                findViewById<View>(R.id.layoutFragFindUser1).visibility = View.GONE
+                findViewById<ImageButton>(R.id.btnAddChatRoom).visibility = View.VISIBLE
+                supportActionBar!!.setTitle("Чат")
+            } else {
+                finish()
+            }
         })
 
+        findViewById<View>(R.id.layoutFragFindUser1).visibility = View.GONE
+
         findViewById<ImageButton>(R.id.btnAddChatRoom).setOnClickListener {
-            addChatChanel()
+            findViewById<View>(R.id.layoutFragFindUser1).visibility = View.VISIBLE
+            findViewById<ImageButton>(R.id.btnAddChatRoom).visibility = View.GONE
+            supportActionBar!!.setTitle("Вернуться")
+            //addChatChanel()
         }
-
-
+        
         findViewById<RecyclerView>(R.id.rvPersMessage).layoutManager = LinearLayoutManager(this)
-        messageListRefresh()
 
-        //загрузка токена
-        chanelsTimer = Timer("chanelsTimer", false).schedule(10000, period = 10000){
-            runOnUiThread(object : TimerTask() {
-                override fun run() {
-                    messageListRefresh()
-                }
-            })
+    }
+
+    override fun selectedUsers(users: ArrayList<Int>) {
+        findViewById<View>(R.id.layoutFragFindUser1).visibility = View.GONE
+        findViewById<ImageButton>(R.id.btnAddChatRoom).visibility = View.VISIBLE
+        supportActionBar!!.setTitle("Чат")
+        CreateChat(users)
+    }
+
+    fun CreateChat(users: ArrayList<Int>): Int {
+        val userStr: String = users.map { it.toString() }.toString()
+        val requestResult = URL(apiCurURL + "/messages/create/grouproom/?users=" + userStr).getText()
+        if ((requestResult != "") and (requestResult.isDigitsOnly())) {
+            return requestResult.toInt()
         }
-
+        return 0
     }
 
     fun addChatChanel() {
@@ -58,7 +75,7 @@ class ChatChanelsActivity : AppCompatActivity() {
             .setTitle("Добавить в чат пользователя:")
             .setIcon(R.drawable.ic_baseline_help_outline_24)
             .setItems(users) { dialog, which ->
-                val chatID = CreateChat(users[which])
+                val chatID = CreateChat_old(users[which])
                 if (chatID > 0) {
                     messageListRefresh()
                     startActivity(
@@ -70,7 +87,7 @@ class ChatChanelsActivity : AppCompatActivity() {
             .show()
     }
 
-    fun CreateChat(userStr: String): Int {
+    fun CreateChat_old(userStr: String): Int {
         val idbeg = userStr.indexOf("[",0,true) + 1
         val idend =  userStr.indexOf("]",0,true)
         val userID2: String = userStr.substring(idbeg, idend)
@@ -83,13 +100,24 @@ class ChatChanelsActivity : AppCompatActivity() {
 
     fun messageListRefresh() {
         val rvPersMessage = findViewById<RecyclerView>(R.id.rvPersMessage)
-        //rvPersMessage.layoutManager = LinearLayoutManager(this)
         rvPersMessage.adapter = RCAdapterPersMessages(fillPersMessageList())
     }
 
     private fun fillPersMessageList(): List<MyPersMessage> {
         val res = URL(apiCurURL + "/messages/get/pers/?f_users=" + myToken.userID).getText()
         return Gson().fromJson(res, Array<MyPersMessage>::class.java).asList()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        //загрузка токена
+        chanelsTimer = Timer("chanelsTimer", false).schedule(10, period = 10000){
+            runOnUiThread(object : TimerTask() {
+                override fun run() {
+                    messageListRefresh()
+                }
+            })
+        }
     }
 
     override fun onStop() {

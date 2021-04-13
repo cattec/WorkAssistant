@@ -32,7 +32,7 @@ val apiURL_heroku: String = "https://wassistant.herokuapp.com"
 val apiURL_local: String = "http://10.226.96.21:5000"
 var apiCurURL: String = apiURL_local
 
-var imageLoader: ImageLoader? = null;
+var imageLoader: ImageLoader? = null
 var myToken: cToken = cToken(0, 0, "", "", "")
 var wasist_db: DataBaseHandler? = null
 
@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     val CHANEL_DESC = "Оповещение отметка здоровья"
     val CHANEL_TEXT = "Пожулйста заполните ежедневную предрабочую карточку состояния здоровья"
 
-    var categories = arrayOf<String>()
+    var categories: Array<String> = arrayOf<String>()
     var lastCategory: String = "Все"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             //findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
 
             //проверка есть ли интернет, ели есть то переключаемся на внешний канал, если нет то на внутренний
-            if (isReallyOnline()) apiCurURL = apiURL_heroku
+            //if (isReallyOnline()) apiCurURL = apiURL_heroku
 
             imageLoader = ImageLoader.Builder(this)
                 .availableMemoryPercentage(0.25)
@@ -72,13 +72,6 @@ class MainActivity : AppCompatActivity() {
 
             //загрузка токена
             getToken()
-            Timer("chat", true).schedule(60000, period = 60000){
-                runOnUiThread(object : TimerTask() {
-                    override fun run() {
-                        getToken()
-                    }
-                })
-            }
 
             //обработка собый основной ленты сообщений
             findViewById<RecyclerView>(R.id.rv).layoutManager = LinearLayoutManager(this)
@@ -95,6 +88,17 @@ class MainActivity : AppCompatActivity() {
         {
             Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show()
             //etInfoShow(e.toString())
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Timer("chat", true).schedule(60000, period = 60000){
+            runOnUiThread(object : TimerTask() {
+                override fun run() {
+                    getToken()
+                }
+            })
         }
     }
 

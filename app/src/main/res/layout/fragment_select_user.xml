@@ -6,57 +6,76 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/findFragMain"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/eUserFindString"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tvSelectUsers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="3dp"
+            android:text="@string/tvSelectUserstxt"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="@string/findStringHint"
-            android:inputType="textPersonName" />
+            android:orientation="horizontal">
 
-        <Button
+            <EditText
+                android:id="@+id/eUserFindString"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/findStringHint"
+                android:inputType="textPersonName" />
 
-            android:id="@+id/btnFindUser"
-            android:layout_width="50dp"
-            android:layout_height="30dp"
-            android:backgroundTint="@color/stream_message_background_incoming"
-            android:hapticFeedbackEnabled="false"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            app:icon="@drawable/ic_baseline_search_24"
-            app:iconPadding="0dp"
-            app:iconTint="@color/purple_700" />
+            <Button
 
-        <Button
-            android:id="@+id/btnSelectUsers"
-            android:layout_width="50dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="10dp"
-            android:backgroundTint="@color/stream_message_background_incoming"
-            android:hapticFeedbackEnabled="false"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            app:icon="@drawable/ic_baseline_done_24"
-            app:iconTint="@color/purple_700" />
+                android:id="@+id/btnFindUser"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:backgroundTint="@color/stream_message_background_incoming"
+                android:hapticFeedbackEnabled="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/ic_baseline_search_24"
+                app:iconPadding="0dp"
+                app:iconTint="@color/purple_700" />
+
+            <Button
+                android:id="@+id/btnSelectUsers"
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:backgroundTint="@color/stream_message_background_incoming"
+                android:hapticFeedbackEnabled="false"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/ic_baseline_done_24"
+                app:iconTint="@color/purple_700" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFindUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp">
+
+        </androidx.recyclerview.widget.RecyclerView>
 
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFindUser"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp">
-
-    </androidx.recyclerview.widget.RecyclerView>
 
 </LinearLayout>

@@ -49,24 +49,13 @@ class RCAdapterPersMessages(
     }
 
     class MyViewHolderMessage(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var MesIcon_view: ImageView? = null
-        var tvMembers_view: TextView? = null
-        var tvChatDate_view: TextView? = null
-        var tvChatLastMess_view: TextView? = null
-        var parent_view: Context? = null
-        var layoutRoom_view: LinearLayout? = null
-        var ivNotReaded_view: ImageView? = null
-
-        init {
-            MesIcon_view = itemView?.findViewById(R.id.MesIcon)
-            tvMembers_view = itemView?.findViewById(R.id.tvMembers)
-            tvChatDate_view = itemView?.findViewById(R.id.tvChatDate)
-            tvChatLastMess_view = itemView?.findViewById(R.id.tvChatLastMess)
-            parent_view = itemView?.context
-            layoutRoom_view = itemView?.findViewById(R.id.layoutRoom)
-            ivNotReaded_view = itemView?.findViewById(R.id.ivNotReaded)
-        }
-
+        var MesIcon_view: ImageView? = itemView.findViewById(R.id.MesIcon)
+        var tvMembers_view: TextView? = itemView.findViewById(R.id.tvMembers)
+        var tvChatDate_view: TextView? = itemView.findViewById(R.id.tvChatDate)
+        var tvChatLastMess_view: TextView? = itemView.findViewById(R.id.tvChatLastMess)
+        var parent_view: Context? = itemView.context
+        var layoutRoom_view: LinearLayout? = itemView.findViewById(R.id.layoutRoom)
+        var ivNotReaded_view: ImageView? = itemView.findViewById(R.id.ivNotReaded)
     }
 
 }

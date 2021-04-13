@@ -33,7 +33,7 @@
                 android:inputType="textMultiLine" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/btnSendTask"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -42,7 +42,7 @@
         </LinearLayout>
 
         <fragment
-            android:id="@+id/fragment"
+            android:id="@+id/layoutFragFindUser"
             android:name="com.example.workassistant.FragFindUser"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
