@@ -18,8 +18,10 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.text.isDigitsOnly
 import coil.load
 import coil.request.ImageRequest
 import com.google.gson.Gson
@@ -323,4 +325,17 @@ class newWebViewWithToken : WebViewClient() {
             null
         }
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun insertIcon(tbl: String, objID: Int, bitmap: Bitmap): Int {
+    val stream = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.PNG, 70, stream)
+    val image = stream.toByteArray()
+    val base64Encoded: String = Base64.getEncoder().encodeToString(image)
+    val nUserUpdateIcon = MyUpdateIcon(0, objID, base64Encoded)
+    val outResponse = Gson().toJson(nUserUpdateIcon)
+    val requestResult = URL(apiCurURL + "/icons/updateObjectIcon/?ftable=" + tbl).sendJSONRequest(outResponse)
+    if ((requestResult != "") and (requestResult.isDigitsOnly())) return requestResult.toInt()
+    return 0
 }

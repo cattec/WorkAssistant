@@ -3,10 +3,12 @@ package com.example.workassistant
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.createBitmap
 import androidx.core.text.isDigitsOnly
@@ -28,6 +30,7 @@ class CardMessageActivity: AppCompatActivity()  {
     var old_fbody: String = ""
     var old_categ_name: String = ""
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.message_card)
@@ -81,6 +84,7 @@ class CardMessageActivity: AppCompatActivity()  {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun saveMessage(): Boolean {
         var isSave = false
         val fname: String = findViewById<TextView>(R.id.tMesName).text.toString()
@@ -118,19 +122,8 @@ class CardMessageActivity: AppCompatActivity()  {
         if (isNewIcon) {
             //сохранение картинки
             if (fkey > 0) {
-                val stream = ByteArrayOutputStream()
                 val bitmap = resizeBitmap(200,(findViewById<ImageView>(R.id.imgCard).getDrawable() as BitmapDrawable).bitmap)
-                bitmap.compress(Bitmap.CompressFormat.PNG, 70, stream)
-                val image = stream.toByteArray()
-                val base64Encoded: String = Base64.getEncoder().encodeToString(image)
-
-                val nUserUpdateIcon = MyUpdateIcon (
-                    0,
-                    fkey,
-                    base64Encoded
-                )
-                val outResponse = Gson().toJson(nUserUpdateIcon)
-                val requestResult = URL(apiCurURL + "/icons/updateObjectIcon/?ftable=messages").sendJSONRequest(outResponse)
+                insertIcon("messages", fkey, bitmap)
                 isSave = true
             }
         }

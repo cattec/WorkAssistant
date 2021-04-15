@@ -4,10 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
 import androidx.core.widget.addTextChangedListener
@@ -121,10 +123,12 @@ class CardUserActivity: AppCompatActivity() {
             startActivity(Intent(this, ChatRoomActivity::class.java)
                     .putExtra("f_messages", f_message.toString())
                     .putExtra("roomName", old_full_name)
+                    .putExtra("youLastMessageRead", "0")
             )
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun pressSave(view: View) {
         try {
             val full_name = findViewById<EditText>(R.id.userCardName1).text.toString()
@@ -154,16 +158,9 @@ class CardUserActivity: AppCompatActivity() {
 
             //Сохраняем новую иконку
             if (isNewIcon == true) {
-                val stream = ByteArrayOutputStream()
                 val bitmap = resizeBitmap(200,(findViewById<ImageView>(R.id.userAvaCard).getDrawable() as BitmapDrawable).bitmap)
-                bitmap.compress(Bitmap.CompressFormat.PNG, 70, stream)
-                val image = stream.toByteArray()
-                val base64Encoded: String = Base64.getEncoder().encodeToString(image)
-                val nUserUpdateIcon = MyUpdateIcon(0, CurUserID.toInt(), base64Encoded)
-                val outResponse = Gson().toJson(nUserUpdateIcon)
-                val requestResult = URL(apiCurURL + "/icons/updateObjectIcon/?ftable=users").sendJSONRequest(outResponse)
+                newIconID = insertIcon("users", CurUserID.toInt(), bitmap)
                 isNeedUpdate = true
-                if ( (requestResult != "") and (requestResult.isDigitsOnly()) ) newIconID = requestResult.toInt()
             }
 
             if (isNeedUpdate == true) {

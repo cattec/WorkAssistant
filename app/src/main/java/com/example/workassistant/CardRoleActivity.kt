@@ -3,10 +3,12 @@ package com.example.workassistant
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -91,6 +93,7 @@ class CardRoleActivity: AppCompatActivity() {
         eInfo.visibility = View.VISIBLE
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun pressSave(it: View) {
         try {
             val name = findViewById<EditText>(R.id.roleCardName1).text.toString()
@@ -124,23 +127,9 @@ class CardRoleActivity: AppCompatActivity() {
 
             //Сохраняем новую иконку
             if (isNewIcon == true) {
-                val stream = ByteArrayOutputStream()
                 val bitmap = resizeBitmap(200,(findViewById<ImageView>(R.id.roleAvaCard).getDrawable() as BitmapDrawable).bitmap)
-                bitmap.compress(Bitmap.CompressFormat.PNG, 70, stream)
-                val image = stream.toByteArray()
-                val base64Encoded: String = Base64.getEncoder().encodeToString(image)
-
-                val nUserUpdateIcon = MyUpdateIcon(
-                    0,
-                    CurRoleID,
-                    base64Encoded
-                )
-                val outResponse = Gson().toJson(nUserUpdateIcon)
-                val requestResult = URL(apiCurURL + "/icons/updateObjectIcon/?ftable=roles").sendJSONRequest(outResponse)
+                newIconID = insertIcon("roles", CurRoleID, bitmap)
                 isNeedUpdate = true
-
-                if ( (requestResult != "") and (requestResult.isDigitsOnly()) ) newIconID = requestResult.toInt()
-
             }
 
             if (isNeedUpdate == true) {
