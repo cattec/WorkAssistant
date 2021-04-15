@@ -2,12 +2,15 @@ package com.example.workassistant
 
 import android.os.Bundle
 import android.view.View
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import okhttp3.internal.addHeaderLenient
 
-class SupportActivity : AppCompatActivity(), FragFindUser.OnSelectedButtonListener {
+class SupportActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,16 +25,7 @@ class SupportActivity : AppCompatActivity(), FragFindUser.OnSelectedButtonListen
             finish();
         })
 
-        findViewById<View>(R.id.layoutFragFindUser).visibility = View.GONE
-        findViewById<Button>(R.id.btnSendTask).setOnClickListener(){
-            findViewById<View>(R.id.layoutFragFindUser).visibility = View.VISIBLE
+
         }
 
     }
-
-    override fun selectedUsers(users: ArrayList<Int>) {
-        findViewById<View>(R.id.layoutFragFindUser).visibility = View.GONE
-        findViewById<EditText>(R.id.editTextTextPersonName).setText(("Select Users: " + users.map { it.toString() }))
-    }
-
-}

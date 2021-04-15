@@ -16,14 +16,11 @@
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme" />
 
-        <TextView
-            android:id="@+id/tv_help_text"
+        <WebView
+            android:id="@+id/webView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:hapticFeedbackEnabled="false"
-            android:text="@string/tv_help_text_text"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:scrollbarSize="10dp" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

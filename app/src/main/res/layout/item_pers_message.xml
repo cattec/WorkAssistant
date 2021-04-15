@@ -53,7 +53,7 @@
                     android:layout_marginRight="2dp"
                     android:layout_marginBottom="2dp"
                     android:visibility="gone"
-                    app:srcCompat="@drawable/stream_ic_error" />
+                    app:srcCompat="?android:attr/textSelectHandleLeft" />
 
             </FrameLayout>
 

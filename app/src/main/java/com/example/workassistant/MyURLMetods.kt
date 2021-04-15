@@ -1,6 +1,5 @@
 package com.example.workassistant
 
-import java.io.BufferedReader
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
