@@ -57,7 +57,7 @@ class RCAdapterNewsMessages(
 
         holder.imgCard_view?.setOnClickListener {
             holder.leyoutComment_view?.visibility = View.VISIBLE
-            holder.imgCard_view?.visibility = View.GONE
+            holder.imgCardMain_view?.visibility = View.GONE
             holder.layout_small_image?.visibility = View.VISIBLE
             setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.imgCardSmall_view!!)
             //holder.layoutLeft_view?.layoutParams!!.height = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -74,15 +74,15 @@ class RCAdapterNewsMessages(
         }
 
         holder.imgCardSmall_view?.setOnClickListener {
-            holder.imgCard_view?.visibility = View.VISIBLE
+            holder.imgCardMain_view?.visibility = View.VISIBLE
             holder.layout_small_image?.visibility = View.GONE
             holder.leyoutComment_view?.visibility = View.GONE
         }
 
         holder.iBFullView_view?.setOnClickListener {
-            if (holder.imgCard_view?.visibility == View.VISIBLE) {
+            if (holder.imgCardMain_view?.visibility == View.VISIBLE) {
                 holder.iBFullView_view?.setImageResource(R.drawable.ic_baseline_arrow_drop_up_24)
-                holder.imgCard_view?.visibility = View.GONE
+                holder.imgCardMain_view?.visibility = View.GONE
                 holder.layout_small_image?.visibility = View.VISIBLE
                 holder.leyoutComment_view?.visibility = View.VISIBLE
                 setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.imgCardSmall_view!!)
@@ -92,7 +92,7 @@ class RCAdapterNewsMessages(
                 else holder.tvComment_view?.visibility = View.GONE
             } else {
                 holder.iBFullView_view?.setImageResource(R.drawable.ic_baseline_arrow_drop_down_24)
-                holder.imgCard_view?.visibility = View.VISIBLE
+                holder.imgCardMain_view?.visibility = View.VISIBLE
                 holder.layout_small_image?.visibility = View.GONE
                 holder.leyoutComment_view?.visibility = View.GONE
             }
@@ -132,6 +132,7 @@ class RCAdapterNewsMessages(
 
     class MyViewHolderMessage(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var vCards_view: CardView? = null
+        var imgCardMain_view: CardView? = itemView.findViewById(R.id.imgCardMain)
         var imgCard_view: ImageView? = null
         var layout_small_image: FrameLayout? = null
         var imgCardSmall_view: ImageView? = null

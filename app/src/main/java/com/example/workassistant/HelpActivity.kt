@@ -37,39 +37,8 @@ class HelpActivity : AppCompatActivity() {
         headers.put("Authorization", myToken.token_type + ' ' + myToken.access_token)
         webView.loadUrl(apiCurURL + "/pages/newbiebook/", headers)*/
 
-        webView.webViewClient = object : WebViewClient() {
-            // Handle API until level 21
-            override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
-                return getNewResponse(url)
-            }
-            // Handle API 21+
-            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-            override fun shouldInterceptRequest(
-                view: WebView,
-                request: WebResourceRequest
-            ): WebResourceResponse? {
-                val url = request.url.toString()
-                return getNewResponse(url)
-            }
-            private fun getNewResponse(url: String): WebResourceResponse? {
-                return try {
-                    val httpClient = OkHttpClient()
-                    val request: Request = Builder()
-                        .url(url.trim { it <= ' ' })
-                        .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
-                        .build()
-                    val response: Response = httpClient.newCall(request).execute()
-                    WebResourceResponse(
-                        null,
-                        response.header("content-encoding", "utf-8"),
-                        response.body?.byteStream()
-                    )
-                } catch (e: Exception) {
-                    null
-                }
-            }
-        }
-
+        //переопределяем веб клиент с целью добавлять во все запросы наш токен
+        webView.webViewClient = newWebViewWithToken()
         webView.loadUrl(apiCurURL + "/pages/newbiebook/")
     }
 

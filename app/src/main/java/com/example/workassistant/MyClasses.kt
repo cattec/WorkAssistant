@@ -1,5 +1,6 @@
 package com.example.workassistant
 
+import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -8,9 +9,14 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.provider.MediaStore
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,6 +25,9 @@ import coil.request.ImageRequest
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.ByteArrayOutputStream
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -281,4 +290,37 @@ fun isReallyOnline(): Boolean {
         e.printStackTrace()
     }
     return false
+}
+
+class newWebViewWithToken : WebViewClient() {
+    // Handle API until level 21
+    override fun shouldInterceptRequest(view: WebView, url: String): WebResourceResponse? {
+        return getNewResponse(url)
+    }
+    // Handle API 21+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    override fun shouldInterceptRequest(
+        view: WebView,
+        request: WebResourceRequest
+    ): WebResourceResponse? {
+        val url = request.url.toString()
+        return getNewResponse(url)
+    }
+    private fun getNewResponse(url: String): WebResourceResponse? {
+        return try {
+            val httpClient = OkHttpClient()
+            val request: Request = Request.Builder()
+                .url(url.trim { it <= ' ' })
+                .addHeader("Authorization", myToken.token_type + ' ' + myToken.access_token)
+                .build()
+            val response: Response = httpClient.newCall(request).execute()
+            WebResourceResponse(
+                null,
+                response.header("content-encoding", "utf-8"),
+                response.body?.byteStream()
+            )
+        } catch (e: Exception) {
+            null
+        }
+    }
 }

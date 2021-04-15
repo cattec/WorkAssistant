@@ -10,6 +10,7 @@
         android:id="@+id/vCards"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:cardCornerRadius="5dp"
         app:cardUseCompatPadding="true">
 
         <LinearLayout
@@ -22,16 +23,23 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/imgCard"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/imgCardMain"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_marginLeft="1dp"
                     android:layout_marginTop="1dp"
                     android:layout_marginRight="1dp"
                     android:layout_marginBottom="1dp"
-                    android:contentDescription="@string/card_img"
-                    app:srcCompat="@drawable/ic_baseline_cloud_download_24" />
+                    app:cardCornerRadius="10dp">
+
+                    <ImageView
+                        android:id="@+id/imgCard"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:contentDescription="@string/card_img"
+                        app:srcCompat="@drawable/ic_baseline_cloud_download_24" />
+                </androidx.cardview.widget.CardView>
 
                 <LinearLayout
                     android:id="@+id/layoutLeft"

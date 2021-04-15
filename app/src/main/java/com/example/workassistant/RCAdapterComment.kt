@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
+import top.defaults.drawabletoolbox.setGradientRadius
 
 
 class RCAdapterComment(
@@ -35,19 +36,6 @@ class RCAdapterComment(
 
     override fun onBindViewHolder(holder: MyViewHolderComment, position: Int) {
 
-        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.persIcon_view!!)
-        holder.persIcon_view?.setOnLongClickListener {
-            holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("CurUserID", CadrParm[position].f_users_create))
-            true
-        }
-
-        if (CadrParm[position].f_users_create == myToken.userID.toString()) {
-            holder.leyoutText_view?.setBackgroundColor(Color.argb(125,242,255,243))
-            //holder.layoutHeadComment_view?.gravity = Gravity.END
-        } else {
-            holder.leyoutText_view?.setBackgroundColor(Color.argb(125,196,231,255))
-        }
-
         if (youLastMessageRead > 0)
             if (youLastMessageRead < CadrParm[position].fkey.toInt()) {
                 holder.ivNotReaded_view?.visibility = View.VISIBLE
@@ -62,32 +50,46 @@ class RCAdapterComment(
             holder.persName_view?.visibility = View.GONE
         }
 
+        //о разному отрисовывать сообщения свои и чужие
+        if (CadrParm[position].f_users_create == myToken.userID.toString()) {
+            setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.persIcon_viewme!!)
+            holder.persIcon_viewme?.setOnLongClickListener {
+                holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("CurUserID", CadrParm[position].f_users_create))
+                true
+            }
+            holder.leyoutText_view?.setBackgroundColor(Color.argb(125,242,255,243))
+            holder.persIcon_view?.visibility = View.GONE
+            holder.persIcon_viewme?.visibility = View.VISIBLE
+            holder.layoutHeadComment_view?.gravity = Gravity.END
+            holder.lv1namedate_view?.gravity = Gravity.END
+        } else {
+            setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.persIcon_view!!)
+            holder.leyoutText_view?.setBackgroundColor(Color.argb(125,196,231,255))
+            holder.persIcon_view?.setOnLongClickListener {
+                holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("CurUserID", CadrParm[position].f_users_create))
+                true
+            }
+            holder.persIcon_view?.visibility = View.VISIBLE
+            holder.persIcon_viewme?.visibility = View.GONE
+            holder.layoutHeadComment_view?.gravity = Gravity.START
+            holder.lv1namedate_view?.gravity = Gravity.START
+        }
+
     }
 
     class MyViewHolderComment(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        //var vCards_view: CardView? = null
-        var persIcon_view: ImageView? = null
-        var persName_view: TextView? = null
-        var persMesDate_view: TextView? = null
-        var tvMessageBody: TextView? = null
-        var parent_view: Context? = null
-        var layoutHeadComment_view: LinearLayout? = null
-        var layoutUser_view: FrameLayout? = null
-        var leyoutText_view: LinearLayout? = null
-        var ivNotReaded_view: ImageView? = null
+        var persIcon_view: ImageView? = itemView.findViewById(R.id.persIcon)
+        var persIcon_viewme: ImageView? = itemView.findViewById(R.id.persIconme)
+        var persName_view: TextView? = itemView.findViewById(R.id.persName)
+        var persMesDate_view: TextView? = itemView.findViewById(R.id.persMesDate)
+        var tvMessageBody: TextView? = itemView.findViewById(R.id.tvMessageBody)
+        var parent_view: Context? = itemView.context
+        var layoutHeadComment_view: LinearLayout? = itemView.findViewById(R.id.layoutHeadComment)
+        var layoutUser_view: FrameLayout? = itemView.findViewById(R.id.layoutUser)
+        var leyoutText_view: LinearLayout? = itemView.findViewById(R.id.layoutText)
+        var ivNotReaded_view: ImageView? = itemView.findViewById(R.id.ivNotReaded)
+        var lv1namedate_view: LinearLayout? = itemView.findViewById(R.id.lv1namedate)
 
-        init {
-            //vCards_view = itemView?.findViewById(R.id.vCards)
-            persIcon_view = itemView?.findViewById(R.id.persIcon)
-            persName_view = itemView?.findViewById(R.id.persName)
-            persMesDate_view = itemView?.findViewById(R.id.persMesDate)
-            tvMessageBody = itemView?.findViewById(R.id.tvMessageBody)
-            parent_view = itemView?.context
-            layoutHeadComment_view = itemView?.findViewById(R.id.layoutHeadComment)
-            layoutUser_view = itemView?.findViewById(R.id.layoutUser)
-            leyoutText_view = itemView?.findViewById(R.id.layoutText)
-            ivNotReaded_view = itemView?.findViewById(R.id.ivNotReaded)
-        }
     }
 
 }

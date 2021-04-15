@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutHeadComment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="3dp"
@@ -11,64 +12,54 @@
     android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/layoutHeadComment"
-            android:layout_width="match_parent"
+        <FrameLayout
+            android:id="@+id/layoutUser"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:visibility="visible">
 
-            <FrameLayout
-                android:id="@+id/layoutUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="visible">
+            <ImageView
+                android:id="@+id/persIcon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginBottom="3dp"
+                android:contentDescription="@string/persDefaultIcon"
+                tools:srcCompat="@tools:sample/avatars" />
 
-                <ImageView
-                    android:id="@+id/persIcon"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginBottom="3dp"
-                    android:contentDescription="@string/persDefaultIcon"
-                    tools:srcCompat="@tools:sample/avatars" />
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginBottom="3dp"
+                android:contentDescription="@string/maskPict"
+                app:srcCompat="@drawable/ic_avatar_form" />
 
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginRight="3dp"
-                    android:layout_marginBottom="3dp"
-                    android:contentDescription="@string/maskPict"
-                    app:srcCompat="@drawable/ic_avatar_form" />
+        </FrameLayout>
 
-                <ImageView
-                    android:id="@+id/ivNotReaded"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginRight="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:visibility="gone"
-                    app:srcCompat="?android:attr/textSelectHandleLeft" />
-
-            </FrameLayout>
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:cardCornerRadius="8dp">
 
             <LinearLayout
                 android:id="@+id/layoutText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#F4F6F1"
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/lv1namedate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -100,10 +91,48 @@
                     android:layout_marginBottom="3dp"
                     android:hint="@string/tvMessageDefault"
                     android:text="@string/tvMessageDefault" />
+
+                <ImageView
+                    android:id="@+id/ivNotReaded"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:visibility="gone"
+                    app:srcCompat="?android:attr/textSelectHandleLeft" />
             </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-        </LinearLayout>
+        <FrameLayout
+            android:id="@+id/layoutUserme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
 
+            <ImageView
+                android:id="@+id/persIconme"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginBottom="3dp"
+                android:contentDescription="@string/persDefaultIcon"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <ImageView
+                android:id="@+id/imageView3me"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_marginBottom="3dp"
+                android:contentDescription="@string/maskPict"
+                app:srcCompat="@drawable/ic_avatar_form" />
+
+        </FrameLayout>
     </LinearLayout>
 
 
