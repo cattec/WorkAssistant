@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -17,7 +18,7 @@ import java.util.ArrayList
 class FragRoomMembers: Fragment(), FragFindUser.OnSelectedButtonListener {
 
     var rootView: View? = null
-    var f_messages: Int = 112
+    var f_messages: Int = 0
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -41,7 +42,12 @@ class FragRoomMembers: Fragment(), FragFindUser.OnSelectedButtonListener {
             addUsers()
         }
 
-       return rootView
+        setFragmentResultListener("FragRoomMembers") { requestKey, bundle ->
+            f_messages = bundle.getString("f_messages")!!.toInt()
+            rvRoomUserUpdate()
+        }
+
+        return rootView
     }
 
     fun rvRoomUserUpdate() {

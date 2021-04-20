@@ -33,7 +33,7 @@
 
         <fragment
             android:id="@+id/layoutFragFindUser1"
-            android:name="com.example.workassistant.FragFindUser"
+            android:name="com.example.workassistant.FragRoomMembers"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

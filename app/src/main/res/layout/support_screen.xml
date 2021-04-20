@@ -40,11 +40,6 @@
                 android:layout_marginRight="10dp"
                 android:text="Отправить заявку" />
 
-            <fragment
-                android:id="@+id/fragment"
-                android:name="com.example.workassistant.FragRoomMembers"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
         </LinearLayout>
 
     </LinearLayout>

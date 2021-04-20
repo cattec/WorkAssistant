@@ -7,7 +7,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.text.isDigitsOnly
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -16,8 +18,9 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.schedule
+import androidx.fragment.app.setFragmentResult
 
-class ChatRoomActivity : AppCompatActivity(), FragFindUser.OnSelectedButtonListener {
+class ChatRoomActivity : AppCompatActivity()/*, FragFindUser.OnSelectedButtonListener*/ {
 
     var f_messages: Int = 0
     var roomName: String = "Комната"
@@ -93,11 +96,14 @@ class ChatRoomActivity : AppCompatActivity(), FragFindUser.OnSelectedButtonListe
             findViewById<View>(R.id.layoutFragFindUser1).visibility = View.VISIBLE
             findViewById<ImageButton>(R.id.btnAddUserToRoom).visibility = View.GONE
             supportActionBar!!.setTitle("Вернуться")
+            val fmanager = supportFragmentManager
+            fmanager.setFragmentResult("FragRoomMembers", bundleOf("f_messages" to f_messages.toString()))
             //AddUserToRoom_old()
         }
 
     }
 
+/*
     override fun selectedUsers(users: ArrayList<Int>) {
         findViewById<View>(R.id.layoutFragFindUser1).visibility = View.GONE
         findViewById<ImageButton>(R.id.btnAddUserToRoom).visibility = View.VISIBLE
@@ -108,7 +114,9 @@ class ChatRoomActivity : AppCompatActivity(), FragFindUser.OnSelectedButtonListe
     fun AddUser(userStr: String) {
         URL(apiCurURL + "/messages/room/add/?f_messages=" + f_messages + "&f_user=" + userStr).getText()
     }
+ */
 
+/*
     fun AddUserToRoom_old() {
         val res = URL(apiCurURL + "/users/get/").getText()
         val data = Gson().fromJson(res, Array<MyUserShort>::class.java).asList()
@@ -128,6 +136,7 @@ class ChatRoomActivity : AppCompatActivity(), FragFindUser.OnSelectedButtonListe
         val userID: String = userStr.substring(idbeg, idend)
         URL(apiCurURL + "/messages/room/add/?f_messages=" + f_messages + "&f_user=" + userID).getText()
     }
+*/
 
     fun RoomFill(rvPersMessage: RecyclerView) {
         rvPersMessage.adapter = RCAdapterComment(false, youLastMessageRead, MessageList!!)
