@@ -72,23 +72,13 @@ class RCAdapterUsers (
     }
 
     class MyViewHolderUser(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var userIcon_view: ImageView? = null
-        var UserLogin_view: TextView? = null
-        var UserName_view: TextView? = null
-        var UserDescription_view: TextView? = null
-        var parent_view: Context? = null
-        var btnDeleteUserFromRole_view: ImageButton? = null
-        var userCardView_view: LinearLayout? = null
-
-        init {
-            userIcon_view = itemView?.findViewById(R.id.userIcon)
-            UserLogin_view = itemView?.findViewById(R.id.UserLogin)
-            UserName_view = itemView?.findViewById(R.id.UserName)
-            UserDescription_view = itemView?.findViewById(R.id.UserDescription)
-            parent_view = itemView?.context
-            btnDeleteUserFromRole_view = itemView?.findViewById(R.id.btnDeleteUserFromRole)
-            userCardView_view = itemView?.findViewById(R.id.userCardView)
-        }
+        var userIcon_view: ImageView? = itemView.findViewById(R.id.userIcon)
+        var UserLogin_view: TextView? = itemView.findViewById(R.id.UserLogin)
+        var UserName_view: TextView? = itemView.findViewById(R.id.UserName)
+        var UserDescription_view: TextView? = itemView.findViewById(R.id.UserDescription)
+        var parent_view: Context? = itemView.context
+        var btnDeleteUserFromRole_view: ImageButton? = itemView.findViewById(R.id.btnDeleteUserFromRole)
+        var userCardView_view: LinearLayout? = itemView.findViewById(R.id.userCardView)
     }
 
 }

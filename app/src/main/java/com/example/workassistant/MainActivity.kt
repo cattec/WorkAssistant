@@ -55,9 +55,8 @@ class MainActivity : AppCompatActivity() {
             //установка необходимых прав
             val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
             StrictMode.setThreadPolicy(policy)
-            //findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
 
-            //проверка есть ли интернет, ели есть то переключаемся на внешний канал, если нет то на внутренний
+            //проверка есть ли интернет, если есть то переключаемся на внешний канал, если нет то на внутренний
             //if (isReallyOnline()) apiCurURL = apiURL_heroku
 
             imageLoader = ImageLoader.Builder(this)
@@ -79,9 +78,6 @@ class MainActivity : AppCompatActivity() {
 
             //События навигационного меню
             navMenuEvents()
-
-            //ждем когда загрузится список и потом убираем слой с интро загрузки
-            findViewById<FrameLayout>(R.id.flLoading).visibility = View.GONE
 
         }
         catch (e: Exception)
@@ -199,17 +195,11 @@ class MainActivity : AppCompatActivity() {
 
     fun mainListRefresh() {
         //реализация обновления списка: толком не работает тормозит дико, потому что генерит милион событий
-        /*val imageLoader = ImageLoader.Builder(this)
-            .availableMemoryPercentage(0.25)
-            .crossfade(true)
-            .build()*/
         val rv = findViewById<RecyclerView>(R.id.rv)
         //rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = RCAdapterNewsMessages(myToken.userID, fillMessageList())
 
-        /*
-        val rv = findViewById<RecyclerView>(R.id.rv)
-        rv.onScrollToStart {
+        /*rv.onScrollToStart {
             Toast.makeText(this, "Refresh list", Toast.LENGTH_SHORT).show()
             refreshMainList(findViewById<NavigationView>(R.id.nav_view))
         }
@@ -218,28 +208,24 @@ class MainActivity : AppCompatActivity() {
         }*/
     }
 
-/*
-    fun RecyclerView.onScrollToStart( onScrollNearStart: (Unit) -> Unit) =
+    /*fun RecyclerView.onScrollToStart( onScrollNearStart: (Unit) -> Unit) =
         addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     if (newState == 1) {
                         val yOffset = computeVerticalScrollOffset()
                         if (yOffset == 0) {
-
                             val initialField = RecyclerView::class.java.getDeclaredField("mInitialTouchY")
                             val lastField = RecyclerView::class.java.getDeclaredField("mLastTouchY")
                             initialField.isAccessible = true
                             lastField.isAccessible = true
                             val initial = initialField.getInt(recyclerView)
                             val last = lastField.getInt(recyclerView)
-
                             if (last > initial) {
                                 onScrollNearStart(Unit);
                             }
                         }
                     }
-
                 }
             })
 
@@ -252,7 +238,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     })*/
-
 
     fun testURLResponse(view: View) {
         try {

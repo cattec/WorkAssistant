@@ -36,17 +36,21 @@ class FragFindUser: Fragment() {
 
         rootView.findViewById<Button>(R.id.btnSelectUsers).setOnClickListener(){
             val users = ArrayList<Int>()
-            (rvUserMessage.adapter as RCAdapterUsersSimple).CadrParm.forEach {
+            (rvUserMessage.adapter as RCAdapterUsersFind).CadrParm.forEach {
                 //users += if (it.isSelected) it.fkey + "," else ""
                 if (it.isSelected) users.add(it.fkey.toInt())
             }
             if (users.count() > 0) {
-                val listener = activity as OnSelectedButtonListener?
+
+                var listener:OnSelectedButtonListener? = null
+                    if (parentFragment == null) {listener = activity as OnSelectedButtonListener?}
+                else{listener = parentFragment as OnSelectedButtonListener?}
+
                 listener?.selectedUsers(users)
-                (rvUserMessage.adapter as RCAdapterUsersSimple).CadrParm.forEach {
+                (rvUserMessage.adapter as RCAdapterUsersFind).CadrParm.forEach {
                     it.isSelected = false
                 }
-                (rvUserMessage.adapter as RCAdapterUsersSimple).notifyDataSetChanged()
+                (rvUserMessage.adapter as RCAdapterUsersFind).notifyDataSetChanged()
             } else {
                 Toast.makeText( it.context,"Нечего не выбрано!", Toast.LENGTH_LONG).show()
             }
@@ -69,7 +73,7 @@ class FragFindUser: Fragment() {
 
     fun findUsersUpdate(rvUserMessage: RecyclerView, filter:  String) {
         val res = URL(apiCurURL + "/users/get/?filter=" + filter).getText()
-        rvUserMessage.adapter = RCAdapterUsersSimple(Gson().fromJson(res, Array<MyUser>::class.java).asList())
+        rvUserMessage.adapter = RCAdapterUsersFind(Gson().fromJson(res, Array<MyUser>::class.java).asList())
     }
 
 }

@@ -132,6 +132,15 @@ class MyUpdateIcon(
     var fdata: String
 )
 
+class MyRoomMembers(
+        var fkey: String,
+        var f_users: Int,
+        var f_roles: Int,
+        var fname: String,
+        var f_icons: Int,
+        var fdescription: String
+)
+
 fun getNewToken(settings: SharedPreferences, myLogin: String, myPassword: String): cToken? {
 
     val tokenResponse = URL(apiCurURL + "/token").getToken(myLogin, myPassword)

@@ -8,45 +8,55 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.net.URL
 
 
-class RCAdapterUsersSimple (
-    val CadrParm: List<MyUser>) :
-    RecyclerView.Adapter<RCAdapterUsersSimple.MyViewHolderUser>() {
+class RCAdapterUsersRoom (
+        private val f_messages: Int,
+        val CadrParm: List<MyRoomMembers>) :
+        RecyclerView.Adapter<RCAdapterUsersRoom.MyViewHolderUser>() {
 
     override fun getItemCount() = CadrParm.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolderUser {
         val itemView = LayoutInflater.from(parent?.context).inflate(
-            R.layout.item_user,
-            parent,
-            false
+                R.layout.item_user,
+                parent,
+                false
         )
         return MyViewHolderUser(itemView)
     }
 
     override fun onBindViewHolder(holder: MyViewHolderUser, position: Int) {
 
-        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons, holder.userIcon_view!!)
+        setImageImageView(holder.parent_view!!, CadrParm[position].f_icons.toString(), holder.userIcon_view!!)
 
         holder.UserLogin_view?.visibility = View.GONE
         holder.UserName_view?.text = CadrParm[position].fname
         holder.UserDescription_view?.text = CadrParm[position].fdescription
-        holder.btnDeleteUserFromRole_view?.visibility = View.GONE
 
         holder.userIcon_view?.setOnLongClickListener {
             holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("CurUserID", CadrParm[position].fkey))
             true
         }
 
-        holder.layoutInfo_view?.setOnClickListener() {
-            if (CadrParm[position].isSelected) {
-                holder.layoutInfo_view?.setBackgroundColor(Color.argb(255, 241, 246, 246))
-            }
-            else {
-                holder.layoutInfo_view?.setBackgroundColor(Color.argb(160, 198, 228, 178))
-            }
-            CadrParm[position].isSelected = !CadrParm[position].isSelected
+        holder.btnDeleteUserFromRole_view?.setOnClickListener {
+            MaterialAlertDialogBuilder(holder.parent_view!!)
+                    .setTitle("Удаление из комнаты")
+                    .setMessage("Вы уверены что хотите удалить <"+ CadrParm[position].fname +"> из Комнаты?")
+                    .setNegativeButton("Отмена") { dialog, which ->
+                        // Respond to negative button press
+                    }
+                    .setPositiveButton("Удалить") { dialog, which ->
+                        // Respond to positive button press
+                        URL(apiCurURL + "/messages/room/delete/?f_messages=" + f_messages.toString()
+                                + "&f_users=" + CadrParm[position].f_users.toString()
+                                + "&f_roles=" + CadrParm[position].f_roles.toString()
+                        ).getText()
+                        holder.userCardView_view?.visibility = View.GONE
+                    }
+                    .show()
         }
 
     }

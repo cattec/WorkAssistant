@@ -82,4 +82,6 @@
     <string name="tvChatLastMesstxt">Последнее сообщение</string>
     <string name="btnSelectUserstxt">Выбрать пользователей</string>
     <string name="tvSelectUserstxt">Выбрать пользователей</string>
+    <string name="tvRoomUserstxt">Состав комнаты</string>
+    <string name="delRoomtxt">Покинуть канал</string>
 </resources>

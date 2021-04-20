@@ -59,6 +59,7 @@ class ChatChanelsActivity : AppCompatActivity(), FragFindUser.OnSelectedButtonLi
     }
 
     fun CreateChat(users: ArrayList<Int>): Int {
+        users.add(myToken.userID)
         val userStr: String = users.map { it.toString() }.toString().replace(" ","")
         val requestResult = URL(apiCurURL + "/messages/create/grouproom/?users=" + userStr).getText()
         if ((requestResult != "") and (requestResult.isDigitsOnly())) {
