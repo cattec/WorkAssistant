@@ -19,8 +19,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.schedule
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 
-class ChatRoomActivity : AppCompatActivity()/*, FragFindUser.OnSelectedButtonListener*/ {
+
+class ChatRoomActivity : AppCompatActivity(), FragRoomMembers.OnChangeCanalNameListener {
 
     var f_messages: Int = 0
     var roomName: String = "Комната"
@@ -97,9 +99,11 @@ class ChatRoomActivity : AppCompatActivity()/*, FragFindUser.OnSelectedButtonLis
             findViewById<ImageButton>(R.id.btnAddUserToRoom).visibility = View.GONE
             supportActionBar!!.setTitle("Вернуться")
             val fmanager = supportFragmentManager
-            fmanager.setFragmentResult("FragRoomMembers", bundleOf("f_messages" to f_messages.toString()))
+            fmanager.setFragmentResult("FragRoomID", bundleOf("f_messages" to f_messages.toString()))
+            fmanager.setFragmentResult("FragRoomName", bundleOf("roomName" to roomName))
             //AddUserToRoom_old()
         }
+
 
     }
 
@@ -176,6 +180,10 @@ class ChatRoomActivity : AppCompatActivity()/*, FragFindUser.OnSelectedButtonLis
         return Gson().fromJson(res, Array<MyComment>::class.java).let { intList ->
             ArrayList<MyComment>(intList.size).apply { intList.forEach { add(it) } }
         }
+    }
+
+    override fun newCanalName(newName: String) {
+        roomName = newName
     }
 
 

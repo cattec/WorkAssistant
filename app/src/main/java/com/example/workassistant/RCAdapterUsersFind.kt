@@ -35,7 +35,7 @@ class RCAdapterUsersFind (
         holder.btnDeleteUserFromRole_view?.visibility = View.GONE
 
         holder.userIcon_view?.setOnLongClickListener {
-            holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("apiCurURL", apiCurURL).putExtra("CurUserID", CadrParm[position].fkey))
+            holder.parent_view?.startActivity(Intent(holder.parent_view, CardUserActivity::class.java).putExtra("CurUserID", CadrParm[position].fkey))
             true
         }
 

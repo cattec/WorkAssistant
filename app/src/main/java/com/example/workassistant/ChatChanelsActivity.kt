@@ -38,6 +38,7 @@ class ChatChanelsActivity : AppCompatActivity(), FragFindUser.OnSelectedButtonLi
             }
         })
 
+
         findViewById<View>(R.id.layoutFragFindUser1).visibility = View.GONE
 
         findViewById<ImageButton>(R.id.btnAddChatRoom).setOnClickListener {

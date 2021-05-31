@@ -29,6 +29,8 @@ class CardMessageActivity: AppCompatActivity()  {
     var old_fname: String = ""
     var old_fbody: String = ""
     var old_categ_name: String = ""
+    var canedit: Boolean = true
+    var spec: String = ""
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,15 +39,16 @@ class CardMessageActivity: AppCompatActivity()  {
 
         if (intent.extras != null) {
             val cfkey = intent.extras!!.getString("f_messages")
-            if (cfkey != null)
-                if (cfkey.isDigitsOnly()) fkey = cfkey.toInt()
+            if (cfkey != null) if (cfkey.isDigitsOnly()) fkey = cfkey.toInt()
+            val spec_in = intent.extras!!.getString("spec")
+            if (spec_in != null) spec = spec_in
         }
 
         val settings = getSharedPreferences("UserInfo", 0)
         userID = settings.getString("userID", "").toString()
 
         if (fkey > 0) {
-            val res = URL(apiCurURL + "/messages/get/?fkey=" + fkey.toString() + "&categ_name=none").getText()
+            val res = URL(apiCurURL + "/messages/get/?fkey=" + fkey.toString() + "&categ_name=none&personal=false").getText()
             val curMessage = Gson().fromJson(res, Array<MyMessage>::class.java).asList()
             old_fname = curMessage[0].fname
             old_fbody = curMessage[0].fbody
@@ -57,8 +60,29 @@ class CardMessageActivity: AppCompatActivity()  {
             if (curMessage[0].f_icons != "") setImageImageView(this, curMessage[0].f_icons, findViewById<ImageView>(R.id.imgCard))
             /*if (curMessage[0].f_icons != "")
                 findViewById<ImageView>(R.id.imgCard).load(apiCurURL + "/icon/?fkey=" + curMessage[0].f_icons) { addHeader("Authorization",myToken.token_type + ' ' + myToken.access_token) }*/
+            canedit = curMessage[0].canedit
         } else {
             findViewById<TextView>(R.id.tMesDate).setText(now())
+        }
+
+        //если не автор и не админ то делаем все недоступным для редактиования
+        if (canedit) {
+            findViewById<ImageView>(R.id.imgCard).setOnClickListener {
+                getNewImage(this)
+            }
+            findViewById<TextView>(R.id.tMesCateg).setOnClickListener {
+                getCategory(this)
+            }
+            findViewById<Button>(R.id.btnSaveCard).setOnClickListener {
+                if (saveMessage()) {
+                    Toast.makeText(this, "Save Massage!!!!", Toast.LENGTH_LONG).show()
+                    finish();
+                }
+            }
+        } else {
+            findViewById<EditText>(R.id.tMesName).isEnabled = false
+            findViewById<EditText>(R.id.tMesText).isEnabled = false
+            findViewById<Button>(R.id.btnSaveCard).visibility = View.GONE
         }
 
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar6)
@@ -68,20 +92,7 @@ class CardMessageActivity: AppCompatActivity()  {
         toolbar.setNavigationOnClickListener(View.OnClickListener {
             finish();
         })
-        findViewById<Button>(R.id.btnSaveCard).setOnClickListener {
-            if (saveMessage()) {
-                Toast.makeText(this, "Save Massage!!!!", Toast.LENGTH_LONG).show()
-                finish();
-            }
-        }
 
-        findViewById<ImageView>(R.id.imgCard).setOnClickListener {
-            getNewImage(this)
-        }
-
-        findViewById<TextView>(R.id.tMesCateg).setOnClickListener {
-            getCategory(this)
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -92,7 +103,7 @@ class CardMessageActivity: AppCompatActivity()  {
         val fbody: String = findViewById<TextView>(R.id.tMesText).text.toString()
         val categ_name: String = findViewById<TextView>(R.id.tMesCateg).text.toString()
 
-        val message = MyMessage(fkey.toString(), fname, fdatecreate, fbody, categ_name, "0", "0", userID)
+        val message = MyMessage(fkey.toString(), fname, fdatecreate, fbody, categ_name, "0", "0", userID, true)
         val outResponse = Gson().toJson(message)
 
         //Если хоть что то изменилось то делаем апдетй в базу
@@ -135,7 +146,7 @@ class CardMessageActivity: AppCompatActivity()  {
             /*val res = URL(apiCurURL + "/categories/").getText(token_type, access_token)
             val data = Gson().fromJson(res, Array<MyCategories>::class.java).asList()
             val categories = Array<String>(data.size) { i -> data[i].fname }*/
-            val categories = getCategories()
+            val categories = getCategories(spec)
             MaterialAlertDialogBuilder(ac)
                     .setTitle("Категория сообщения?")
                     .setIcon(R.drawable.arni)

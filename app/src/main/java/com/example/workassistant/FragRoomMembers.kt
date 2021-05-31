@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.text.isDigitsOnly
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,7 +20,11 @@ class FragRoomMembers: Fragment(), FragFindUser.OnSelectedButtonListener {
 
     var rootView: View? = null
     var f_messages: Int = 0
+    var oldCanalName = ""
 
+    interface OnChangeCanalNameListener {
+        fun newCanalName(newName: String)
+    }
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -28,7 +33,11 @@ class FragRoomMembers: Fragment(), FragFindUser.OnSelectedButtonListener {
 
         rootView = inflater.inflate(R.layout.fragment_room_members, container, false)
 
-        rootView?.findViewById<View>(R.id.lfindFragment)?.visibility = View.GONE
+        rootView?.findViewById<View>(R.id.layoutFrgmentFind)?.visibility = View.GONE
+        rootView?.findViewById<Button>(R.id.btnCancelFind)?.setOnClickListener() {
+            rootView?.findViewById<View>(R.id.layoutFrgmentFind)?.visibility = View.GONE
+            rootView?.findViewById<View>(R.id.RoomFragMain)?.visibility = View.VISIBLE
+        }
 
         val rvRoomUser = rootView?.findViewById<RecyclerView>(R.id.rvRoomUser)
         rvRoomUser?.layoutManager = LinearLayoutManager(rootView?.context)
@@ -42,9 +51,33 @@ class FragRoomMembers: Fragment(), FragFindUser.OnSelectedButtonListener {
             addUsers()
         }
 
-        setFragmentResultListener("FragRoomMembers") { requestKey, bundle ->
+        setFragmentResultListener("FragRoomID") { requestKey, bundle ->
             f_messages = bundle.getString("f_messages")!!.toInt()
             rvRoomUserUpdate()
+        }
+
+        setFragmentResultListener("FragRoomName") { requestKey, bundle ->
+            oldCanalName = bundle.getString("roomName")!!
+            rootView?.findViewById<EditText>(R.id.ptCanalName)?.setText(oldCanalName)
+        }
+
+        val btnSaveName = rootView?.findViewById<ImageButton>(R.id.btnSaveCanalName)
+        btnSaveName?.visibility = View.GONE
+        rootView?.findViewById<EditText>(R.id.ptCanalName)?.addTextChangedListener {
+            if (it.toString() == oldCanalName) {
+                btnSaveName?.visibility = View.GONE
+            } else {
+                btnSaveName?.visibility = View.VISIBLE
+            }
+        }
+        btnSaveName?.setOnClickListener() {
+            val newName = rootView?.findViewById<EditText>(R.id.ptCanalName)?.text!!.toString()
+            if (newName.length > 0) {
+                URL(apiCurURL + "/messages/rename/room/?f_messages=" + f_messages.toString() + "&newname=" + newName).getText()
+                it.visibility = View.GONE
+                val listener = activity as FragRoomMembers.OnChangeCanalNameListener?
+                listener?.newCanalName(newName)
+            }
         }
 
         return rootView
@@ -74,12 +107,12 @@ class FragRoomMembers: Fragment(), FragFindUser.OnSelectedButtonListener {
     }
 
     fun addUsers() {
-        rootView?.findViewById<View>(R.id.lfindFragment)?.visibility = View.VISIBLE
+        rootView?.findViewById<View>(R.id.layoutFrgmentFind)?.visibility = View.VISIBLE
         rootView?.findViewById<View>(R.id.RoomFragMain)?.visibility = View.GONE
     }
 
     override fun selectedUsers(users: ArrayList<Int>) {
-        rootView?.findViewById<View>(R.id.lfindFragment)?.visibility = View.GONE
+        rootView?.findViewById<View>(R.id.layoutFrgmentFind)?.visibility = View.GONE
         rootView?.findViewById<View>(R.id.RoomFragMain)?.visibility = View.VISIBLE
         if (users.count() > 0) {
             if (InsertUsers(users) > 0) rvRoomUserUpdate()

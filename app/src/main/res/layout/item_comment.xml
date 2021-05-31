@@ -90,7 +90,8 @@
                     android:layout_marginEnd="3dp"
                     android:layout_marginBottom="3dp"
                     android:hint="@string/tvMessageDefault"
-                    android:text="@string/tvMessageDefault" />
+                    android:text="@string/tvMessageDefault"
+                    android:textIsSelectable="true" />
 
                 <ImageView
                     android:id="@+id/ivNotReaded"

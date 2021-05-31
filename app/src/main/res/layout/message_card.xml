@@ -21,10 +21,9 @@
             app:title="@string/mesCartTitle">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="end"
-                android:orientation="horizontal">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end">
 
                 <Button
                     android:id="@+id/btnSaveCard"
@@ -83,6 +82,7 @@
                             android:autofillHints=""
                             android:hint="@string/card_title"
                             android:inputType="textMultiLine|textPhonetic|textCapSentences"
+                            android:textIsSelectable="true"
                             android:textSize="24sp" />
 
                         <TextView
@@ -124,6 +124,7 @@
             android:autofillHints=""
             android:hint="@string/card_text"
             android:inputType="textMultiLine|textPhonetic|textCapSentences"
+            android:textIsSelectable="true"
             android:textSize="24sp" />
 
     </LinearLayout>

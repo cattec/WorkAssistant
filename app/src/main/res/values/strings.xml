@@ -84,4 +84,7 @@
     <string name="tvSelectUserstxt">Выбрать пользователей</string>
     <string name="tvRoomUserstxt">Состав комнаты</string>
     <string name="delRoomtxt">Покинуть канал</string>
+    <string name="canalNametxt">Имя канала</string>
+    <string name="btnCancelTxt">отменить поиск</string>
+    <string name="myblogtxt">Мой блог</string>
 </resources>

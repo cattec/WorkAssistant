@@ -101,6 +101,7 @@
                                     android:layout_weight="1"
                                     android:text="@string/card_title"
                                     android:textColor="@color/black"
+                                    android:textIsSelectable="true"
                                     android:textSize="18sp" />
 
                                 <ImageButton
@@ -153,6 +154,7 @@
                         android:layout_marginRight="3dp"
                         android:layout_marginBottom="3dp"
                         android:text="@string/card_text"
+                        android:textIsSelectable="true"
                         android:textSize="14sp" />
 
                 </LinearLayout>

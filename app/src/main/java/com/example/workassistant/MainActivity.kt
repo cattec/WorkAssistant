@@ -30,10 +30,10 @@ import kotlin.concurrent.schedule
 
 val apiURL_heroku: String = "https://wassistant.herokuapp.com"
 val apiURL_local: String = "http://10.226.96.21:5000"
-var apiCurURL: String = apiURL_heroku
+var apiCurURL: String = apiURL_local
 
 var imageLoader: ImageLoader? = null
-var myToken: cToken = cToken(0, 0, "", "", "")
+var myToken: cToken = cToken(0, 0, "", "", "", "")
 var wasist_db: DataBaseHandler? = null
 
 class MainActivity : AppCompatActivity() {
@@ -113,6 +113,7 @@ class MainActivity : AppCompatActivity() {
         val full_name: String = settings.getString("full_name", "").toString()
         val token_type: String = settings.getString("token_type", "").toString()
         val access_token: String = settings.getString("access_token", "").toString()
+        val roles: String = settings.getString("roles", "").toString()
         val myLogin: String = settings.getString("myLogin", "").toString()
         val myPassword: String = settings.getString("myPassword", "").toString()
         val token_limit_date_str: String = settings.getString("token_limit_date", "").toString()
@@ -128,7 +129,8 @@ class MainActivity : AppCompatActivity() {
                 iconID,
                 full_name,
                 access_token,
-                token_type
+                token_type,
+                roles
             )
             return true
         }
@@ -136,7 +138,7 @@ class MainActivity : AppCompatActivity() {
         //Проверяем старый токен действует еще или уже нет, если вернуло ответ то токен еще рабочий
         val result = URL(apiCurURL + "/users/me/").checkToken()
         if ( result != "" ) {
-            myToken = cToken(userID, iconID, full_name, access_token, token_type)
+            myToken = cToken(userID, iconID, full_name, access_token, token_type, roles)
             return true
         }
 
@@ -178,10 +180,12 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
+        if (!isRole("1")) myNav.menu.findItem(R.id.nav_item_admintools).setVisible(false)
+
         myNav.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_item_three0 -> startActivity(Intent(this, CardMessageActivity::class.java))
-                R.id.nav_item_three1 -> createINNCNotify()
+                R.id.nav_item_three0 -> startActivity(Intent(this, CardMessageActivity::class.java).putExtra("spec","news"))
+                R.id.nav_item_blog -> startActivity(Intent(this, BlogActivity::class.java))
                 R.id.nav_item_chat -> startActivity(Intent(this, ChatChanelsActivity::class.java))
                 R.id.nav_item_three3 -> startActivity(Intent(this, SupportActivity::class.java))
                 R.id.nav_item_help -> startActivity(Intent(this, HelpActivity::class.java))
@@ -197,7 +201,7 @@ class MainActivity : AppCompatActivity() {
         //реализация обновления списка: толком не работает тормозит дико, потому что генерит милион событий
         val rv = findViewById<RecyclerView>(R.id.rv)
         //rv.layoutManager = LinearLayoutManager(this)
-        rv.adapter = RCAdapterNewsMessages(myToken.userID, fillMessageList())
+        rv.adapter = RCAdapterNewsMessages(fillMessageList())
 
         /*rv.onScrollToStart {
             Toast.makeText(this, "Refresh list", Toast.LENGTH_SHORT).show()
@@ -328,7 +332,7 @@ class MainActivity : AppCompatActivity() {
     private fun fillMessageList(): List<MyMessage> {
         var curCategory = "none"
         if (lastCategory != "Все") curCategory = lastCategory
-        val res = URL(apiCurURL + "/messages/get/?fkey=0&categ_name=" + curCategory).getText()
+        val res = URL(apiCurURL + "/messages/get/?fkey=0&categ_name=" + curCategory + "&personal=false").getText()
         return Gson().fromJson(res, Array<MyMessage>::class.java).asList()
     }
 
@@ -345,7 +349,7 @@ class MainActivity : AppCompatActivity() {
     fun changeCategory(view: View) {
         try {
            if (categories.size == 0) {
-               categories = getCategories()
+               categories = getCategories("main")
            }
             MaterialAlertDialogBuilder(this)
                     .setTitle("Категория сообщения?")

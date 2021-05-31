@@ -15,7 +15,6 @@ import java.net.URL
 
 
 class RCAdapterNewsMessages(
-    private val userID: Int,
     private val CadrParm: List<MyMessage>
 ) :
     RecyclerView.Adapter<RCAdapterNewsMessages.MyViewHolderMessage>() {
@@ -103,7 +102,7 @@ class RCAdapterNewsMessages(
                 holder.btnSendMessage_view?.isEnabled = false
                 //формируем запрос
                 val nMess = MyCommentOut(
-                        userID,
+                        myToken.userID,
                         holder.tvComment_text_view?.text.toString(),
                         CadrParm[position].fkey.toInt()
                 )

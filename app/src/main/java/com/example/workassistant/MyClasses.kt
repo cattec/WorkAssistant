@@ -41,7 +41,8 @@ class cToken(
     val iconID: Int,
     val full_name: String,
     val access_token: String,
-    val token_type: String
+    val token_type: String,
+    val roles: String
 )
 
 class MyCategories(
@@ -66,7 +67,8 @@ class MyMessage(
     var categ_name: String,
     var f_categories: String,
     var f_icons: String,
-    var f_users_create: String
+    var f_users_create: String,
+    var canedit: Boolean
 )
 
 class MyPersMessage(
@@ -161,6 +163,7 @@ fun getNewToken(settings: SharedPreferences, myLogin: String, myPassword: String
         editor.putString("full_name", myNewToken.full_name)
         editor.putString("token_type", myNewToken.token_type)
         editor.putString("access_token", myNewToken.access_token)
+        editor.putString("roles", myNewToken.roles)
         editor.putString("token_limit_date", Calendar.getInstance().time.time.toString())
         editor.commit()
         return myNewToken
@@ -198,8 +201,8 @@ fun getFromCamera(ac: Activity): Intent? {
     return null
 }
 
-fun getCategories (): Array<String> {
-    val res = URL(apiCurURL + "/categories/").getText()
+fun getCategories (spec: String): Array<String> {
+    val res = URL(apiCurURL + "/categories/?spec=" + spec).getText()
     val data = Gson().fromJson(res, Array<MyCategories>::class.java).asList()
     return Array<String>(data.size) { i -> data[i].fname }
 }
@@ -347,4 +350,9 @@ fun insertIcon(tbl: String, objID: Int, bitmap: Bitmap): Int {
     val requestResult = URL(apiCurURL + "/icons/updateObjectIcon/?ftable=" + tbl).sendJSONRequest(outResponse)
     if ((requestResult != "") and (requestResult.isDigitsOnly())) return requestResult.toInt()
     return 0
+}
+
+fun isRole(roleID: String): Boolean {
+    if ((myToken.roles.split(',').find { it == roleID })!!.length > 0) return true
+    return false
 }
