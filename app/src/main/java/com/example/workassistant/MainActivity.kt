@@ -30,7 +30,7 @@ import kotlin.concurrent.schedule
 
 val apiURL_heroku: String = "https://wassistant.herokuapp.com"
 val apiURL_local: String = "http://10.226.96.21:5000"
-var apiCurURL: String = apiURL_local
+var apiCurURL: String = apiURL_heroku
 
 var imageLoader: ImageLoader? = null
 var myToken: cToken = cToken(0, 0, "", "", "", "")
